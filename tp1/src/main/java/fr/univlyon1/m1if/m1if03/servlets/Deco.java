@@ -23,13 +23,14 @@ import java.util.Map;
  * et affiche l'interface du chat (sans modifier l'URL).
  * &Agrave; noter le fait que l'URL à laquelle elle répond ("/todos") n'est pas le nom de la servlet.
  */
-@WebServlet(name = "Connect", value = "/todos")
-public class Connect extends HttpServlet {
+
+@WebServlet(name = "Deco", value = "/deco")
+public class Deco extends HttpServlet {
     // Variables communes pour toute l'application (remplacent la BD).
     // Elles seront stockées dans le contexte applicatif pour pouvoir être accédées par tous les objets de l'application :
 
     // Map d'objets User
-    public final Map<String, User> users = new HashMap<>();
+    private Map<String, User> users = new HashMap<>();
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -37,15 +38,11 @@ public class Connect extends HttpServlet {
         super.init(config);
         //Récupère le contexte applicatif et y place les variables globales
         ServletContext context = config.getServletContext();
-        context.setAttribute("users", users);
+        users = (Map<String, User>) context.getAttribute("users");
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Récupère l'User dans l'attribut de session et le place dans la map (qui est un attribut de contexte)
-        HttpSession session = request.getSession();
-        User user = (User) session.getAttribute("user");
-        users.put(user.getLogin(), user);
         // Utilise un RequestDispatcher pour "transférer" la requête à un autre objet, en interne du serveur.
         // Ceci n'est pas une redirection HTTP ; le client n'est pas informé de cette redirection.
         // Note :
@@ -56,6 +53,11 @@ public class Connect extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        // Récupère l'User dans l'attribut de session et l'enlève
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        users.remove(user.getLogin(), user);
+        session.removeAttribute("user");
         // Ceci est une redirection HTTP ; le client est informé qu'il doit requêter une autre ressource
         response.sendRedirect("index.html");
     }

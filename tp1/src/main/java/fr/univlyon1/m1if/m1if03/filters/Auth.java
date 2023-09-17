@@ -27,6 +27,17 @@ public class Auth extends HttpFilter {
 
     @Override
     protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+        // Traite les formulaires d'authentification
+        String login = request.getParameter("login");
+        if(request.getMethod().equals("POST") && login != null && !login.isEmpty()) {
+            // Gestion de la session utilisateur
+            HttpSession session = request.getSession(true);
+            session.setAttribute("user", new User(login, request.getParameter("name")));
+            chain.doFilter(request, response);
+            return;
+        }
+
+
         // Permet de retrouver la fin de l'URL (après l'URL du contexte) -> indépendant de l'URL de déploiement
         String url = request.getRequestURI().replace(request.getContextPath(), "");
 
@@ -34,17 +45,7 @@ public class Auth extends HttpFilter {
         // Note :
         //   le paramètre false dans request.getSession(false) permet de récupérer null si la session n'est pas déjà créée.
         //   Sinon, l'appel de la méthode getSession() la crée automatiquement.
-        if(url.equals("/") || url.equals("/index.html") || request.getSession(false) != null) {
-            chain.doFilter(request, response);
-            return;
-        }
-
-        // Traite les formulaires d'authentification
-        String login = request.getParameter("login");
-        if(request.getMethod().equals("POST") && login != null && !login.isEmpty()) {
-            // Gestion de la session utilisateur
-            HttpSession session = request.getSession(true);
-            session.setAttribute("user", new User(login, request.getParameter("name")));
+        if(url.equals("/") || url.equals("/index.html") || url.endsWith(".css") || request.getSession(false) != null) {
             chain.doFilter(request, response);
             return;
         }
