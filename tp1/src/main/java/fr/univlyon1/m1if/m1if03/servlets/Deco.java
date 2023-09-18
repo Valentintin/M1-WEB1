@@ -56,8 +56,9 @@ public class Deco extends HttpServlet {
         // Récupère l'User dans l'attribut de session et l'enlève
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
-        users.remove(user.getLogin(), user);
+        users.remove(user.getLogin());
         session.removeAttribute("user");
+        System.out.println(users);
         // Ceci est une redirection HTTP ; le client est informé qu'il doit requêter une autre ressource
         response.sendRedirect("index.html");
     }

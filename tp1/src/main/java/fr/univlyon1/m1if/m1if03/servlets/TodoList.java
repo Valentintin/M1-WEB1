@@ -3,6 +3,9 @@ package fr.univlyon1.m1if.m1if03.servlets;
 import fr.univlyon1.m1if.m1if03.classes.Todo;
 
 import fr.univlyon1.m1if.m1if03.exceptions.MissingParameterException;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,6 +27,15 @@ public class TodoList extends HttpServlet {
 
     //TODO Placer la map dans le contexte
     private final List<Todo> todos = new ArrayList<>();
+
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        // Cette instruction doit toujours être au début de la méthode init() pour pouvoir accéder à l'objet config.
+        super.init(config);
+        //Récupère le contexte applicatif et y place les variables globales
+        ServletContext context = config.getServletContext();
+        context.setAttribute("todos", todos);
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
