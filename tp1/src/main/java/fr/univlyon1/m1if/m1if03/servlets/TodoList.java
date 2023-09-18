@@ -16,6 +16,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import jakarta.servlet.RequestDispatcher;
 
 /**
  * Cette servlet gère la liste des TODOs.
@@ -38,42 +39,18 @@ public class TodoList extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        // Génère "à la main" la page HTML de réponse
-        PrintWriter out = response.getWriter();
-        out.write("""
-                <!DOCTYPE html>
-                <html lang="fr">
-                <head>
-                  <meta charset="UTF-8">
-                  <title>TODOs</title>
-                  <link rel="stylesheet" href="css/style.css">
-                  <meta http-equiv="refresh" content="5">
-                </head>
-                <body>
-                  <table>""");
-        for (Todo t : todos) {
-            out.println("      <form action='todolist' method='POST'>");
-            out.write("        <tr><td>" + (t.isCompleted() ? "&#x2611;" : "&#x2610;") + "</td>");
-            out.write("          <td><em>" + t.getTitle() + "</em></td>");
-            if (t.isCompleted()) {
-                out.write("          <td><input type='submit' name='toggle' value='Not done!'></td>");
-            } else {
-                out.write("          <td><input type='submit' name='toggle' value='Done!'></td>");
-            }
-            out.println("        </tr>");
-            out.println("        <input type='hidden' name='operation' value='update'>");
-            out.println("        <input type='hidden' name='index' value='" + todos.indexOf(t) + "'>");
-            out.println("      </form>");
-        }
-        out.write("""
-                  </table>
-                </body>
-                </html>""");
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        response.setContentType("text/html;charset=UTF-8");
+
+        request.setAttribute("todos", todos);
+
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/todolist.jsp");
+
+        dispatcher.include(request, response);
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         try {
             switch (request.getParameter("operation")) {
                 case "add" -> {
