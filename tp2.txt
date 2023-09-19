@@ -1,0 +1,47 @@
+q1 : ps aux | grep nginx
+
+Cette commande affichera une liste des processus Nginx en cours d'exécution, y compris l'utilisateur qui a lancé chaque processus. L'utilisateur sera répertorié dans la colonne "USER" du résultat.
+
+q2 : cat /etc/nginx/nginx.conf | grep users
+ou users nginx;
+
+Les "workers" de nginx sont généralement exécutés sous un utilisateur spécifique pour des raisons de sécurité. Pour déterminer l'utilisateur sous lequel les "workers" fonctionnent, vous pouvez regarder la configuration nginx. Les directives pertinentes se trouvent dans le fichier de configuration principal, généralement /etc/nginx/nginx.conf.
+
+q3 : 
+
+La deuxième ligne non vide du fichier nginx.conf est généralement une directive worker_processes, qui spécifie le nombre de processus "workers" à utiliser pour traiter les requêtes. Vous pouvez vérifier cette ligne en examinant le contenu du fichier nginx.conf comme indiqué précédemment. Par exemple :
+
+
+q4 : sudo nginx -s reload
+Indiquez la fonction des sous-répertoires non vides du répertoire de configuration d'nginx.
+Les sous-répertoires non vides du répertoire de configuration d'nginx (/etc/nginx/) sont généralement utilisés pour organiser les configurations des sites web individuels. Chaque sous-répertoire correspond à un site ou une application web spécifique, et il contient des fichiers de configuration spécifiques à ce site
+
+q5 :
+Le fichier de configuration du site actuellement déployé se trouve généralement dans un sous-répertoire de /etc/nginx/sites-available/. Ce répertoire contient des fichiers de configuration individuels pour chaque site ou application web.
+
+Pour que le serveur nginx "trouve" et utilise le fichier de configuration d'un site, il doit être symboliquement lié (symlink) depuis le répertoire /etc/nginx/sites-available/ vers le répertoire /etc/nginx/sites-enabled/. Cela se fait généralement en utilisant la commande ln.
+
+Par exemple, pour activer un site nommé "monsite", vous pouvez exécuter :
+
+sudo ln -s /etc/nginx/sites-available/monsite /etc/nginx/sites-enabled/
+q6 : 
+Le port sur lequel le serveur répond est généralement spécifié à l'intérieur du fichier de configuration du site (par exemple, /etc/nginx/sites-available/monsite). Dans ce fichier, vous trouverez une section de bloc server qui définit les paramètres du site, y compris le port. La directive qui spécifie le port est généralement listen. Par exemple :
+
+server {
+    listen 80;
+    # Autres paramètres de configuration du site
+}
+Dans cet exemple, le serveur nginx écoute sur le port 80 pour ce site.
+
+q7 : 
+
+Le répertoire où se trouvent les données du site est spécifié dans la directive root à l'intérieur du bloc server du fichier de configuration du site. Par exemple :
+
+server {
+    listen 80;
+    root /var/www/monsite;
+    # Autres paramètres de configuration du site
+}
+Dans cet exemple, les données du site se trouvent dans le répertoire /var/www/monsite. Pour vérifier cela, vous pouvez accéder à ce répertoire et modifier la page d'accueil du site. Une fois les modifications effectuées, vous devrez peut-être recharger la configuration nginx pour que les changements soient pris en compte, comme expliqué précédemment.
+
+Veuillez noter que les emplacements exacts des fichiers de configuration et des répertoires peuvent varier en fonction de la distribution Linux et de la configuration spécifique de votre VM. Les chemins et les noms de fichiers indiqués dans cet exemple sont des conventions courantes, mais ils peuvent être différents sur votre système.
