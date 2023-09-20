@@ -13,7 +13,7 @@ variables:
 deploy:
     only:
         - master
-    image: maven:3.6.1-jdk-17 # docker image with Maven
+    image: maven:3.8.6-openjdk-18 # docker image with Maven
     before_script:
         - ./ci/setup-mvn-proxy.sh
         - chmod 400 $CI_SSH_KEY
