@@ -22,3 +22,4 @@ deploy:
         - cd tp1
         - mvn clean package
         - scp -o StrictHostKeyChecking=no -i $CI_SSH_KEY target/todos.war gitlabci@192.168.75.73:/opt/tomcat/webapps/v1.war
+
