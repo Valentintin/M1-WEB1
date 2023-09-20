@@ -6,6 +6,7 @@ cache:
     # Must be within the repository under test hence we can't use the
     # default ~/.m2
     - .m2/repository
+    - target/
 variables:
   # Use the cached directory above.
   MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
