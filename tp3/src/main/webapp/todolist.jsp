@@ -16,7 +16,7 @@
         <th>Titre</th>
         <th>Utilisateur assigné</th>
     </tr>
-    <c:forEach var="todo" items="${applicationScope.todos}">
+    <c:forEach var="todo" items="${applicationScope.todos.findAll()}">
     <form method="POST" action="todolist">
         <tr id="${todo.hashCode()}">
             <td>${todo.completed ? "&#x2611;" : "&#x2610;"}</td>
@@ -32,7 +32,7 @@
             </td>
         </tr>
         <input type='hidden' name='operation' value='update'>
-        <input type='hidden' name='index' value='${applicationScope.todos.indexOf(todo)}'>
+        <input type='hidden' name='index' value='${applicationScope.todos.findAll().indexOf(todo)}'>
     </form>
     </c:forEach>
 </table>
