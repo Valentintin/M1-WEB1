@@ -1,15 +1,13 @@
 package fr.univlyon1.m1if.m1if03.daos;
 
 import fr.univlyon1.m1if.m1if03.classes.Todo;
-import fr.univlyon1.m1if.m1if03.daos.AbstractListDao;
 
-import javax.naming.InvalidNameException;
-import javax.naming.NameNotFoundException;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
+/**
+ * TODODAO.
+ *
+ *
+ *
+ */
 public class TodoDao extends AbstractListDao<Todo> {
     /*
     public TodoDao(){

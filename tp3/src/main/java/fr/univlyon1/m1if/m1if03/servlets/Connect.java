@@ -1,6 +1,5 @@
 package fr.univlyon1.m1if.m1if03.servlets;
 
-import fr.univlyon1.m1if.m1if03.classes.Todo;
 import fr.univlyon1.m1if.m1if03.classes.User;
 
 import fr.univlyon1.m1if.m1if03.daos.Dao;
@@ -16,7 +15,6 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import javax.naming.NameAlreadyBoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 
 /**
  * Cette servlet initialise les objets communs à toute l'application,
