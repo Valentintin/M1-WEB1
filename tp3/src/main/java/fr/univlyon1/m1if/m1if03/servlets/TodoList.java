@@ -1,6 +1,5 @@
 package fr.univlyon1.m1if.m1if03.servlets;
 
-import fr.univlyon1.m1if.m1if03.daos.TodoDao;
 import fr.univlyon1.m1if.m1if03.classes.Todo;
 
 import fr.univlyon1.m1if.m1if03.classes.User;
@@ -14,7 +13,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Objects;
 
 /**

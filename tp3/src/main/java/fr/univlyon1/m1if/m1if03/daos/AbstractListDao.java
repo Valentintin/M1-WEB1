@@ -1,6 +1,6 @@
 package fr.univlyon1.m1if.m1if03.daos;
 
-import fr.univlyon1.m1if.m1if03.classes.Todo;
+//import fr.univlyon1.m1if.m1if03.classes.Todo;
 
 import javax.naming.InvalidNameException;
 import javax.naming.NameNotFoundException;
