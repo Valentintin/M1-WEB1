@@ -22,7 +22,7 @@
             <a href="todolist" target="list">Tâches</a>
         </div>
         <div>
-            <a href="deco">D&eacute;connexion</a>
+            <a href="connect?operation=deco">Déconnexion</a>
         </div>
     </aside>
 

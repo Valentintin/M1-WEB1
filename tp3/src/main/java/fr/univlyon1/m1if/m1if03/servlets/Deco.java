@@ -1,3 +1,4 @@
+/*
 package fr.univlyon1.m1if.m1if03.servlets;
 
 import fr.univlyon1.m1if.m1if03.classes.User;
@@ -13,12 +14,13 @@ import jakarta.servlet.http.HttpSession;
 import javax.naming.InvalidNameException;
 import javax.naming.NameNotFoundException;
 import java.io.IOException;
-
+*/
 /**
  * Cette servlet invalide la session de l'utilisateur et le supprime du contexte pour les méthodes GET et POST.
  *
  * @author Lionel Médini
- */
+*/
+/*
 @WebServlet(name = "Deco", value = "/deco")
 public class Deco extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
@@ -34,7 +36,7 @@ public class Deco extends HttpServlet {
     @Override
     @SuppressWarnings("unchecked")
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        HttpSession session = request.getSession(false);
+        /*HttpSession session = request.getSession(false);
         String login = null;
         try {
             login = (String) session.getAttribute("login");
@@ -46,3 +48,4 @@ public class Deco extends HttpServlet {
         }
     }
 }
+*/

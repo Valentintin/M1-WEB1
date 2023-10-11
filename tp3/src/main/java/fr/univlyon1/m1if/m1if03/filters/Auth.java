@@ -29,7 +29,9 @@ public class Auth extends HttpFilter {
 
     @Override
     protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-        // Permet de retrouver la fin de l'URL (après l'URL du contexte) ; indépendant de l'URL de déploiement
+        //if(request.getParameter("operation").equals("connect"))
+
+            // Permet de retrouver la fin de l'URL (après l'URL du contexte) ; indépendant de l'URL de déploiement
         String url = request.getRequestURI().replace(request.getContextPath(), "");
 
         // Laisse passer les URLs ne nécessitant pas d'authentification et les requêtes par des utilisateurs authentifiés
@@ -43,8 +45,7 @@ public class Auth extends HttpFilter {
 
         // Traite les formulaires d'authentification
         String login = request.getParameter("login");
-        if (url.equals("/connect") &&
-                request.getMethod().equals("POST") &&
+        if (request.getMethod().equals("POST") &&
                 login != null && !login.isEmpty()) {
             // Gestion de la session utilisateur
             HttpSession session = request.getSession(true);
