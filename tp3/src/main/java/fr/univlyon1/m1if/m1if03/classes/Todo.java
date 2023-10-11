@@ -12,7 +12,7 @@ import java.util.Objects;
 public class Todo {
     private final int hash;
     private String title;
-    private User assignee = null;
+    private String assignee = null;
     private boolean completed = false;
 
     /**
@@ -39,7 +39,7 @@ public class Todo {
         this.title = title;
     }
 
-    public User getAssignee() {
+    public String getAssignee() {
         return assignee;
     }
 
@@ -48,7 +48,7 @@ public class Todo {
      * @param assignee Login de l'utilisateur à assigner
      */
     public void setAssignee(User assignee) {
-        this.assignee = assignee;
+        this.assignee = assignee.getLogin();
     }
 
     public boolean isCompleted() {

@@ -39,7 +39,6 @@ public class TodoList extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         try {
             Dao<Todo> todos = (Dao<Todo>) this.getServletContext().getAttribute("todos");
-            this.getServletContext().getAttribute("todos");
             switch (request.getParameter("operation")) {
                 case "add" -> {
                     if (request.getParameter("title") == null || request.getParameter("login") == null) {
