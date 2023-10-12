@@ -47,8 +47,8 @@ public class Todo {
      * Assigne un utilisateur à la réalisation du TODO_.
      * @param assignee Login de l'utilisateur à assigner
      */
-    public void setAssignee(User assignee) {
-        this.assignee = assignee.getLogin();
+    public void setAssignee(String login) {
+        this.assignee = login;
     }
 
     public boolean isCompleted() {

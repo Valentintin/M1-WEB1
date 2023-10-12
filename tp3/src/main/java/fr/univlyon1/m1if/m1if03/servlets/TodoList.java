@@ -2,10 +2,11 @@ package fr.univlyon1.m1if.m1if03.servlets;
 
 import fr.univlyon1.m1if.m1if03.classes.Todo;
 
-import fr.univlyon1.m1if.m1if03.classes.User;
 import fr.univlyon1.m1if.m1if03.daos.Dao;
+import fr.univlyon1.m1if.m1if03.daos.TodoDao;
 import fr.univlyon1.m1if.m1if03.exceptions.MissingParameterException;
 import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -27,6 +28,8 @@ public class TodoList extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
+        ServletContext context = config.getServletContext();
+        context.setAttribute("todos", new TodoDao());
     }
 
     @Override
@@ -60,8 +63,8 @@ public class TodoList extends HttpServlet {
                     } else {
                         if (request.getParameter("assign") != null && !request.getParameter("assign").isEmpty()) {
                             String login = (String) request.getSession().getAttribute("login");
-                            User user = ((Dao<User>) this.getServletContext().getAttribute("users")).findOne(login);
-                            todo.setAssignee(user);
+                            //User user = ((Dao<User>) this.getServletContext().getAttribute("users")).findOne(login);
+                            todo.setAssignee(login);
                         } else {
                             throw new MissingParameterException("Modification à réaliser non spécifiée.");
                         }

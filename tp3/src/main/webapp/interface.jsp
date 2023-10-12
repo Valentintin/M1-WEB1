@@ -16,7 +16,7 @@
     <aside class="menu">
         <h2>Menu</h2>
         <div>
-            <a href="userlist.jsp" target="list">Utilisateurs</a>
+            <a href="connect?operation=view" target="list">Utilisateurs</a>
         </div>
         <div>
             <a href="todolist" target="list">Tâches</a>

@@ -1,22 +1,5 @@
-<%@ page import="fr.univlyon1.m1if.m1if03.classes.User" %>
-<%@ page import="fr.univlyon1.m1if.m1if03.daos.Dao" %>
-<%@ page import="javax.naming.InvalidNameException" %>
-<%@ page import="javax.naming.NameNotFoundException" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
-<%
-    if(request.getMethod().equals("POST")) {
-        try {
-            User user = ((Dao<User>) config.getServletContext().getAttribute("users")).findOne(request.getParameter("login"));
-            user.setName(request.getParameter("name"));
-        } catch (NullPointerException | InvalidNameException | NameNotFoundException e) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Login de l'utilisateur vide ou inexistant: " + request.getParameter("login") + ".");
-            return;
-        }
-        // On redirige la totalité de l'interface pour afficher le nouveau nom dans l'interface
-        response.sendRedirect("interface.jsp");
-    } else {
-%>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -36,6 +19,3 @@
 </ul>
 </body>
 </html>
-<%
-    }
-%>
