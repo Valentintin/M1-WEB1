@@ -48,8 +48,8 @@ public class Auth extends HttpFilter {
         if (request.getMethod().equals("POST") &&
                 login != null && !login.isEmpty()) {
             // Gestion de la session utilisateur
-            HttpSession session = request.getSession(true);
-            session.setAttribute("login", login);
+            /*HttpSession session = request.getSession(true);
+            session.setAttribute("login", login);*/
             chain.doFilter(request, response);
             return;
         }

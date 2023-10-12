@@ -46,6 +46,8 @@ public class Connect extends HttpServlet {
             // Gestion de la session utilisateur
             HttpSession session = request.getSession(true);
             User user = new User(request.getParameter("login"), request.getParameter("name"));
+
+            session.setAttribute("login", user.getLogin());
             try {
                 users.add(user);
             } catch (NameAlreadyBoundException e) {
