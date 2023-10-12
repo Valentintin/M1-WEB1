@@ -7,15 +7,10 @@
 <%
     if(request.getMethod().equals("POST")) {
         try {
-            if(!request.getParameter("login").equals(request.getSession(false).getAttribute("login")))
-                throw new IllegalAccessException("Vous n'avez pas le droit de modifier l'utilisateur " + request.getParameter("login"));
             User user = ((Dao<User>) config.getServletContext().getAttribute("users")).findOne(request.getParameter("login"));
             user.setName(request.getParameter("name"));
         } catch (NullPointerException | InvalidNameException | NameNotFoundException e) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Login de l'utilisateur vide ou inexistant: " + request.getParameter("login") + ".");
-            return;
-        } catch (IllegalAccessException e) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN, e.getMessage());
             return;
         }
         // On redirige la totalité de l'interface pour afficher le nouveau nom dans l'interface
