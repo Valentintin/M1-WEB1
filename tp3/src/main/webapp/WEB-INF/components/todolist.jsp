@@ -17,13 +17,13 @@
         <th>Titre</th>
         <th>Utilisateur assigné</th>
     </tr>
-    <c:forEach var="todo" items="${applicationScope.todos.findAll()}">
+    <c:forEach var="todo" items="${requestScope.todos}">
     <form method="POST" action="todolist">
         <tr id="${todo.hashCode()}">
             <td>${todo.completed ? "&#x2611;" : "&#x2610;"}</td>
             <td><em>${todo.title}</em></td>
             <td>
-                <c:if test="${todo.getAssignee() != null}"><a href="user.jsp?user=${todo.getAssignee()}">${todo.getAssignee()}</a></c:if>
+                <c:if test="${todo.getAssignee() != null}"><a href="connect?operation=user&user=${todo.getAssignee()}">${todo.getAssignee()}</a></c:if>
                 <c:if test="${!todo.completed && todo.getAssignee() != sessionScope.login}">
                     <input type='submit' name='assign' value='Choisir cette tâche'>&nbsp;
                 </c:if>
@@ -33,7 +33,7 @@
             </td>
         </tr>
         <input type='hidden' name='operation' value='update'>
-        <input type='hidden' name='index' value='${applicationScope.todos.findAll().indexOf(todo)}'>
+        <input type='hidden' name='index' value='${requestScope.todos.indexOf(todo)}'>
     </form>
     </c:forEach>
 </table>

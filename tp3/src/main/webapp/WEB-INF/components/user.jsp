@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<c:set var="user" value="${applicationScope.users.findOne(param.user)}" scope="request"/>
+<c:set var="user" value="${requestScope.users.findOne(param.user)}" scope="request"/>
 <h2>Utilisateur ${user.login}</h2>
 <div>
     Login : ${user.login}<br>
@@ -22,7 +22,7 @@
     <br>
     Todos:
     <ul>
-        <c:forEach items="${applicationScope.todos.findAll()}" var="todo">
+        <c:forEach items="${requestScope.todos}" var="todo">
             <c:if test="${todo.assignee != null && todo.assignee.equals(user)}">
                 <li><a href="todolist#${todo.hashCode()}">${todo.title}</a></li>
             </c:if>

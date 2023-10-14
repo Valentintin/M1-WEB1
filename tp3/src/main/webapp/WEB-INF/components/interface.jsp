@@ -9,7 +9,7 @@
 <body>
 <header>
     <h1 class="header-titre">MIF TODOs</h1>
-    <p class="header-user">Bonjour <strong><a href="user.jsp?user=${sessionScope.login}" target="list">${applicationScope.users.findOne(sessionScope.login).name}</a></strong></p>
+    <p class="header-user">Bonjour <strong><a href="connect?operation=user&user=${sessionScope.login}" target="list">${applicationScope.users.findOne(sessionScope.login).name}</a></strong></p>
 </header>
 
 <div class="wrapper">

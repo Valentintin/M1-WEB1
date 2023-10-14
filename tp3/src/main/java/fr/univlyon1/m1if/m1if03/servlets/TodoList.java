@@ -2,8 +2,10 @@ package fr.univlyon1.m1if.m1if03.servlets;
 
 import fr.univlyon1.m1if.m1if03.classes.Todo;
 
+import fr.univlyon1.m1if.m1if03.classes.User;
 import fr.univlyon1.m1if.m1if03.daos.Dao;
 import fr.univlyon1.m1if.m1if03.daos.TodoDao;
+import fr.univlyon1.m1if.m1if03.daos.UserDao;
 import fr.univlyon1.m1if.m1if03.exceptions.MissingParameterException;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletContext;
@@ -25,15 +27,18 @@ import java.util.Objects;
  */
 @WebServlet(name = "TodoList", value = "/todolist")
 public class TodoList extends HttpServlet {
+
+    private final Dao<Todo> todos = new TodoDao();
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         ServletContext context = config.getServletContext();
-        context.setAttribute("todos", new TodoDao());
+        context.setAttribute("todos", todos);
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        request.setAttribute("todos", todos.findAll());
         request.getRequestDispatcher("/WEB-INF/components/todolist.jsp").include(request, response);
     }
 

@@ -41,7 +41,7 @@ public class Connect extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setAttribute("users", users);
+        request.setAttribute("users", users.findAll());
         switch (request.getParameter("operation")) {
             case "deco" -> {
                 doGet(request, response);
@@ -82,7 +82,7 @@ public class Connect extends HttpServlet {
         // Note :
         //     il existe deux méthodes pour transférer une requête (et une réponse) à l'aide d'un RequestDispatcher : include et forward
         //     voir les différences ici : https://docs.oracle.com/javaee/6/tutorial/doc/bnagi.html
-        request.setAttribute("users", users);
+        request.setAttribute("users", users.findAll());
         switch (request.getParameter("operation")) {
             case "deco" -> {
                 HttpSession session = request.getSession(false);
@@ -101,6 +101,11 @@ public class Connect extends HttpServlet {
             }
             case "view" -> {
                 request.getRequestDispatcher("/WEB-INF/components/userlist.jsp").include(request, response);
+            }
+            case "user" ->{
+                request.setAttribute("users", users);
+                request.setAttribute("name", request.getParameter("user"));
+                request.getRequestDispatcher("/WEB-INF/components/user.jsp").include(request, response);
             }
         }
     }

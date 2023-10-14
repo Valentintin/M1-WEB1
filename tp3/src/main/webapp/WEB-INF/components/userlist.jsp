@@ -12,10 +12,10 @@
 <body>
 
 <h2>Liste des utilisateurs connectés</h2>
-<p>Il y a actuellement ${requestScope.users.findAll().size()} utilisateur(s) connect&eacute;(s) :</p>
+<p>Il y a actuellement ${requestScope.users.size()} utilisateur(s) connect&eacute;(s) :</p>
 <ul>
-    <c:forEach items="${requestScope.users.findAll()}" var="u">
-        <li>${u.login} : <strong><a href="user.jsp?user=${u.login}">${u.name}</a></strong></li>
+    <c:forEach items="${requestScope.users}" var="u">
+        <li>${u.login} : <strong><a href="connect?operation=user&user=${u.login}">${u.name}</a></strong></li>
     </c:forEach>
 </ul>
 </body>
