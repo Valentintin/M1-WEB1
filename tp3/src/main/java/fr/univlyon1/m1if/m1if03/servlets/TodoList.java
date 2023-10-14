@@ -34,11 +34,10 @@ public class TodoList extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        request.getRequestDispatcher("todolist.jsp").include(request, response);
+        request.getRequestDispatcher("/WEB-INF/components/todolist.jsp").include(request, response);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         try {
             Dao<Todo> todos = (Dao<Todo>) this.getServletContext().getAttribute("todos");

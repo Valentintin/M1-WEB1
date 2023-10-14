@@ -41,6 +41,7 @@ public class Connect extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setAttribute("users", users);
         switch (request.getParameter("operation")) {
             case "deco" -> {
                 doGet(request, response);
@@ -58,9 +59,9 @@ public class Connect extends HttpServlet {
                     return;
                 }
                 // Ceci est une redirection HTTP : le client est informé de cette redirection.
-                response.sendRedirect("interface.jsp");
+                request.getRequestDispatcher("/WEB-INF/components/interface.jsp").include(request, response);
             }
-            case "view" -> {
+            case "modify" -> {
                 try {
                     User user = ((Dao<User>) this.getServletContext().getAttribute("users")).findOne(request.getParameter("login"));
                     user.setName(request.getParameter("name"));
@@ -69,7 +70,7 @@ public class Connect extends HttpServlet {
                     return;
                 }
                 // On redirige la totalité de l'interface pour afficher le nouveau nom dans l'interface
-                response.sendRedirect("interface.jsp");
+                request.getRequestDispatcher("/WEB-INF/components/interface.jsp").include(request, response);
             }
         }
     }
@@ -81,6 +82,7 @@ public class Connect extends HttpServlet {
         // Note :
         //     il existe deux méthodes pour transférer une requête (et une réponse) à l'aide d'un RequestDispatcher : include et forward
         //     voir les différences ici : https://docs.oracle.com/javaee/6/tutorial/doc/bnagi.html
+        request.setAttribute("users", users);
         switch (request.getParameter("operation")) {
             case "deco" -> {
                 HttpSession session = request.getSession(false);
@@ -95,10 +97,10 @@ public class Connect extends HttpServlet {
                 }
             }
             case "connect" -> {
-                request.getRequestDispatcher("interface.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/components/interface.jsp").include(request, response);
             }
             case "view" -> {
-                request.getRequestDispatcher("userlist.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/components/userlist.jsp").include(request, response);
             }
         }
     }

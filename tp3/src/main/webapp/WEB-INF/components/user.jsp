@@ -12,9 +12,10 @@
 <h2>Utilisateur ${user.login}</h2>
 <div>
     Login : ${user.login}<br>
-    <form method="post" action="userlist.jsp" target="_parent">
+    <form method="post" action="connect" target="_parent">
         <label for="name">Prénom : <input type="text" name="name" id="name" value="${user.name}"></label>&nbsp;
         <input type="submit" value="Modification">
+        <input type="hidden" name="operation" value="modify">
         <input type="hidden" name="login" value="${user.login}">
     </form>
     <c:if test="${sessionScope.login.equals(user.login)}">

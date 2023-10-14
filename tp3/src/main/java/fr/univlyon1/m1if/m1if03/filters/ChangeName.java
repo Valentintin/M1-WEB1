@@ -14,8 +14,6 @@ import java.util.Arrays;
 
 @WebFilter(filterName = "ChangeName", urlPatterns = {"/user.jsp"})
 public class ChangeName extends HttpFilter {
-    private final String[] whiteList = {"/", "/index.html", "/css/style.css"};
-
     @Override
     public void init(FilterConfig config) throws ServletException {
         super.init(config);
