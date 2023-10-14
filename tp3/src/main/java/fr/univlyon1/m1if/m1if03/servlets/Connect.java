@@ -103,8 +103,17 @@ public class Connect extends HttpServlet {
                 request.getRequestDispatcher("/WEB-INF/components/userlist.jsp").include(request, response);
             }
             case "user" ->{
-                request.setAttribute("users", users);
-                request.setAttribute("name", request.getParameter("user"));
+                /*request.setAttribute("users", users);
+                request.setAttribute("name", request.getParameter("user"));*/
+                User user = null;
+                try {
+                    user = users.findOne(request.getParameter("user"));
+                } catch (NameNotFoundException e) {
+                    throw new RuntimeException(e);
+                } catch (InvalidNameException e) {
+                    throw new RuntimeException(e);
+                }
+                request.setAttribute("user", user);
                 request.getRequestDispatcher("/WEB-INF/components/user.jsp").include(request, response);
             }
         }

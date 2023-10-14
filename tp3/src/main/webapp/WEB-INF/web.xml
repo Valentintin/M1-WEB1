@@ -17,6 +17,6 @@
     </filter-mapping>
     <filter-mapping>
         <filter-name>ChangeName</filter-name>
-        <url-pattern>/user.jsp</url-pattern>
+        <url-pattern>/connect</url-pattern>
     </filter-mapping>
 </web-app>

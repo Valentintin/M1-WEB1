@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<c:set var="user" value="${requestScope.users.findOne(param.user)}" scope="request"/>
+<c:set var="user" value="${requestScope.user}" scope="request"/>
 <h2>Utilisateur ${user.login}</h2>
 <div>
     Login : ${user.login}<br>

@@ -12,17 +12,19 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Arrays;
 
-@WebFilter(filterName = "ChangeName", urlPatterns = {"/user.jsp"})
+@WebFilter(filterName = "ChangeName", urlPatterns = {"/connect"})
 public class ChangeName extends HttpFilter {
-    @Override
     public void init(FilterConfig config) throws ServletException {
         super.init(config);
     }
     @Override
     protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+        if(request.getParameter("operation") == null || !request.getParameter("operation").equals("user")){
+            chain.doFilter(request, response);
+            return;
+        }
         HttpSession session = request.getSession(false);
         String login = (String) session.getAttribute("login");
-
         if (login.equals(request.getParameter("user"))) {
             chain.doFilter(request, response);
             return;
