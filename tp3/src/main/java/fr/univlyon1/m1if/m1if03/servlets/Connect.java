@@ -66,6 +66,7 @@ public class Connect extends HttpServlet {
                 try {
                     User user = ((Dao<User>) this.getServletContext().getAttribute("users")).findOne(request.getParameter("login"));
                     user.setName(request.getParameter("name"));
+                    request.setAttribute("user", user.getName());
                 } catch (NullPointerException | InvalidNameException | NameNotFoundException e) {
                     response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Login de l'utilisateur vide ou inexistant: " + request.getParameter("login") + ".");
                     return;
