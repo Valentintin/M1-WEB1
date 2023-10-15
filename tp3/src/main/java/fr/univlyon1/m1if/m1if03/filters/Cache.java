@@ -15,57 +15,56 @@ import javax.naming.NameNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 @WebFilter(filterName = "Cache", urlPatterns = {"/todolist"})
 public class Cache extends HttpFilter {
     public Map<String, Date> dateMap;
+    public String lastTodoTitle;
 
     @Override
     public void init(FilterConfig config) throws ServletException {
         super.init(config);
+        dateMap = new HashMap<>();
     }
 
     @Override
     protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-        //vérifier utilisateur connecté
-        if (request.getSession(false) != null) {
-            chain.doFilter(request, response);
-            return;
-        }
         //1 requete POST ajout todo ou Get sur liste
-        boolean isGetList = (request.getMethod().equals("GET") && request.getAttribute("todos") != null);
-        if(request.getParameter("operation").equals("add") || isGetList){
+        boolean isGetList = (request.getMethod().equals("GET"));
+        boolean isPost = (request.getMethod().equals("POST") && request.getParameter("operation").equals("add"));
+        if(isPost){
             //passez la main à l'élément suivant de la chaîne
             chain.doFilter(request, response);
             //stockez la date courante dans la map ci-dessus.
-            Date date = new Date();
-            String todo = request.getParameter("title");
-            dateMap.put(todo, date);
-            //2 Get sur liste
-            if(isGetList) {
-                //générez un en-tête de réponse Last-Modified, à l'aide de la méthode response.setDateHeader(...).
-                Dao<Todo> todos = (Dao<Todo>) request.getAttribute("todos");
-                int v = todos.findAll().size() - 1;
-                try {
-                    String title = todos.findOne(v).getTitle();
-                    response.setDateHeader("Last-Modified", this.dateMap.get((title)).getTime());
-                } catch (NameNotFoundException e) {
-                    throw new RuntimeException(e);
-                } catch (InvalidNameException e) {
-                    throw new RuntimeException(e);
-                }
-                //testez pour vérifier que votre client vous renvoie bien cette valeur dans un en-tête If-Modified-Since lors de la requête d'actualisation de la page
-                //3 Finalisez le traitement à la réception d'une requête GET : si la requête contient un en-tête If-Modified-Since, comparez la valeur de cet en-tête avec celle stockée dans la map et réagissez en conséquence
-                //génération de la page + en-tête Last-Modified ou
-                //code de statut 304 (Not Modified)
+            String titleTmp = request.getParameter("title");
+            if(titleTmp != null) {
+                lastTodoTitle = titleTmp;
+                System.out.println(lastTodoTitle);
             }
-
-
         }
-
-
-
-
+        this.dateMap.put(lastTodoTitle, new Date());
+        if(isGetList) {
+            //générez un en-tête de réponse Last-Modified, à l'aide de la méthode response.setDateHeader(...).
+            long ifModifiedSince = request.getDateHeader("If-Modified-Since");
+            Date lastModified  = dateMap.get(this.lastTodoTitle);
+            System.out.println(lastModified.getTime());
+            System.out.println(ifModifiedSince);
+            if (lastModified != null && ifModifiedSince > 0 && lastModified.getTime() >= ifModifiedSince) {
+                // If the resource hasn't been modified since the client's If-Modified-Since date,
+                // respond with a 304 (Not Modified) status.
+                response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+            } else {
+                // If the resource has been modified or If-Modified-Since header is not provided,
+                // generate a new Last-Modified header and process the request as usual.
+                if (lastModified != null) {
+                    response.setDateHeader("Last-Modified", lastModified.getTime());
+                }
+                chain.doFilter(request, response);
+            }
+            //génération de la page + en-tête Last-Modified ou
+            //code de statut 304 (Not Modified)
+        }
     }
 }
