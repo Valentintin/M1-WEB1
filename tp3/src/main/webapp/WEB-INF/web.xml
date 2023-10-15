@@ -8,9 +8,14 @@
         <filter-class>fr.univlyon1.m1if.m1if03.filters.Auth</filter-class>
     </filter>
     <filter>
+        <filter-name>Cache</filter-name>
+        <filter-class>fr.univlyon1.m1if.m1if03.filters.Cache</filter-class>
+    </filter>
+    <filter>
         <filter-name>ChangeName</filter-name>
         <filter-class>fr.univlyon1.m1if.m1if03.filters.ChangeName</filter-class>
     </filter>
+
     <filter-mapping>
         <filter-name>Auth</filter-name>
         <url-pattern>/*</url-pattern>
@@ -18,5 +23,9 @@
     <filter-mapping>
         <filter-name>ChangeName</filter-name>
         <url-pattern>/connect</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>Cache</filter-name>
+        <url-pattern>/todolist</url-pattern>
     </filter-mapping>
 </web-app>
