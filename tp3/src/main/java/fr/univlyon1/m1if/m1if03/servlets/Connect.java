@@ -59,6 +59,7 @@ public class Connect extends HttpServlet {
                     return;
                 }
                 // Ceci est une redirection HTTP : le client est informé de cette redirection.
+                request.setAttribute("user", user.getName());
                 request.getRequestDispatcher("/WEB-INF/components/interface.jsp").include(request, response);
             }
             case "modify" -> {
@@ -72,6 +73,7 @@ public class Connect extends HttpServlet {
                 // On redirige la totalité de l'interface pour afficher le nouveau nom dans l'interface
                 request.getRequestDispatcher("/WEB-INF/components/interface.jsp").include(request, response);
             }
+            default -> throw new UnsupportedOperationException("Opération à réaliser non prise en charge.");
         }
     }
 
@@ -116,6 +118,7 @@ public class Connect extends HttpServlet {
                 request.setAttribute("user", user);
                 request.getRequestDispatcher("/WEB-INF/components/user.jsp").include(request, response);
             }
+            default -> throw new UnsupportedOperationException("Opération à réaliser non prise en charge.");
         }
     }
 }

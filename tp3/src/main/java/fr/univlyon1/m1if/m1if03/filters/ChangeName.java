@@ -10,8 +10,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
-import java.util.Arrays;
 
+/**
+ * Filtre pour changer de nom.
+ * N'autorise l'accès qu'aux clients qui possède ce compte.
+ */
 @WebFilter(filterName = "ChangeName", urlPatterns = {"/connect"})
 public class ChangeName extends HttpFilter {
     public void init(FilterConfig config) throws ServletException {

@@ -2,10 +2,9 @@ package fr.univlyon1.m1if.m1if03.servlets;
 
 import fr.univlyon1.m1if.m1if03.classes.Todo;
 
-import fr.univlyon1.m1if.m1if03.classes.User;
+
 import fr.univlyon1.m1if.m1if03.daos.Dao;
 import fr.univlyon1.m1if.m1if03.daos.TodoDao;
-import fr.univlyon1.m1if.m1if03.daos.UserDao;
 import fr.univlyon1.m1if.m1if03.exceptions.MissingParameterException;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletContext;
