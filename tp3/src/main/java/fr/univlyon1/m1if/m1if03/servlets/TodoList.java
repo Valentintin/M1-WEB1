@@ -2,10 +2,12 @@ package fr.univlyon1.m1if.m1if03.servlets;
 
 import fr.univlyon1.m1if.m1if03.classes.Todo;
 
-import fr.univlyon1.m1if.m1if03.classes.User;
+
 import fr.univlyon1.m1if.m1if03.daos.Dao;
+import fr.univlyon1.m1if.m1if03.daos.TodoDao;
 import fr.univlyon1.m1if.m1if03.exceptions.MissingParameterException;
 import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -24,22 +26,25 @@ import java.util.Objects;
  */
 @WebServlet(name = "TodoList", value = "/todolist")
 public class TodoList extends HttpServlet {
+
+    private final Dao<Todo> todos = new TodoDao();
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
+        ServletContext context = config.getServletContext();
+        context.setAttribute("todos", todos);
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        request.getRequestDispatcher("todolist.jsp").include(request, response);
+        request.setAttribute("todos", todos.findAll());
+        request.getRequestDispatcher("/WEB-INF/components/todolist.jsp").include(request, response);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         try {
             Dao<Todo> todos = (Dao<Todo>) this.getServletContext().getAttribute("todos");
-            this.getServletContext().getAttribute("todos");
             switch (request.getParameter("operation")) {
                 case "add" -> {
                     if (request.getParameter("title") == null || request.getParameter("login") == null) {
@@ -61,8 +66,8 @@ public class TodoList extends HttpServlet {
                     } else {
                         if (request.getParameter("assign") != null && !request.getParameter("assign").isEmpty()) {
                             String login = (String) request.getSession().getAttribute("login");
-                            User user = ((Dao<User>) this.getServletContext().getAttribute("users")).findOne(login);
-                            todo.setAssignee(user);
+                            //User user = ((Dao<User>) this.getServletContext().getAttribute("users")).findOne(login);
+                            todo.setAssignee(login);
                         } else {
                             throw new MissingParameterException("Modification à réaliser non spécifiée.");
                         }
