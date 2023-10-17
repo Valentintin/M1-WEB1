@@ -1,0 +1,825 @@
+openapi: 3.1.0
+info:
+  description: "Description de l'API du serveur de gestion des ressources de l'applicaiton \"MIF-Todos\".<br>Vous pouvez changer l'URL dans <code>servers</code> pour l'adapter au déploiement que vous souhaitez tester. Les autres valeurs ne doivent pas être modifiées.<br>**Pour tester les requêtes avec _Try it out_, il vous faut rajouter la configuration du CorsFilter de Tomcat** (voir énoncé du TP)."
+  version: "1.0.0"
+  title: "Mif-Todos"
+externalDocs:
+  description: "Voir le sujet du TP"
+  url: "https://perso.liris.cnrs.fr/lionel.medini/enseignement/#md=M1IF03/TP/md/TP4"
+servers:
+  - url: "http://localhost:8080/mif_todos_war_exploded"
+  - url: "http://localhost:8080/todos"
+  - url: "http://192.168.75.xxx:8080/v3"
+  - url: "https://192.168.75.xxx:8080/api/v3"
+
+tags:
+  - name: "users"
+    description: "Gestion des utilisateurs"
+  - name: "todos"
+    description: "Gestion des todos"
+
+paths:
+  /users:
+    post:
+      tags:
+        - "users"
+      summary: "Créer un utilisateur"
+      description: "Crée un utilisateur avec un login, password et nom. Remarque : il est créé si le login n'existait pas déjà. Dans ce cas, on renvoie un code 201. Sinon, on renvoie un 409 (Conflict)."
+      operationId: "createUser"
+      requestBody:
+        description: "représentation de l'utilisateur"
+        required: true
+        content:
+          'application/json':
+            schema:
+              $ref: "#/components/schemas/UserRequest"
+            example:
+              login: "toto"
+              password: "totoaussi"
+              name: "Toto"
+          'application/xml':
+            schema:
+              $ref: "#/components/schemas/UserRequest"
+          'application/x-www-form-urlencoded':
+            schema:
+              $ref: "#/components/schemas/UserRequest"
+      responses:
+        '201':
+          description: "Utilisateur créé."
+          headers:
+            Location:
+              schema:
+                type: string
+              description: "l'URL (locale) de l'utilisateur créé"
+        '400':
+          description: "Paramètres de la requête non acceptables"
+        '409':
+          description: "Un utilisateur avec ce login existe déjà"
+    get:
+      tags:
+        - "users"
+      summary: "Récupérer la collection d'utilisateurs"
+      description: "Renvoie les URI de tous les utilisateurs"
+      operationId: "getAllUsers"
+      responses:
+        '200':
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Users"
+              example:
+                - "http://localhost:8080/users/toto"
+                - "http://localhost:8080/users/titi"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/Users"
+              example: "<users>\n  <user>http://localhost:8080/users/toto</user>\n  <user>http://localhost:8080/users/titi</user>\n</users>"
+            text/html:
+              schema:
+                type: string
+              example: "page HTML contenant la collection"
+
+  /users/{userId}:
+    get:
+      tags:
+        - "users"
+      summary: "Récupérer un utilisateur"
+      description: "Renvoie une représentation d'un utilisateur"
+      operationId: "getUserById"
+      parameters:
+        - name: userId
+          in: "path"
+          description: "Login de l'utilisateur"
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+              example:
+                login: "toto"
+                nom: "Test"
+                assignedTodos: ['todos/234567', 'todos/109876']
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+            text/html:
+              schema:
+                type: string
+                description: "page HTML décrivant l'utilisateur"
+        '401':
+          description: "Utilisateur non authentifié"
+        '403':
+          description: "Utilisateur authentifié avec un autre login"
+        '404':
+          description: "Utilisateur non trouvé"
+      security:
+        - bearer_auth: []
+    put:
+      tags:
+        - "users"
+      summary: "Créer ou mettre à jour un utilisateur"
+      description: "Crée un utilisateur s'il est \"complet\" et le met à jour si seul le champ nom est passé en paramètre"
+      operationId: "updateUser"
+      parameters:
+        - name: userId
+          in: "path"
+          description: "Login de l'utilisateur"
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: "représentation de l'utilisateur"
+        required: true
+        content:
+          'application/json':
+            schema:
+              type: object
+              properties:
+                password:
+                  $ref: "#/components/schemas/UserRequest/properties/password"
+                name:
+                  $ref: "#/components/schemas/UserRequest/properties/name"
+              required:
+                - name
+            example:
+              login: "toto"
+              password: "totoaussi"
+              name: "Toto"
+          'application/xml':
+            schema:
+              type: object
+              properties:
+                password:
+                  $ref: "#/components/schemas/UserRequest/properties/password"
+                name:
+                  $ref: "#/components/schemas/UserRequest/properties/name"
+              required:
+                - name
+              xml:
+                name: "user"
+          'application/x-www-form-urlencoded':
+            schema:
+              type: object
+              properties:
+                password:
+                  $ref: "#/components/schemas/UserRequest/properties/password"
+                name:
+                  $ref: "#/components/schemas/UserRequest/properties/name"
+              required:
+                - name
+      responses:
+        '201':
+          description: "Utilisateur créé."
+          headers:
+            Location:
+              schema:
+                type: string
+              description: "l'URL (locale) de l'utilisateur créé"
+        '204':
+          description: "Utilisateur modifié"
+        '400':
+          description: "Paramètres de la requête non acceptables"
+        '401':
+          description: "Utilisateur non authentifié"
+        '403':
+          description: "Utilisateur authentifié avec un autre login"
+        '404':
+          description: "Utilisateur non trouvé"
+      security:
+        - bearer_auth: []
+    delete:
+      tags:
+        - "users"
+      summary: "Supprimer un utilisateur"
+      description: "Supprime un utilisateur de la collection d'utilisateurs. Renvoie un code 204 si l'utilisateur était bien dans la collection, ou un 404 sinon."
+      operationId: "deleteUser"
+      parameters:
+        - name: userId
+          in: "path"
+          description: "Id de l'utilisateur"
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: "Utilisateur supprimé"
+        '401':
+          description: "Utilisateur non authentifié"
+        '404':
+          description: "Utilisateur non trouvé"
+      security:
+        - bearer_auth: []
+
+  /users/{userId}/name:
+    get:
+      tags:
+        - "users"
+      summary: "Récupérer le nom d'un utilisateur"
+      description: "Renvoie le nom d'un utilisateur"
+      operationId: "getUserNameById"
+      parameters:
+        - name: userId
+          in: "path"
+          description: "Login de l'utilisateur"
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse/properties/name"
+              example:
+                nom: "Test"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/UserResponse/properties/name"
+              example: "<user><name>Toto</name></user>"
+            text/html:
+              schema:
+                type: string
+                description: "page HTML indiquant le nom de l'utilisateur"
+        '401':
+          description: "Utilisateur non authentifié"
+        '404':
+          description: "Utilisateur non trouvé"
+      security:
+        - bearer_auth: []
+  /users/{userId}/assignedTodos:
+    get:
+      tags:
+        - "users"
+      summary: "Récupérer la collection des todos assignés à un utilisateur"
+      description: "Renvoie la collection des todos assignés à un utilisateur"
+      operationId: "getUserAssignedTodosById"
+      parameters:
+        - name: userId
+          in: "path"
+          description: "Login de l'utilisateur"
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse/properties/assignedTodos"
+              example:
+                nom: "Test"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/UserResponse/properties/assignedTodos"
+              example: "<user><assignedTodos><todo>todos/876543</todo><todo>todos/543254</todo></assignedTodos></user>"
+            text/html:
+              schema:
+                type: string
+                description: "page HTML indiquant la collection des todos créés par l'utilisateur"
+        '401':
+          description: "Utilisateur non authentifié"
+        '403':
+          description: "Utilisateur authentifié avec un autre login"
+        '404':
+          description: "Utilisateur non trouvé"
+      security:
+        - bearer_auth: []
+  /users/{userId}/assignedTodos/*:
+    get:
+      tags:
+        - "users"
+      summary: "Récupérer une sous-propriété de la collection des todos assignés à un utilisateur"
+      description: "Redirige vers la sous-propriété par l'URL du todo"
+      operationId: "getUserAssignedTodosSubproperty"
+      parameters:
+        - name: userId
+          in: "path"
+          description: "Login de l'utilisateur"
+          required: true
+          schema:
+            type: string
+      responses:
+        '302':
+          description: "Redirection vers la sous-ressource correspondante de la collection de todos (pas de test d'existence)"
+          headers:
+            Location:
+              schema:
+                type: string
+              description: "l'URL (locale) de la sous-ressource correspondante de la collection de todos"
+        '401':
+          description: "Utilisateur non authentifié"
+        '404':
+          description: "Utilisateur non trouvé"
+      security:
+        - bearer_auth: []
+  /users/login:
+    post:
+      tags:
+        - "users"
+      summary: "Connecter un utilisateur (opération métier)"
+      description: "Connecte un utilisateur à l'aide d'un token JWT. Renvoie un code 204 si le login et le mot de passe correspondent, 401 sinon."
+      operationId: "loginUser"
+      requestBody:
+        description: "login de l'utilisateur"
+        required: true
+        content:
+          'application/json':
+            schema:
+              $ref: "#/components/schemas/UserLogin"
+          'application/xml':
+            schema:
+              $ref: "#/components/schemas/UserLogin"
+          'application/x-www-form-urlencoded':
+            schema:
+              $ref: "#/components/schemas/UserLogin"
+      responses:
+        '204':
+          description: "Utilisateur logué."
+          headers:
+            Authorization:
+              schema:
+                type: string
+              description: "le token d'authentification"
+            Location:
+              schema:
+                type: string
+              description: "URL de l'utilisateur"
+        '400':
+          description: "Paramètres de la requête non acceptables"
+        '401':
+          description: "Les login et mot de passe ne correspondent pas"
+        '404':
+          description: "Utilisateur non trouvé"
+  /users/logout:
+    post:
+      tags:
+        - "users"
+      summary: "Déconnecter l'utilisateur connecté (opération métier)"
+      description: "Déconnecte l'utilisateur sans l'enlever de la collection d'utilisateurs. Si vous passez l'authentification dans des headers HTTP, cette méthode ne fait rien mais répond que l'opération s'est bien passée."
+      operationId: "logoutUser"
+      responses:
+        204:
+          description: "successful operation"
+      security:
+        - bearer_auth: []
+
+  /todos:
+    post:
+      tags:
+        - "todos"
+      summary: "Créer un todo"
+      description: "Crée un todo avec un titre et le login de son propriétaire. Un todo est obligatoirement créé sans utilisateur assigné, et avec le statut 'Not done'."
+      operationId: "createTodo"
+      requestBody:
+        description: "représentation du todo"
+        required: true
+        content:
+          'application/json':
+            schema:
+              $ref: "#/components/schemas/TodoCreateRequest"
+            example:
+              title: "Mon beau todo"
+              creator: "toto"
+          'application/xml':
+            schema:
+              $ref: "#/components/schemas/TodoCreateRequest"
+          'application/x-www-form-urlencoded':
+            schema:
+              $ref: "#/components/schemas/TodoCreateRequest"
+      responses:
+        '201':
+          description: "Todo créé."
+          headers:
+            Location:
+              schema:
+                type: string
+              description: "l'URL (locale) du todo créé"
+        '400':
+          description: "Paramètres de la requête non acceptables"
+        '401':
+          description: "Utilisateur non authentifié"
+      security:
+        - bearer_auth: []
+    get:
+      tags:
+        - "todos"
+      summary: "Récupérer la collection de todos"
+      description: "Renvoie les URI de tous les todos"
+      operationId: "getAllTodos"
+      responses:
+        '200':
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Todos"
+              example:
+                - "http://localhost:8080/todos/675744564"
+                - "http://localhost:8080/todos/768956867"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/Todos"
+              example: "<todos>\n  <todo>http://localhost:8080/todos/675744564</todo>\n  <todo>http://localhost:8080/todos/768956867</todo>\n</todos>"
+            text/html:
+              schema:
+                type: string
+              example: "page HTML contenant la collection"
+        '401':
+          description: "Utilisateur non authentifié"
+      security:
+        - bearer_auth: []
+
+  /todos/{todoId}:
+    get:
+      tags:
+        - "todos"
+      summary: "Récupérer un todo"
+      description: "Renvoie une représentation d'un todo"
+      operationId: "getTodoById"
+      parameters:
+        - name: todoId
+          in: "path"
+          description: "Id du todo"
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TodoResponse"
+              example:
+                title: "Mon beau todo"
+                assignee: "toto"
+                status: "Not done"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/TodoResponse"
+            text/html:
+              schema:
+                type: string
+                description: "page HTML décrivant le todo"
+        '400':
+          description: "Id du todo syntaxiquement incorrect (non entier)"
+        '401':
+          description: "Utilisateur non authentifié"
+        '403':
+          description: "Utilisateur non membre du todo"
+        '404':
+          description: "Todo non trouvé"
+      security:
+        - bearer_auth: []
+    put:
+      tags:
+        - "todos"
+      summary: "Mettre à jour un todo"
+      description: "Met à jour un todo en fonction du champ passé en paramètre : ce peut être le titre ou l'utilisateur assigné."
+      operationId: "updateTodo"
+      parameters:
+        - name: todoId
+          in: "path"
+          description: "Id du todo"
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        description: "représentation du todo"
+        required: true
+        content:
+          'application/json':
+            schema:
+              type: object
+              properties:
+                title:
+                  $ref: "#/components/schemas/TodoUpdateRequest/properties/title"
+                assignee:
+                  $ref: "#/components/schemas/TodoUpdateRequest/properties/assignee"
+            examples:
+              ex1:
+                summary: "Changement de titre"
+                value:
+                  title: "Mon nouveau beau todo"
+              ex2:
+                summary: "Assignation d'un utilisateur"
+                value:
+                  assignee: "toto"
+          'application/xml':
+            schema:
+              type: object
+              properties:
+                title:
+                  $ref: "#/components/schemas/TodoUpdateRequest/properties/title"
+                  xml:
+                    name: "title"
+                assignee:
+                  $ref: "#/components/schemas/TodoUpdateRequest/properties/assignee"
+                  xml:
+                    name: "assignee"
+              xml:
+                name: "todo"
+          'application/x-www-form-urlencoded':
+            schema:
+              type: object
+              properties:
+                title:
+                  $ref: "#/components/schemas/TodoUpdateRequest/properties/title"
+                assignee:
+                  $ref: "#/components/schemas/TodoUpdateRequest/properties/assignee"
+      responses:
+        '204':
+          description: "Todo modifié"
+        '400':
+          description: "Paramètres de la requête non acceptables (id syntaxiquement incorrect, titre manquant)"
+        '401':
+          description: "Utilisateur non authentifié"
+        '404':
+          description: "Todo non trouvé"
+      security:
+        - bearer_auth: []
+    delete:
+      tags:
+        - "todos"
+      summary: "Supprimer un todo"
+      description: "Supprime un todo de la collection de todos. Renvoie un code 204 si le todo était bien dans la collection, ou un 404 sinon."
+      operationId: "deleteTodo"
+      parameters:
+        - name: todoId
+          in: "path"
+          description: "Id du todo"
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: "Todo supprimé"
+        '400':
+          description: "Paramètres de la requête non acceptables (id syntaxiquement incorrect)"
+        '401':
+          description: "Utilisateur non authentifié"
+        '404':
+          description: "Todo non trouvé"
+      security:
+        - bearer_auth: []
+
+  /todos/{todoId}/title:
+    get:
+      tags:
+        - "todos"
+      summary: "Récupérer le nom d'un todo"
+      description: "Renvoie le nom d'un todo"
+      operationId: "getTodoTitleById"
+      parameters:
+        - name: todoId
+          in: "path"
+          description: "Id du todo"
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TodoResponse/properties/title"
+              example:
+                title: "Test"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/TodoResponse/properties/title"
+              example: "<todo><title>Mon beau todo</title></todo>"
+            text/html:
+              schema:
+                type: string
+                description: "page HTML indiquant le titre du todo"
+        '400':
+          description: "Paramètres de la requête non acceptables (id syntaxiquement incorrect)"
+        '401':
+          description: "Utilisateur non authentifié"
+        '404':
+          description: "Todo non trouvé"
+      security:
+        - bearer_auth: []
+  /todos/{todoId}/assignee:
+    get:
+      tags:
+        - "todos"
+      summary: "Récupérer l'utilisateur auquel le todo est assigné"
+      description: "Renvoie l'id de l'utilisateur auquel le todo est assigné s'il y en a un, ou un code 404 sinon."
+      operationId: "getTodoAssigneeById"
+      parameters:
+        - name: todoId
+          in: "path"
+          description: "Id du todo"
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TodoResponse/properties/assignee"
+              example:
+                assignee: "users/toto"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/TodoResponse/properties/assignee"
+              example: "<todo><assignee>users/toto</assignee></todo>"
+            text/html:
+              schema:
+                type: string
+                description: "page HTML indiquant l'URL (locale) de l'utilisateur assigné au todo"
+        '400':
+          description: "Paramètres de la requête non acceptables (id syntaxiquement incorrect)"
+        '401':
+          description: "Utilisateur non authentifié"
+        '403':
+          description: "Utilisateur non assigné au todo"
+        '404':
+          description: "Todo non trouvé, ou todo non assigné à un utilisateur"
+      security:
+        - bearer_auth: []
+  /todos/{todoId}/assignee/*:
+    get:
+      tags:
+        - "todos"
+      summary: "Récupérer une sous-propriété de l'utilisateur auquel le todo est assigné"
+      description: "Redirige vers la sous-propriété par l'URL de l'utilisateur auquel le todo est assigné"
+      operationId: "getTodoOwnerSubproperty"
+      parameters:
+        - name: todoId
+          in: "path"
+          description: "Id du todo"
+          required: true
+          schema:
+            type: integer
+      responses:
+        '302':
+          description: "Redirection vers la sous-ressource correspondante de l'utilisateur auquel le todo est assigné (pas de test d'existence)"
+          headers:
+            Location:
+              schema:
+                type: string
+              description: "l'URL (locale) de la sous-ressource correspondante de l'utilisateur auquel le todo est assigné"
+        '400':
+          description: "Id du todo syntaxiquement incorrect (non entier)"
+        '401':
+          description: "Utilisateur non authentifié"
+        '403':
+          description: "Utilisateur non assigné au todo"
+        '404':
+          description: "Todo non trouvé ou pas assigné à un utilisateur"
+      security:
+        - bearer_auth: []
+  /todos/{todoId}/toggleStatus:
+    post:
+      tags:
+        - "todos"
+      summary: "Modifier le statut d'un todo"
+      description: "Passe le statut d'un todo de 'Not done' à 'Done' ou inversement. Seul l'utilisateur à qui est assigné le todo peut invoquer cette opération."
+      operationId: "toggleTodoStatus"
+      parameters:
+        - name: todoId
+          in: "path"
+          description: "Id du todo"
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: "Todo modifié"
+        '400':
+          description: "Paramètres de la requête non acceptables (id syntaxiquement incorrect)"
+        '401':
+          description: "Utilisateur non authentifié"
+        '403':
+          description: "Utilisateur non assigné au todo"
+        '404':
+          description: "Todo non trouvé"
+      security:
+        - bearer_auth: []
+components:
+  schemas:
+    Users:
+      type: array
+      items:
+        type: string
+        xml:
+          name: "user"
+      xml:
+        name: "users"
+    UserRequest:
+      type: object
+      properties:
+        login:
+          type: string
+          xml:
+            name: "login"
+        password:
+          type: string
+          xml:
+            name: "password"
+        name:
+          type: string
+          xml:
+            name: "name"
+      xml:
+        name: "user"
+    UserResponse:
+      type: object
+      properties:
+        login:
+          type: string
+          xml:
+            name: "login"
+        name:
+          type: string
+          xml:
+            name: "name"
+        assignedTodos:
+          type: array
+          items:
+            type: string
+          xml:
+            name: "assignedTodos"
+      xml:
+        name: "user"
+    UserLogin:
+      type: object
+      properties:
+        login:
+          type: string
+        password:
+          type: string
+      xml:
+        name: "user"
+
+    Todos:
+      type: array
+      items:
+        type: string
+        xml:
+          name: "todo"
+      xml:
+        name: "todos"
+    TodoCreateRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          xml:
+            name: "title"
+        creator:
+          type: string
+          xml:
+            name: "creator"
+      xml:
+        name: "todo"
+    TodoUpdateRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          xml:
+            name: "title"
+        assignee:
+          type: string
+          xml:
+            name: "assignee"
+      xml:
+        name: "todo"
+    TodoResponse:
+      type: object
+      properties:
+        title:
+          type: string
+          xml:
+            name: "title"
+        assignee:
+          type: string
+          xml:
+            name: "assignee"
+        status:
+          type: string
+          xml:
+            name: "status"
+      xml:
+        name: "todo"
+
+  securitySchemes:
+    bearer_auth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
