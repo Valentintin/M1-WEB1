@@ -683,20 +683,37 @@ paths:
           description: "Todo non trouvé ou pas assigné à un utilisateur"
       security:
         - bearer_auth: []
-  /todos/{todoId}/toggleStatus:
+  /todos/toggleStatus:
     post:
       tags:
         - "todos"
       summary: "Modifier le statut d'un todo"
       description: "Passe le statut d'un todo de 'Not done' à 'Done' ou inversement. Seul l'utilisateur à qui est assigné le todo peut invoquer cette opération."
       operationId: "toggleTodoStatus"
-      parameters:
-        - name: todoId
-          in: "path"
-          description: "Id du todo"
-          required: true
-          schema:
-            type: integer
+      requestBody:
+        description: "ID du todo"
+        required: true
+        content:
+          'application/json':
+            schema:
+              type: object
+              properties:
+                hash:
+                  type: integer
+          'application/xml':
+            schema:
+              type: object
+              properties:
+                hash:
+                  type: integer
+                xml:
+                  name: "hash"
+          'application/x-www-form-urlencoded':
+            schema:
+              type: object
+              properties:
+                hash:
+                  type: integer
       responses:
         '204':
           description: "Todo modifié"
