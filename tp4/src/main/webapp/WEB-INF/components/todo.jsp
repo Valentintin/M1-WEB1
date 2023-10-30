@@ -1,19 +1,19 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: valou
-  Date: 18/10/2023
-  Time: 16:06
-  To change this template use File | Settings | File Templates.
---%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
+<!DOCTYPE html>
+<html lang="fr">
 <head>
-    <title>Todo</title>
-    <c:forEach var="todo" items="${requestScope.todoDto}">
-    <h1>${todo.title}</h1>
-</c:forEach>
+    <meta charset="UTF-8">
+    <title>Users</title>
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/style.css">
+    <meta http-equiv="refresh" content="5">
 </head>
 <body>
-
+    <title>Todo</title>
+    <ul>
+        <c:forEach items="${requestScope.todos}" var="todo">
+            <li>${todo.title}</li>
+        </c:forEach>
+    </ul>
 </body>
 </html>

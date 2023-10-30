@@ -3,10 +3,8 @@ package fr.univlyon1.m1if.m1if03.controllers;
 import fr.univlyon1.m1if.m1if03.dao.TodoDao;
 import fr.univlyon1.m1if.m1if03.dto.todo.TodoDtoMapper;
 import fr.univlyon1.m1if.m1if03.dto.todo.TodoResponseDto;
-import fr.univlyon1.m1if.m1if03.dto.user.UserResponseDto;
 import fr.univlyon1.m1if.m1if03.exceptions.ForbiddenLoginException;
 import fr.univlyon1.m1if.m1if03.model.Todo;
-import fr.univlyon1.m1if.m1if03.model.User;
 import fr.univlyon1.m1if.m1if03.utils.UrlUtils;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
@@ -64,7 +62,7 @@ public class TodosResourceController extends HttpServlet {
         response.setHeader("X-test", "doGet");
         String[] url = UrlUtils.getUrlParts(request);
         if (url.length == 1) { // Renvoie la liste de tous les todos
-            request.setAttribute("todoDto", todoResource.readAll());
+            request.setAttribute("todos", todoResource.readAll());
             // Transfère la gestion de l'interface à une JSP
             request.getRequestDispatcher("/WEB-INF/components/todo.jsp").include(request, response);
             return;
