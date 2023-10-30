@@ -20,8 +20,8 @@ import javax.naming.NameNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
 
-@WebServlet(name = "TodosResourceController", urlPatterns = {"/todo", "/todo/*"})
-public class TodosResourceController extends HttpServlet {
+@WebServlet(name = "TodoResourceController", urlPatterns = {"/todo", "/todo/*"})
+public class TodoResourceController extends HttpServlet {
 
     private TodoDtoMapper todoMapper;
     private TodoResource todoResource;
