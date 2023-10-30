@@ -12,7 +12,7 @@
 <title>Todo</title>
 <ul>
     <c:forEach items="${requestScope.todos}" var="todo">
-        <li>${todo.title}</li>
+        <li>${todo.title} : état ${todo.completed}</li>
     </c:forEach>
 </ul>
 </body>

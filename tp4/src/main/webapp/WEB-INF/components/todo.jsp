@@ -13,8 +13,7 @@
 <body>
     <title>Todo</title>
     <ul>
-        <li>${todo.title}</li>
-        <li>${todo.creator}</li>
+        <li>${todo.title} : état ${todo.completed}</li>
     </ul>
 </body>
 </html>
