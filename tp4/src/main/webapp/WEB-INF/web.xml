@@ -3,14 +3,6 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd"
          version="5.0">
-    <servlet>
-        <servlet-name>interface</servlet-name>
-        <jsp-file>/WEB-INF/interface.jsp</jsp-file>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>interface</servlet-name>
-        <url-pattern>/todos</url-pattern>
-    </servlet-mapping>
     <filter>
         <filter-name>CorsFilter</filter-name>
         <filter-class>org.apache.catalina.filters.CorsFilter</filter-class>
