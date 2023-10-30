@@ -116,7 +116,7 @@ public class TodoResourceController extends HttpServlet {
                     if (url[2].equals("assignee")) {
                         // Construction de la fin de l'URL vers laquelle rediriger
                         String urlEnd = UrlUtils.getUrlEnd(request, 3);
-                        response.sendRedirect("todo" + urlEnd);
+                        response.sendRedirect("todos" + urlEnd);
                     } else {
                         response.sendError(HttpServletResponse.SC_BAD_REQUEST);
                     }
@@ -221,11 +221,8 @@ public class TodoResourceController extends HttpServlet {
 
         public void modifStatut(@NotNull Integer hash)
                 throws IllegalArgumentException, NameAlreadyBoundException, ForbiddenLoginException, InvalidNameException, NameNotFoundException {
-            System.out.println("Modif status");
             Todo todo = todoDao.findByHash(hash);
-            System.out.println("find");
             todo.setCompleted(!todo.isCompleted());
-            System.out.println("update completed");
         }
         /**
          * Renvoie les titres de tous les utilisateurs présents dans le DAO.

@@ -13,7 +13,7 @@
 <body>
     <title>Todo</title>
     <ul>
-        <li>${todo.title} : état ${todo.completed}</li>
+        <li>${todo.title}</li>
     </ul>
 </body>
 </html>
