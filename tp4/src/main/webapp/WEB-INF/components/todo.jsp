@@ -8,12 +8,13 @@
     <link rel="stylesheet" href="<%= request.getContextPath() %>/css/style.css">
     <meta http-equiv="refresh" content="5">
 </head>
+<c:set var="todo" value="${requestScope.todoDto}" scope="request"/>
+
 <body>
     <title>Todo</title>
     <ul>
-        <c:forEach items="${requestScope.todos}" var="todo">
-            <li>${todo.title}</li>
-        </c:forEach>
+        <li>${todo.title}</li>
+        <li>${todo.creator}</li>
     </ul>
 </body>
 </html>

@@ -5,6 +5,7 @@ import fr.univlyon1.m1if.m1if03.dto.todo.TodoDtoMapper;
 import fr.univlyon1.m1if.m1if03.dto.todo.TodoResponseDto;
 import fr.univlyon1.m1if.m1if03.exceptions.ForbiddenLoginException;
 import fr.univlyon1.m1if.m1if03.model.Todo;
+import fr.univlyon1.m1if.m1if03.model.User;
 import fr.univlyon1.m1if.m1if03.utils.UrlUtils;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
@@ -44,7 +45,7 @@ public class TodoResourceController extends HttpServlet {
             String title = request.getParameter("title");
             String creator = request.getParameter("creator");
             try {
-                todoResource.create(title,creator);
+                todoResource.create(title, creator);
                 response.setHeader("Location", "todo/" + title.hashCode());
                 response.setStatus(HttpServletResponse.SC_CREATED);
             } catch (IllegalArgumentException | ForbiddenLoginException ex) {
@@ -52,8 +53,24 @@ public class TodoResourceController extends HttpServlet {
             } catch (NameAlreadyBoundException e) {
                 response.sendError(HttpServletResponse.SC_CONFLICT, "Le todo " + title + " n'est plus disponible.");
             }
-        } else {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+        } else if (url.length == 2) { // TOGGLE STATUS
+            if (url[1].equals("toggleStatus")) {
+                String title = request.getHeader("title");
+                try {
+                    todoResource.modifAssignee(title);
+                    response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+                } catch (IllegalArgumentException | ForbiddenLoginException ex) {
+                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, ex.getMessage());
+                } catch (NameNotFoundException e) {
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Le todo " + title + " n'existe pas.");
+                } catch (NameAlreadyBoundException e) {
+                    response.sendError(HttpServletResponse.SC_CONFLICT, "Le todo " + title + " n'est plus disponible.");
+                } catch (InvalidNameException e) {
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Le todo " + title + " n'existe pas.");
+                }
+            } else {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            }
         }
     }
 
@@ -62,9 +79,18 @@ public class TodoResourceController extends HttpServlet {
         response.setHeader("X-test", "doGet");
         String[] url = UrlUtils.getUrlParts(request);
         if (url.length == 1) { // Renvoie la liste de tous les todos
+
+
+            // TEST RECUP ID MARCHE PAS
+            Collection<Todo> todos = todoResource.readAll();
+            for (Todo todo : todos) {
+                TodoResponseDto todoDto = todoMapper.toDto(todo);
+                System.out.println(todoDto.getHash());
+            }
+            //
             request.setAttribute("todos", todoResource.readAll());
             // Transfère la gestion de l'interface à une JSP
-            request.getRequestDispatcher("/WEB-INF/components/todo.jsp").include(request, response);
+            request.getRequestDispatcher("/WEB-INF/components/todolist.jsp").include(request, response);
             return;
         }
         try {
@@ -101,9 +127,75 @@ public class TodoResourceController extends HttpServlet {
         } catch (IllegalArgumentException ex) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, ex.getMessage());
         } catch (NameNotFoundException e) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND, "L'utilisateur " + url[1] + " n'existe pas.");
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "Le todo " + url[1] + " n'existe pas.");
         } catch (InvalidNameException ignored) {
             // Ne devrait pas arriver car les paramètres sont déjà des Strings
+        }
+    }
+
+    /**
+     * Réalise la modification d'un todo.
+     * En fonction du title passé dans l'URL :
+     * <ul>
+
+     *     <li>Mise à jour d'un todo</li>
+     * </ul>
+     * Renvoie un code de statut 204 (No Content) en cas de succès ou une erreur HTTP appropriée sinon.
+     *
+     * @param request  Une requête dont l'URL est de la forme <code>/todos/{title}</code>
+     * @param response Une réponse vide (si succès)
+     * @throws IOException Voir doc...
+     */
+    @Override
+    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String[] url = UrlUtils.getUrlParts(request);
+        String title = url[1];
+        // TODO Parsing des paramètres "old school" ; sera amélioré dans la partie négociation de contenus...
+        String newtitle = request.getParameter("title");
+        String assignee = request.getParameter("assignee");
+
+        if (url.length == 2) {
+            try {
+                todoResource.update(title, newtitle, assignee);
+                response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+            } catch (IllegalArgumentException ex) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, ex.getMessage());
+            } catch (NameNotFoundException e) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Le todo " + title + " n'existe pas.");
+            } catch (InvalidNameException ignored) {
+                // Ne devrait pas arriver car les paramètres sont déjà des Strings
+            }
+        } else {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+        }
+    }
+
+    /**
+     * Réalise l'aiguillage des requêtes DELETE.<br>
+     * En clair : appelle simplement l'opération de suppression de todo.<br>
+     * Renvoie un code 204 (No Content) si succès ou une erreur HTTP appropriée sinon.
+     *
+     * @param request  Une requête dont l'URL est de la forme <code>/todo/{title}</code>
+     * @param response Une réponse vide (si succès)
+     * @throws IOException Voir doc...
+     */
+    @Override
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String[] url = UrlUtils.getUrlParts(request);
+        String title = url[1];
+        if (url.length == 2) {
+            try {
+                todoResource.delete(title);
+                response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+            } catch (IllegalArgumentException ex) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, ex.getMessage());
+            } catch (NameNotFoundException e) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Le todo " + title + " n'existe pas.");
+            } catch (InvalidNameException ignored) {
+                // Ne devrait pas arriver car les paramètres sont déjà des Strings
+            }
+        } else {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
         }
     }
 
@@ -128,6 +220,16 @@ public class TodoResourceController extends HttpServlet {
 //            }
             todoDao.add(new Todo(title,creator));
         }
+
+        public void modifAssignee(@NotNull String title)
+                throws IllegalArgumentException, NameAlreadyBoundException, ForbiddenLoginException, InvalidNameException, NameNotFoundException {
+            if (title == null || title.isEmpty()) {
+                throw new IllegalArgumentException("Le title ne doit pas être null ou vide.");
+            }
+            Todo todo = todoDao.findOne(title);
+            boolean completed = todo.isCompleted();
+            todo.setCompleted(!completed);
+        }
         /**
          * Renvoie les titres de tous les utilisateurs présents dans le DAO.
          *
@@ -143,6 +245,45 @@ public class TodoResourceController extends HttpServlet {
                 throw new IllegalArgumentException("Le title ne doit pas être null ou vide.");
             }
             return todoDao.findOne(title.hashCode());
+        }
+
+        /**
+         * Met à jour un todo en fonction des param.<br>
+         * Si l'un des paramètres est nul ou vide, le champ correspondant n'est pas mis à jour.
+         *
+         * @param title     Le title de la todo
+         * @param newtitle Le tile à modifier. Ou pas.
+         * @param assignee      Le assignee à modifier. Ou pas.
+         * @throws IllegalArgumentException Si le login est null ou vide
+         * @throws InvalidNameException Ne doit pas arriver car les clés du DAO user sont des strings
+         * @throws NameNotFoundException Si le login ne correspond pas à un utilisateur existant
+         */
+        public void update(@NotNull String title, String newtitle, String assignee) throws IllegalArgumentException, InvalidNameException, NameNotFoundException {
+            Todo todo = readOne(title);
+            if (newtitle != null && !newtitle.isEmpty()) {
+                todo.setTitle(newtitle);
+            }
+            if (assignee != null && !assignee.isEmpty()) {
+                todo.setAssignee(assignee);
+            }
+        }
+
+        /**
+         * Supprime un todo dans le DAO.
+         *
+         * @param title Le title du todo à supprimer
+         * @throws IllegalArgumentException Si le login est null ou vide
+         * @throws NameNotFoundException Si le login ne correspond à aucune entrée dans le DAO
+         * @throws InvalidNameException Ne doit pas arriver car les clés du DAO user sont des strings
+         */
+        public void delete(@NotNull String title) throws IllegalArgumentException, NameNotFoundException, InvalidNameException {
+            if (title == null || title.isEmpty()) {
+                throw new IllegalArgumentException("Le title ne doit pas être null ou vide.");
+            }
+            System.out.println("On supprime");
+            System.out.println(todoDao.findOne(title).getTitle());
+            todoDao.deleteById(title);
+            System.out.println(todoDao.findOne(title).getTitle());
         }
     };
 
