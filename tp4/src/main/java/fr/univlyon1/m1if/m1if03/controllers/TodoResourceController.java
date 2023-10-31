@@ -2,10 +2,12 @@ package fr.univlyon1.m1if.m1if03.controllers;
 
 import fr.univlyon1.m1if.m1if03.dao.TodoDao;
 import fr.univlyon1.m1if.m1if03.dto.todo.TodoDtoMapper;
+import fr.univlyon1.m1if.m1if03.dto.todo.TodoRequestDto;
 import fr.univlyon1.m1if.m1if03.dto.todo.TodoResponseDto;
 import fr.univlyon1.m1if.m1if03.exceptions.ForbiddenLoginException;
 import fr.univlyon1.m1if.m1if03.model.Todo;
 import fr.univlyon1.m1if.m1if03.model.User;
+import fr.univlyon1.m1if.m1if03.utils.ContentNegotiationHelper;
 import fr.univlyon1.m1if.m1if03.utils.UrlUtils;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
@@ -20,6 +22,7 @@ import javax.naming.NameAlreadyBoundException;
 import javax.naming.NameNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.IllegalFormatException;
 
 @WebServlet(name = "TodoResourceController", urlPatterns = {"/todos", "/todos/*"})
 public class TodoResourceController extends HttpServlet {
@@ -48,7 +51,7 @@ public class TodoResourceController extends HttpServlet {
                 todoResource.create(title, creator);
                 response.setHeader("Location", "todos/" + title.hashCode());
                 response.setStatus(HttpServletResponse.SC_CREATED);
-            } catch (IllegalArgumentException | ForbiddenLoginException ex) {
+            } catch (IllegalArgumentException | ForbiddenLoginException ex) {//erreur 400
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, ex.getMessage());
             } catch (NameAlreadyBoundException e) {
                 response.sendError(HttpServletResponse.SC_CONFLICT, "Le todo " + title + " n'est plus disponible.");
