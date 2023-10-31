@@ -21,7 +21,7 @@ import javax.naming.NameNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
 
-@WebServlet(name = "TodoResourceController", urlPatterns = {"/todo", "/todo/*"})
+@WebServlet(name = "TodoResourceController", urlPatterns = {"/todos", "/todos/*"})
 public class TodoResourceController extends HttpServlet {
 
     private TodoDtoMapper todoMapper;
@@ -46,7 +46,7 @@ public class TodoResourceController extends HttpServlet {
             String creator = request.getParameter("creator");
             try {
                 todoResource.create(title, creator);
-                response.setHeader("Location", "todo/" + title.hashCode());
+                response.setHeader("Location", "todos/" + title.hashCode());
                 response.setStatus(HttpServletResponse.SC_CREATED);
             } catch (IllegalArgumentException | ForbiddenLoginException ex) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, ex.getMessage());
@@ -116,7 +116,7 @@ public class TodoResourceController extends HttpServlet {
                     if (url[2].equals("assignee")) {
                         // Construction de la fin de l'URL vers laquelle rediriger
                         String urlEnd = UrlUtils.getUrlEnd(request, 3);
-                        response.sendRedirect("todos" + urlEnd);
+                        response.sendRedirect("users" + urlEnd);
                     } else {
                         response.sendError(HttpServletResponse.SC_BAD_REQUEST);
                     }
@@ -173,7 +173,7 @@ public class TodoResourceController extends HttpServlet {
      * En clair : appelle simplement l'opération de suppression de todo.<br>
      * Renvoie un code 204 (No Content) si succès ou une erreur HTTP appropriée sinon.
      *
-     * @param request  Une requête dont l'URL est de la forme <code>/todo/{title}</code>
+     * @param request  Une requête dont l'URL est de la forme <code>/todos/{title}</code>
      * @param response Une réponse vide (si succès)
      * @throws IOException Voir doc...
      */

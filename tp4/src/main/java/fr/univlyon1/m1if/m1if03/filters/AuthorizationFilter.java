@@ -87,8 +87,15 @@ public class AuthorizationFilter extends HttpFilter {
                     }
                 }
                 case "todos" -> {
-                    Todo todo = todoDao.findByHash(Integer.parseInt(url[1]));
-                    if (todo.getAssignee() != null && todo.getAssignee().equals(request.getSession(false).getAttribute("user"))) {
+                    Todo todo;
+                    if(url[1].equals("toggleStatus"))
+                    {
+                        todo = todoDao.findByHash(Integer.parseInt(request.getParameter("hash")));
+                    }
+                    else{
+                        todo = todoDao.findByHash(Integer.parseInt(url[1]));
+                    }
+                    if (todo.getAssignee() == null || todo.getAssignee().equals(((User) request.getSession(false).getAttribute("user")).getLogin())) {
                         chain.doFilter(request, response);
                     } else {
                         response.sendError(HttpServletResponse.SC_FORBIDDEN, "Vous n'êtes pas assigné.e à ce todo.");

@@ -14,6 +14,10 @@
     <c:if test="${todo.title != null}">
         <li>Title : ${todo.title}</li>
     </c:if>
+
+    <c:if test="${todo.assignee != null}">
+        <li>Assignee : ${todo.assignee}</li>
+    </c:if>
 </head>
 <body>
 
