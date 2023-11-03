@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 
 /**
@@ -34,15 +35,9 @@ public class AuthorizationFilter extends HttpFilter {
             {"PUT", "users", "*", "password"},
             {"POST", "users", "*", "name"},
             {"PUT", "users", "*", "name"},
-            {"*", "users", "*", "todos"},
-            {"*", "users", "*", "todos", "*"},
-            {"POST", "todos", "*"},
-            {"PUT", "todos", "*"},
-            {"GET", "todos", "*", "assignee"},
-            {"DELETE", "todos", "*", "assignee"},
-            {"GET", "todos", "*", "assignee", "*"},
-            {"POST", "todos", "*", "status"},
-            {"PUT", "todos", "*", "status"}
+            {"*", "users", "*", "assignedTodos"},
+            {"POST", "todos", "toggleStatus"},
+            {"*", "todos", "*", "assignee"}
     };
 
     // Liste des ressources qui
@@ -71,8 +66,11 @@ public class AuthorizationFilter extends HttpFilter {
             if (url[0].equals("users")) {
                 request.setAttribute("authorizedUser", url[1].equals(((User) request.getSession(false).getAttribute("user")).getLogin()));
             } else if (url[0].equals("todos")) {
-                Todo todo = todoDao.findByHash(Integer.parseInt(url[1]));
-                request.setAttribute("authorizedUser", todo.getAssignee() != null && todo.getAssignee().equals(request.getSession(false).getAttribute("user")));
+                try {
+                    Todo todo = todoDao.findByHash(Integer.parseInt(url[1]));
+                    request.setAttribute("authorizedUser", todo.getAssignee() != null &&
+                            todo.getAssignee().equals(request.getSession(false).getAttribute("user")));
+                } catch(Exception ignored) {} // Les exceptions sont traitées dans le contrôleur.
             }
         }
 
@@ -87,11 +85,20 @@ public class AuthorizationFilter extends HttpFilter {
                     }
                 }
                 case "todos" -> {
-                    Todo todo = todoDao.findByHash(Integer.parseInt(url[1]));
-                    if (todo.getAssignee() != null && todo.getAssignee().equals(request.getSession(false).getAttribute("user"))) {
-                        chain.doFilter(request, response);
-                    } else {
-                        response.sendError(HttpServletResponse.SC_FORBIDDEN, "Vous n'êtes pas assigné.e à ce todo.");
+                    try {
+                        // Dans le cas du POST -> toggleStatus, le hash est dans le corps de la requête.
+                        // TODO Parsing des paramètres "old school". Sera amélioré par la suite.
+                        String todoHash = (url[1] != null && url[1].equals("toggleStatus")) ? request.getParameter("hash") : url[1];
+                        Todo todo = todoDao.findByHash(Integer.parseInt(todoHash));
+                        if (todo.getAssignee() != null && todo.getAssignee().equals(((User) (request.getSession(false).getAttribute("user"))).getLogin())) {
+                            chain.doFilter(request, response);
+                        } else {
+                            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Vous n'êtes pas assigné.e à ce todo.");
+                        }
+                    } catch (IllegalArgumentException e) {
+                        response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+                    } catch (NoSuchElementException e) {
+                        response.sendError(HttpServletResponse.SC_NOT_FOUND, "Le todo " + url[1] + " n'existe pas.");
                     }
                 }
                 default -> // On laisse Tomcat générer un 404.

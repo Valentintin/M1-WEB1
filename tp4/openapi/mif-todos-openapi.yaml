@@ -1,6 +1,6 @@
 openapi: 3.1.0
 info:
-  description: "Description de l'API du serveur de gestion des ressources de l'applicaiton \"MIF-Todos\".<br>Vous pouvez changer l'URL dans <code>servers</code> pour l'adapter au déploiement que vous souhaitez tester. Les autres valeurs ne doivent pas être modifiées.<br>**Pour tester les requêtes avec _Try it out_, il vous faut rajouter la configuration du CorsFilter de Tomcat** (voir énoncé du TP)."
+  description: "Description de l'API du serveur de gestion des ressources de l'application \"MIF-Todos\".<br>Vous pouvez changer l'URL dans <code>servers</code> pour l'adapter au déploiement que vous souhaitez tester. Les autres valeurs ne doivent pas être modifiées.<br>**Pour tester les requêtes avec _Try it out_, il vous faut rajouter la configuration du CorsFilter de Tomcat** (voir énoncé du TP)."
   version: "1.0.0"
   title: "Mif-Todos"
 externalDocs:
@@ -69,23 +69,23 @@ paths:
               schema:
                 $ref: "#/components/schemas/Users"
               example:
-                - "http://localhost:8080/users/toto"
-                - "http://localhost:8080/users/titi"
+                - "users/toto"
+                - "users/titi"
             application/xml:
               schema:
                 $ref: "#/components/schemas/Users"
-              example: "<users>\n  <user>http://localhost:8080/users/toto</user>\n  <user>http://localhost:8080/users/titi</user>\n</users>"
+              example: "<users>\n\t<user>users/toto</user>\n\t<user>users/titi</user>\n</users>"
             text/html:
               schema:
                 type: string
-              example: "page HTML contenant la collection"
+              example: "page HTML contenant la liste des utilisateurs (avec des liens relatifs vers ces utilisateurs)"
 
   /users/{userId}:
     get:
       tags:
         - "users"
       summary: "Récupérer un utilisateur"
-      description: "Renvoie une représentation d'un utilisateur"
+      description: "Renvoie une représentation d'un utilisateur. Cette représentation est complète si l'utilisateur est l'auteur de la requête, et partielle (sans les todos assignés) sinon."
       operationId: "getUserById"
       parameters:
         - name: userId
@@ -103,19 +103,18 @@ paths:
                 $ref: "#/components/schemas/UserResponse"
               example:
                 login: "toto"
-                nom: "Test"
+                name: "Test"
                 assignedTodos: ['todos/234567', 'todos/109876']
             application/xml:
               schema:
                 $ref: "#/components/schemas/UserResponse"
+              example: "<user>\n\t<login>toto</login>\n\t<name>Toto</name>\n\t<assignedTodos>\n\t\t<todo>todos/654654</todo>\n\t\t<todo>todos/789798</todo>\n\t</assignedTodo>\n</user>"
             text/html:
               schema:
                 type: string
-                description: "page HTML décrivant l'utilisateur"
+              example: "page HTML décrivant l'utilisateur"
         '401':
           description: "Utilisateur non authentifié"
-        '403':
-          description: "Utilisateur authentifié avec un autre login"
         '404':
           description: "Utilisateur non trouvé"
       security:
@@ -134,45 +133,41 @@ paths:
           schema:
             type: string
       requestBody:
-        description: "représentation de l'utilisateur"
+        description: "représentation de l'utilisateur (chaque propriété est optionnelle)"
         required: true
         content:
           'application/json':
             schema:
               type: object
               properties:
-                password:
-                  $ref: "#/components/schemas/UserRequest/properties/password"
                 name:
                   $ref: "#/components/schemas/UserRequest/properties/name"
-              required:
-                - name
+                password:
+                  $ref: "#/components/schemas/UserRequest/properties/password"
             example:
-              login: "toto"
-              password: "totoaussi"
-              name: "Toto"
+              name: "Tototo"
+              password: "tototoaussi"
           'application/xml':
             schema:
               type: object
               properties:
-                password:
-                  $ref: "#/components/schemas/UserRequest/properties/password"
                 name:
                   $ref: "#/components/schemas/UserRequest/properties/name"
-              required:
-                - name
+                password:
+                  $ref: "#/components/schemas/UserRequest/properties/password"
               xml:
                 name: "user"
+            example:
+              name: "Tototo"
+              password: "tototoaussi"
           'application/x-www-form-urlencoded':
             schema:
               type: object
               properties:
-                password:
-                  $ref: "#/components/schemas/UserRequest/properties/password"
                 name:
                   $ref: "#/components/schemas/UserRequest/properties/name"
-              required:
-                - name
+                password:
+                  $ref: "#/components/schemas/UserRequest/properties/password"
       responses:
         '201':
           description: "Utilisateur créé."
@@ -236,17 +231,17 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserResponse/properties/name"
+                $ref: "#/components/schemas/NamePropertyUserResponse"
               example:
-                nom: "Test"
+                name: "Toto"
             application/xml:
               schema:
-                $ref: "#/components/schemas/UserResponse/properties/name"
-              example: "<user><name>Toto</name></user>"
+                $ref: "#/components/schemas/NamePropertyUserResponse"
+              example: "<user>\n\t<name>Toto</name>\n</user>"
             text/html:
               schema:
                 type: string
-                description: "page HTML indiquant le nom de l'utilisateur"
+              example: "page HTML indiquant le nom de l'utilisateur"
         '401':
           description: "Utilisateur non authentifié"
         '404':
@@ -273,17 +268,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserResponse/properties/assignedTodos"
+                $ref: "#/components/schemas/AssignedTodosPropertyUserResponse"
               example:
-                nom: "Test"
+                assignedTodos:
+                  - "todos/6874687"
+                  - "todos/6546544"
             application/xml:
               schema:
-                $ref: "#/components/schemas/UserResponse/properties/assignedTodos"
-              example: "<user><assignedTodos><todo>todos/876543</todo><todo>todos/543254</todo></assignedTodos></user>"
+                $ref: "#/components/schemas/AssignedTodosPropertyUserResponse"
+              example: "<user>\n\t<assignedTodos>\n\t\t<todo>todos/654654</todo>\n\t\t<todo>todos/789798</todo>\n\t</assignedTodo>\n</user>"
             text/html:
               schema:
                 type: string
-                description: "page HTML indiquant la collection des todos créés par l'utilisateur"
+              example: "page HTML indiquant la collection des todos assignés à l'utilisateur"
         '401':
           description: "Utilisateur non authentifié"
         '403':
@@ -422,16 +419,16 @@ paths:
               schema:
                 $ref: "#/components/schemas/Todos"
               example:
-                - "http://localhost:8080/todos/675744564"
-                - "http://localhost:8080/todos/768956867"
+                - "todos/675744564"
+                - "todos/768956867"
             application/xml:
               schema:
                 $ref: "#/components/schemas/Todos"
-              example: "<todos>\n  <todo>http://localhost:8080/todos/675744564</todo>\n  <todo>http://localhost:8080/todos/768956867</todo>\n</todos>"
+              example: "<todos>\n\t<todo>todos/675744564</todo>\n\t<todo>todos/768956867</todo>\n</todos>"
             text/html:
               schema:
                 type: string
-              example: "page HTML contenant la collection"
+              example: "page HTML contenant la collection de todos (et les liens vers ces todos)"
         '401':
           description: "Utilisateur non authentifié"
       security:
@@ -460,21 +457,20 @@ paths:
                 $ref: "#/components/schemas/TodoResponse"
               example:
                 title: "Mon beau todo"
-                assignee: "toto"
+                assignee: "users/toto"
                 status: "Not done"
             application/xml:
               schema:
                 $ref: "#/components/schemas/TodoResponse"
+              example: "<todo>\n\t<title>Mon beau todo</title>\n\t<assignee>users/toto</assignee>\n\t<status>Not done</status>\n</todo>"
             text/html:
               schema:
                 type: string
-                description: "page HTML décrivant le todo"
+              example: "page HTML décrivant le todo"
         '400':
           description: "Id du todo syntaxiquement incorrect (non entier)"
         '401':
           description: "Utilisateur non authentifié"
-        '403':
-          description: "Utilisateur non membre du todo"
         '404':
           description: "Todo non trouvé"
       security:
@@ -527,6 +523,15 @@ paths:
                     name: "assignee"
               xml:
                 name: "todo"
+            examples:
+              ex1:
+                summary: "Changement de titre"
+                value:
+                  title: "Mon nouveau beau todo"
+              ex2:
+                summary: "Assignation d'un utilisateur"
+                value:
+                  assignee: "toto"
           'application/x-www-form-urlencoded':
             schema:
               type: object
@@ -591,17 +596,17 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/TodoResponse/properties/title"
+                $ref: "#/components/schemas/TitlePropertyTodoResponse"
               example:
-                title: "Test"
+                title: "Test todo"
             application/xml:
               schema:
-                $ref: "#/components/schemas/TodoResponse/properties/title"
-              example: "<todo><title>Mon beau todo</title></todo>"
+                $ref: "#/components/schemas/TitlePropertyTodoResponse"
+              example: "<todo>\n\t<title>Mon beau todo</title>\n</todo>"
             text/html:
               schema:
                 type: string
-                description: "page HTML indiquant le titre du todo"
+              example: "page HTML indiquant le titre du todo"
         '400':
           description: "Paramètres de la requête non acceptables (id syntaxiquement incorrect)"
         '401':
@@ -630,17 +635,17 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/TodoResponse/properties/assignee"
+                $ref: "#/components/schemas/AssigneePropertyTodoResponse"
               example:
                 assignee: "users/toto"
             application/xml:
               schema:
-                $ref: "#/components/schemas/TodoResponse/properties/assignee"
-              example: "<todo><assignee>users/toto</assignee></todo>"
+                $ref: "#/components/schemas/AssigneePropertyTodoResponse"
+              example: "<todo>\n\t<assignee>users/toto</assignee>\n</todo>"
             text/html:
               schema:
                 type: string
-                description: "page HTML indiquant l'URL (locale) de l'utilisateur assigné au todo"
+              example: "page HTML indiquant l'URL (locale) de l'utilisateur assigné au todo"
         '400':
           description: "Paramètres de la requête non acceptables (id syntaxiquement incorrect)"
         '401':
@@ -677,10 +682,47 @@ paths:
           description: "Id du todo syntaxiquement incorrect (non entier)"
         '401':
           description: "Utilisateur non authentifié"
-        '403':
-          description: "Utilisateur non assigné au todo"
         '404':
           description: "Todo non trouvé ou pas assigné à un utilisateur"
+      security:
+        - bearer_auth: []
+  /todos/{todoId}/status:
+    get:
+      tags:
+        - "todos"
+      summary: "Récupérer le statut d'un todo"
+      description: "Renvoie le statut d'un todo"
+      operationId: "getTodoStatusById"
+      parameters:
+        - name: todoId
+          in: "path"
+          description: "Id du todo"
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StatusPropertyTodoResponse"
+              example:
+                status: "Done"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/StatusPropertyTodoResponse"
+              example: "<todo>\n\t<status>Done</status>\n</todo>"
+            text/html:
+              schema:
+                type: string
+              example: "page HTML indiquant le statut du todo"
+        '400':
+          description: "Paramètres de la requête non acceptables (id syntaxiquement incorrect)"
+        '401':
+          description: "Utilisateur non authentifié"
+        '404':
+          description: "Todo non trouvé"
       security:
         - bearer_auth: []
   /todos/toggleStatus:
@@ -696,24 +738,20 @@ paths:
         content:
           'application/json':
             schema:
-              type: object
-              properties:
-                hash:
-                  type: integer
+              $ref: "#/components/schemas/TodoToggleRequest"
+            example:
+              hash: 6454654
           'application/xml':
             schema:
-              type: object
-              properties:
-                hash:
-                  type: integer
-                xml:
-                  name: "hash"
+              $ref: "#/components/schemas/TodoToggleRequest"
+            example: "<todo>\n\t<hash>465465</hash>\n</todo>"
           'application/x-www-form-urlencoded':
             schema:
               type: object
               properties:
                 hash:
                   type: integer
+                  description: "Valeur du hash du todo dont on veut modifier le statut"
       responses:
         '204':
           description: "Todo modifié"
@@ -727,6 +765,7 @@ paths:
           description: "Todo non trouvé"
       security:
         - bearer_auth: []
+
 components:
   schemas:
     Users:
@@ -754,6 +793,9 @@ components:
             name: "name"
       xml:
         name: "user"
+      required:
+        - login
+        - password
     UserResponse:
       type: object
       properties:
@@ -773,6 +815,29 @@ components:
             name: "assignedTodos"
       xml:
         name: "user"
+    NamePropertyUserResponse:
+      type: object
+      properties:
+        name:
+          type: string
+          xml:
+            name: "name"
+      xml:
+        name: "user"
+    AssignedTodosPropertyUserResponse:
+      type: object
+      xml:
+        name: "user"
+      properties:
+        assignedTodos:
+          type: array
+          xml:
+            name: "assignedTodos"
+          items:
+            type: string
+            xml:
+              name: "todo"
+              wrapped: true
     UserLogin:
       type: object
       properties:
@@ -782,7 +847,9 @@ components:
           type: string
       xml:
         name: "user"
-
+      required:
+        - login
+        - password
     Todos:
       type: array
       items:
@@ -804,6 +871,8 @@ components:
             name: "creator"
       xml:
         name: "todo"
+      required:
+        - title
     TodoUpdateRequest:
       type: object
       properties:
@@ -817,8 +886,19 @@ components:
             name: "assignee"
       xml:
         name: "todo"
+    TodoToggleRequest:
+      type: object
+      properties:
+        hash:
+          type: number
+          xml:
+            name: "hash"
+      xml:
+        name: "todo"
     TodoResponse:
       type: object
+      xml:
+        name: "todo"
       properties:
         title:
           type: string
@@ -832,8 +912,33 @@ components:
           type: string
           xml:
             name: "status"
+    TitlePropertyTodoResponse:
+      type: object
       xml:
         name: "todo"
+      properties:
+        title:
+          type: string
+          xml:
+            name: "title"
+    AssigneePropertyTodoResponse:
+      type: object
+      xml:
+        name: "todo"
+      properties:
+        assignee:
+          type: string
+          xml:
+            name: "assignee"
+    StatusPropertyTodoResponse:
+      type: object
+      xml:
+        name: "todo"
+      properties:
+        status:
+          type: string
+          xml:
+            name: "status"
 
   securitySchemes:
     bearer_auth:
