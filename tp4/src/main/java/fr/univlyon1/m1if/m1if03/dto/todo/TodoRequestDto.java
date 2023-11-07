@@ -9,14 +9,16 @@ public class TodoRequestDto {
     private String title;
     private Integer hash;
     private String assignee;
+    private String creator;
 
     public TodoRequestDto() {
     }
 
-    public TodoRequestDto(String title, Integer hash, String assignee) {
+    public TodoRequestDto(String title, Integer hash, String assignee, String creator) {
         this.title = title;
         this.hash = hash;
         this.assignee = assignee;
+        this.creator = creator;
     }
 
     public String getTitle() {
@@ -41,5 +43,13 @@ public class TodoRequestDto {
 
     public void setAssignee(String assignee) {
         this.assignee = assignee;
+    }
+
+    public String getCreator() {
+        return creator;
+    }
+
+    public void setCreator(String creator) {
+        this.creator = creator;
     }
 }

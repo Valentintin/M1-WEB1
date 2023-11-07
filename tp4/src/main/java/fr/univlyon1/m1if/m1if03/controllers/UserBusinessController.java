@@ -37,6 +37,9 @@ public class UserBusinessController extends HttpServlet {
     //<editor-fold desc="Méthode de service">
     /**
      * Réalise l'opération demandée en fonction de la fin de l'URL de la requête (<code>/users/login</code> ou <code>/users/logout</code>).
+     * Renvoie un code HTTP 204 (No Content) en cas de succès.
+     * Sinon, renvoie une erreur HTTP appropriée.
+     *
      * @param request  Voir doc...
      * @param response Voir doc...
      * @throws IOException Voir doc...
@@ -91,7 +94,6 @@ public class UserBusinessController extends HttpServlet {
         UserBusiness(UserDao userDao) {
             this.userDao = userDao;
         }
-        //<editor-fold desc="Méthodes réalisant les opérations métier sur les ressources">
 
         /**
          * Réalise l'opération de login d'un utilisateur.
@@ -101,8 +103,6 @@ public class UserBusinessController extends HttpServlet {
          *     <li>que ce login corresponde à un utilisateur déjà créé par <code>UserResourceController</code></li>
          *     <li>que le password corresponde à celui de l'utilisateur</li>
          * </ul>
-         * Renvoie un code HTTP 204 (No Content) en cas de succès.
-         * Sinon, renvoie une erreur HTTP appropriée.
          *
          * @param login    le paramètre "login" de la requête
          * @param password le paramètre "password" de la requête

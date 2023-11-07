@@ -7,9 +7,10 @@ import jakarta.servlet.http.HttpServletResponseWrapper;
 import java.io.PrintWriter;
 
 /**
- * Classe inutilisée ?
+ * Classe qui "mocke" une réponse avec un <code>PrintWriter</code> minimal.
+ * Elle sera passée aux éléments de la chaîne suivants par le filtre de négociation de contenus,
+ * pour que la servlet en bout de chaîne puisse fermer son flux de sortie, mais pas celui de la "vraie" réponse.
  */
-//TODO vérifier et si possible, supprimer
 public class BufferlessHttpServletResponseWrapper extends HttpServletResponseWrapper {
     private final ServletOutputStream os;
 

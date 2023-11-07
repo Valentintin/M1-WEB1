@@ -71,8 +71,8 @@ public final class ContentNegotiationHelper {
             );
             case "TodoRequestDto" -> new TodoRequestDto(
                     request.getParameter("title"),
-                    (url.length > 1 && url[1] != null) ? Integer.valueOf(url[1]) : null,
-                    request.getParameter("assignee")
+                    (url.length > 1 && url[1] != null) ? Integer.valueOf(url[1].equals("toggleStatus") ? request.getParameter("hash") : url[1]) : null,
+                    request.getParameter("assignee"), request.getParameter("creator")
             );
             default ->
                     throw new UnsupportedOperationException("La classe " + dtoTypeName + " n'est pas reconnue par cette application.");
