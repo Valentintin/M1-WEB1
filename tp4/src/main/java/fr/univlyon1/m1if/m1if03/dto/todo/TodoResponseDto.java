@@ -1,9 +1,12 @@
 package fr.univlyon1.m1if.m1if03.dto.todo;
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+
 /**
  * DTO contenant la totalité des données d'un todo_ renvoyé par une vue du serveur.
  * @author Lionel Médini
  */
+@JacksonXmlRootElement(localName = "todo")
 public class TodoResponseDto {
     private final String title;
     private final int hash;

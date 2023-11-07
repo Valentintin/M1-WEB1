@@ -1,8 +1,8 @@
 {
 	"info": {
-		"_postman_id": "ff3215c8-fd7f-42b4-a977-d98a9ee8e4ec",
-		"name": "Mif-Todos-Q1.5-JSON",
-		"description": "**Collection de requêtes issue de la description de l'API Swagger pour \"MIF-Todos\".**\n\nVersion question 1.5 : corps des requêtes en JSON\n\nPour tester : cliquer sur le nom de la collection -> `Runs` -> `Run Collection`\n\nIdée générale :\n\n- Tester les todos en mode non connecté -> doit renvoyer des 401\n- Créer les utilisateurs\n- Loguer le premier user et tester les requêtes users et todos -> success\n- Loguer le deuxième user et tester les requêtes users et todos -> certaines doivent marcher et d'autres donner des 403.\n- Remettre \"à zéro\" pour pouvoir relancer un nouveau run\n    \n\nVous pouvez rajouter des tests ou modifier l'ordre / le workflow d'un run à partir de la [doc de Postman](https://learning.postman.com/docs/writing-scripts/test-scripts/).",
+		"_postman_id": "271544cf-40d8-4a68-947a-04e4ce212ebf",
+		"name": "Mif-Todos-Q3.3-JSON",
+		"description": "**Collection de requêtes issue de la description de l'API Swagger pour \"MIF-Todos\".**\n\nVersion question 3.3\n\n- Contenu des requêtes et format de réponses demandé : application/json\n    \n\nPour tester : cliquer sur le nom de la collection -> `Runs` -> `Run Collection`\n\nIdée générale :\n\n- Tester les todos en mode non connecté -> doit renvoyer des 401\n- Créer les utilisateurs\n- Loguer le premier user et tester les requêtes users et todos -> success\n- Loguer le deuxième user et tester les requêtes users et todos -> certaines doivent marcher et d'autres donner des 403.\n- Remettre \"à zéro\" pour pouvoir relancer un nouveau run\n    \n\nVous pouvez rajouter des tests ou modifier l'ordre / le workflow d'un run à partir de la [doc de Postman](https://learning.postman.com/docs/writing-scripts/test-scripts/).",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "30541291"
 	},
@@ -22,6 +22,13 @@
 										"exec": [
 											"pm.test(\"Status code is 200\", function () {\r",
 											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"pm.test(\"Content-Type is JSON\", function () {\r",
+											"    pm.response.to.have.header(\"Content-Type\");\r",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+											"});\r",
+											"pm.test(\"Response is a JSON array\", function () {\r",
+											"    pm.expect(pm.response.json()).to.be.an('array');\r",
 											"});\r",
 											"postman.setNextRequest(\"Récupérer la collection de todos - NC\");"
 										],
@@ -43,12 +50,18 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"method": "GET",
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -120,18 +133,9 @@
 									}
 								}
 							],
-							"protocolProfileBehavior": {
-								"disabledSystemHeaders": {}
-							},
 							"request": {
 								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/x-www-form-urlencoded",
-										"disabled": true
-									}
-								],
+								"header": [],
 								"body": {
 									"mode": "raw",
 									"raw": "{\r\n    \"login\": \"{{login1}}\",\r\n    \"password\": \"{{passwd1}}\",\r\n    \"name\": \"{{name1}}\"\r\n}",
@@ -302,20 +306,34 @@
 											"pm.test(\"Status code is 200\", function () {\r",
 											"    pm.response.to.have.status(200);\r",
 											"});\r",
+											"pm.test(\"Content-Type is JSON\", function () {\r",
+											"    pm.response.to.have.header(\"Content-Type\");\r",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+											"});\r",
+											"pm.test(\"Response is a JSON array\", function () {\r",
+											"    pm.expect(pm.response.json()).to.be.an('array');\r",
+											"});\r",
 											"pm.test(\"Body matches string\", function () {\r",
-											"    pm.expect(pm.response.text()).to.include(pm.collectionVariables.get(\"login1\"));\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData).to.include(pm.collectionVariables.get(\"login1\"));\r",
 											"});"
 										],
 										"type": "text/javascript"
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"method": "GET",
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -773,6 +791,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -788,7 +811,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -996,6 +1020,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -1011,7 +1040,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -1027,7 +1057,7 @@
 									"variable": [
 										{
 											"key": "userId",
-											"value": "<string>",
+											"value": "{{login1}}",
 											"description": "(Required) Login de l'utilisateur"
 										}
 									]
@@ -1182,6 +1212,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -1197,7 +1232,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -1368,6 +1404,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -1380,7 +1421,13 @@
 									]
 								},
 								"method": "GET",
-								"header": [],
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
 								"url": {
 									"raw": "{{baseUrl}}/users/:userId/assignedTodos/1/test",
 									"host": [
@@ -1780,8 +1827,17 @@
 											"pm.test(\"Status code is 200\", function () {\r",
 											"    pm.response.to.have.status(200);\r",
 											"});\r",
+											"pm.test(\"Content-Type is JSON\", function () {\r",
+											"    pm.response.to.have.header(\"Content-Type\");\r",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+											"});\r",
+											"pm.test(\"Response is a JSON array\", function () {\r",
+											"    pm.expect(pm.response.json()).to.be.an('array');\r",
+											"});\r",
 											"pm.test(\"Body matches string\", function () {\r",
-											"    pm.expect(pm.response.text()).to.include(pm.collectionVariables.get(\"login2\"));\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData).to.include(pm.collectionVariables.get(\"login1\"));\r",
+											"    pm.expect(jsonData).to.include(pm.collectionVariables.get(\"login2\"));\r",
 											"});\r",
 											"\r",
 											"postman.setNextRequest(\"Connecter l'utilisateur #1 (opération métier) - NC\");"
@@ -1790,12 +1846,18 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"method": "GET",
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -1859,6 +1921,12 @@
 											"pm.test(\"Status code is 204\", function () {\r",
 											"    pm.response.to.have.status(204);\r",
 											"});\r",
+											"pm.test(\"Authorization is present\", function () {\r",
+											"    pm.response.to.have.header(\"Authorization\");\r",
+											"    var authHeader = pm.response.headers.get(\"Authorization\");\r",
+											"    pm.collectionVariables.set(\"bearerToken\", authHeader.startsWith(\"Bearer \") ? authHeader.substring(7) : authHeader);\r",
+											"});\r",
+											"\r",
 											"postman.setNextRequest(\"Récupérer la collection de todos - U1\");"
 										],
 										"type": "text/javascript"
@@ -2465,19 +2533,32 @@
 											"pm.test(\"Status code is 200\", function () {\r",
 											"    pm.response.to.have.status(200);\r",
 											"});\r",
-											"// Nom modifié par PUT\r",
-											"pm.test(\"Body matches string\", function () {\r",
-											"    pm.expect(pm.response.text()).to.include(pm.collectionVariables.get(\"newName1\"));\r",
+											"pm.test(\"Content-Type is JSON\", function () {\r",
+											"    pm.response.to.have.header(\"Content-Type\");\r",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
 											"});\r",
-											"// On doit voir les todos puisqu'on est l'utilisateur connecté\r",
+											"pm.test('Schema is valid', function () {\r",
+											"    pm.expect(tv4.validate(pm.response.json(), pm.collectionVariables.get(\"userSchema\"))).to.be.true;\r",
+											"});\r",
 											"pm.test(\"Body matches string\", function () {\r",
-											"    pm.expect(pm.response.text()).to.include(pm.collectionVariables.get(\"todoU1Id\"));\r",
+											"    var jsonData = pm.response.json();\r",
+											"    // On contrôle que le login est le bon (il faut le faire au moins une fois)\r",
+											"    pm.expect(jsonData.login).to.eql(pm.collectionVariables.get(\"login1\"));\r",
+											"    // Nom modifié par PUT\r",
+											"    pm.expect(jsonData.name).to.eql(pm.collectionVariables.get(\"newName1\"));\r",
+											"    // On doit voir les todos puisqu'on est l'utilisateur connecté\r",
+											"    pm.expect(jsonData.assignedTodos).to.be.an('array').that.includes(Number(pm.collectionVariables.get(\"todoU1Id\")));\r",
 											"});"
 										],
 										"type": "text/javascript"
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -2493,7 +2574,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -2508,8 +2590,7 @@
 									"variable": [
 										{
 											"key": "userId",
-											"value": "{{login1}}",
-											"description": "(Required) Login de l'utilisateur"
+											"value": "{{login1}}"
 										}
 									]
 								},
@@ -2704,6 +2785,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -2719,7 +2805,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -2894,6 +2981,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -2909,7 +3001,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -3080,6 +3173,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -3092,7 +3190,13 @@
 									]
 								},
 								"method": "GET",
-								"header": [],
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
 								"url": {
 									"raw": "{{baseUrl}}/users/:userId/assignedTodos/:todoId/title",
 									"host": [
@@ -3779,6 +3883,11 @@
 										"exec": [
 											"pm.test(\"Status code is 204\", function () {\r",
 											"    pm.response.to.have.status(204);\r",
+											"});\r",
+											"pm.test(\"Authorization is present\", function () {\r",
+											"    pm.response.to.have.header(\"Authorization\");\r",
+											"    var authHeader = pm.response.headers.get(\"Authorization\");\r",
+											"    pm.collectionVariables.set(\"bearerToken\", authHeader.startsWith(\"Bearer \") ? authHeader.substring(7) : authHeader);\r",
 											"});"
 										],
 										"type": "text/javascript"
@@ -3988,6 +4097,9 @@
 									"listen": "test",
 									"script": {
 										"exec": [
+											"pm.test(\"Status code is 204\", function () {\r",
+											"    pm.response.to.have.status(204);\r",
+											"});\r",
 											"postman.setNextRequest(\"Connecter l'utilisateur #2 (opération métier) - NC\");"
 										],
 										"type": "text/javascript"
@@ -4071,6 +4183,12 @@
 											"pm.test(\"Status code is 204\", function () {\r",
 											"    pm.response.to.have.status(204);\r",
 											"});\r",
+											"pm.test(\"Authorization is present\", function () {\r",
+											"    pm.response.to.have.header(\"Authorization\");\r",
+											"    var authHeader = pm.response.headers.get(\"Authorization\");\r",
+											"    pm.collectionVariables.set(\"bearerToken\", authHeader.startsWith(\"Bearer \") ? authHeader.substring(7) : authHeader);\r",
+											"});\r",
+											"\r",
 											"postman.setNextRequest(\"Récupérer l'utilisateur auquel le premier todo est assigné - U2\");"
 										],
 										"type": "text/javascript"
@@ -4677,19 +4795,36 @@
 											"pm.test(\"Status code is 200\", function () {\r",
 											"    pm.response.to.have.status(200);\r",
 											"});\r",
-											"// Ne doit pas contenir la liste des todos de l'utilisateur car on est logué avec un autre user.\r",
-											"pm.test(\"Body does not match string\", function () {\r",
-											"    pm.expect(pm.response.text()).not.to.include(pm.collectionVariables.get(\"todoU1Id\"));\r",
+											"pm.test(\"Content-Type is JSON\", function () {\r",
+											"    pm.response.to.have.header(\"Content-Type\");\r",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
 											"});\r",
-											"// Ne doit pas contenir le nom qu'on a essayé de changer\r",
+											"pm.test('Schema is valid', function () {\r",
+											"    pm.expect(tv4.validate(pm.response.json(), pm.collectionVariables.get(\"userSchema\"))).to.be.true;\r",
+											"});\r",
+											"pm.test(\"Object does not have property value\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    // Ne doit pas contenir la liste des todos de l'utilisateur car on est logué avec un autre user;\r",
+											"    for(const prop in jsonData) {\r",
+											"        if(jsonData[prop]) // si la propriété est nulle, l'assertion include ne sait pas matcher de valeur\r",
+											"            pm.expect(jsonData[prop]).not.to.include(Number(pm.collectionVariables.get(\"todoU1Id\")));\r",
+											"    }\r",
+											"});\r",
 											"pm.test(\"Body does not match string\", function () {\r",
-											"    pm.expect(pm.response.text()).not.to.include(pm.collectionVariables.get(\"newNewName1\"));\r",
+											"    var jsonData = pm.response.json();\r",
+											"    // Ne doit pas contenir le nom qu'on a essayé de changer\r",
+											"    pm.expect(jsonData.name).not.to.eql(pm.collectionVariables.get(\"newNewName1\"));\r",
 											"});"
 										],
 										"type": "text/javascript"
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -4705,7 +4840,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -4908,15 +5044,28 @@
 											"pm.test(\"Status code is 200\", function () {\r",
 											"    pm.response.to.have.status(200);\r",
 											"});\r",
-											"// Ne doit pas contenir le nom qu'on a essayé de changer\r",
+											"pm.test(\"Content-Type is JSON\", function () {\r",
+											"    pm.response.to.have.header(\"Content-Type\");\r",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+											"});\r",
+											"pm.test(\"Response is a JSON object\", function () {\r",
+											"    pm.expect(pm.response.json()).to.be.an('object');\r",
+											"});\r",
 											"pm.test(\"Body does not match string\", function () {\r",
-											"    pm.expect(pm.response.text()).not.to.include(pm.collectionVariables.get(\"newNewName1\"));\r",
+											"    var jsonData = pm.response.json();\r",
+											"    // Ne doit pas contenir le nom qu'on a essayé de changer\r",
+											"    pm.expect(jsonData.name).not.to.eql(pm.collectionVariables.get(\"newNewName1\"));\r",
 											"});"
 										],
 										"type": "text/javascript"
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -4932,7 +5081,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -5103,6 +5253,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -5118,7 +5273,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -5289,6 +5445,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -5301,7 +5462,13 @@
 									]
 								},
 								"method": "GET",
-								"header": [],
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
 								"url": {
 									"raw": "{{baseUrl}}/users/:userId/assignedTodos/test",
 									"host": [
@@ -5859,23 +6026,35 @@
 											"pm.test(\"Status code is 200\", function () {\r",
 											"    pm.response.to.have.status(200);\r",
 											"});\r",
-											"pm.test(\"Body matches string\", function () {\r",
-											"    pm.expect(pm.response.text()).not.to.include(pm.collectionVariables.get(\"login1\"));\r",
+											"pm.test(\"Content-Type is JSON\", function () {\r",
+											"    pm.response.to.have.header(\"Content-Type\");\r",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+											"});\r",
+											"pm.test(\"Response is a JSON array\", function () {\r",
+											"    pm.expect(pm.response.json()).to.be.an('array');\r",
 											"});\r",
 											"pm.test(\"Body does not match string\", function () {\r",
-											"    pm.expect(pm.response.text()).not.to.include(pm.collectionVariables.get(\"login2\"));\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData).not.to.include(pm.collectionVariables.get(\"login1\"));\r",
+											"    pm.expect(jsonData).not.to.include(pm.collectionVariables.get(\"login2\"));\r",
 											"});"
 										],
 										"type": "text/javascript"
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"method": "GET",
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -6027,6 +6206,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -6042,7 +6226,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -6338,6 +6523,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -6353,7 +6543,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -6368,7 +6559,7 @@
 									"variable": [
 										{
 											"key": "todoId",
-											"value": "<integer>",
+											"value": "{{todoU1Id}}",
 											"description": "(Required) Id du todo"
 										}
 									]
@@ -6602,6 +6793,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -6617,7 +6813,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -6633,7 +6830,7 @@
 									"variable": [
 										{
 											"key": "todoId",
-											"value": "<integer>",
+											"value": "{{todoU1Id}}",
 											"description": "(Required) Id du todo"
 										}
 									]
@@ -6830,6 +7027,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -6845,7 +7047,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -6861,7 +7064,7 @@
 									"variable": [
 										{
 											"key": "todoId",
-											"value": "<integer>",
+											"value": "{{todoU1Id}}",
 											"description": "(Required) Id du todo"
 										}
 									]
@@ -7100,6 +7303,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -7112,7 +7320,13 @@
 									]
 								},
 								"method": "GET",
-								"header": [],
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
 								"url": {
 									"raw": "{{baseUrl}}/todos/:todoId/assignee/name",
 									"host": [
@@ -7127,7 +7341,7 @@
 									"variable": [
 										{
 											"key": "todoId",
-											"value": "<integer>",
+											"value": "{{todoU1Id}}",
 											"description": "(Required) Id du todo"
 										}
 									]
@@ -7670,21 +7884,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{baseUrl}}/todos/:todoId/toggleStatus",
+									"raw": "{{baseUrl}}/todos/toggleStatus",
 									"host": [
 										"{{baseUrl}}"
 									],
 									"path": [
 										"todos",
-										":todoId",
 										"toggleStatus"
-									],
-									"variable": [
-										{
-											"key": "todoId",
-											"value": "{{todoU1Id}}",
-											"description": "(Required) Id du todo"
-										}
 									]
 								},
 								"description": "Passe le statut d'un todo de 'Not done' à 'Done' ou inversement. Seul l'utilisateur à qui est assigné le todo peut invoquer cette opération."
@@ -8131,12 +8337,24 @@
 										"exec": [
 											"pm.test(\"Status code is 200\", function () {\r",
 											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"pm.test(\"Content-Type is JSON\", function () {\r",
+											"    pm.response.to.have.header(\"Content-Type\");\r",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+											"});\r",
+											"pm.test(\"Response is a JSON array\", function () {\r",
+											"    pm.expect(pm.response.json()).to.be.an('array');\r",
 											"});"
 										],
 										"type": "text/javascript"
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -8152,7 +8370,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -8454,15 +8673,26 @@
 											"pm.test(\"Status code is 200\", function () {\r",
 											"    pm.response.to.have.status(200);\r",
 											"});\r",
-											"// On vérifie que la page contient le hash du todo créé\r",
+											"pm.test(\"Content-Type is JSON\", function () {\r",
+											"    pm.response.to.have.header(\"Content-Type\");\r",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+											"});\r",
+											"pm.test(\"Response is a JSON array\", function () {\r",
+											"    pm.expect(pm.response.json()).to.be.an('array');\r",
+											"});\r",
 											"pm.test(\"Body matches string\", function () {\r",
-											"    pm.expect(pm.response.text()).to.include(pm.collectionVariables.get(\"todoU1Id\"));\r",
+											"    pm.expect(pm.response.json()).to.include(Number(pm.collectionVariables.get(\"todoU1Id\")));\r",
 											"});"
 										],
 										"type": "text/javascript"
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -8478,7 +8708,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -8575,21 +8806,33 @@
 											"pm.test(\"Status code is 200\", function () {\r",
 											"    pm.response.to.have.status(200);\r",
 											"});\r",
-											"// On vérifie que la page contient bien le hash, le titre et le statut du todo\r",
-											"pm.test(\"Body matches string\", function () {\r",
-											"    pm.expect(pm.response.text()).to.include(pm.collectionVariables.get(\"todoU1Id\"));\r",
+											"pm.test(\"Content-Type is JSON\", function () {\r",
+											"    pm.response.to.have.header(\"Content-Type\");\r",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+											"});\r",
+											"pm.test(\"Response is a JSON object\", function () {\r",
+											"    pm.expect(pm.response.json()).to.be.an('object');\r",
+											"});\r",
+											"pm.test('Schema is valid', function () {\r",
+											"    pm.expect(tv4.validate(pm.response.json(), pm.collectionVariables.get(\"todoSchema\"))).to.be.true;\r",
 											"});\r",
 											"pm.test(\"Body matches string\", function () {\r",
-											"    pm.expect(pm.response.text()).to.include(pm.collectionVariables.get(\"todoU1Title\"));\r",
-											"});\r",
-											"pm.test(\"Body matches string\", function () {\r",
-											"    pm.expect(pm.response.text()).to.include(pm.collectionVariables.get(\"todoStatusNotDoneHtmlText\"));\r",
+											"    var jsonData = pm.response.json();\r",
+											"    // On vérifie que la réponse contient bien le hash, le titre et le statut du todo\r",
+											"    pm.expect(jsonData.hash).to.eql(Number(pm.collectionVariables.get(\"todoU1Id\")));\r",
+											"    pm.expect(jsonData.title).to.eql(pm.collectionVariables.get(\"todoU1Title\"));\r",
+											"    pm.expect(jsonData.completed).to.eql(false);\r",
 											"});"
 										],
 										"type": "text/javascript"
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -8605,7 +8848,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -9123,21 +9367,28 @@
 											"pm.test(\"Status code is 200\", function () {\r",
 											"    pm.response.to.have.status(200);\r",
 											"});\r",
-											"// On vérifie que la page contient bien le hash, le statut et le nouveau titre du todo\r",
-											"pm.test(\"Body matches string\", function () {\r",
-											"    pm.expect(pm.response.text()).to.include(pm.collectionVariables.get(\"todoU1Id\"));\r",
+											"pm.test(\"Content-Type is JSON\", function () {\r",
+											"    pm.response.to.have.header(\"Content-Type\");\r",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+											"});\r",
+											"pm.test('Schema is valid', function () {\r",
+											"    pm.expect(tv4.validate(pm.response.json(), pm.collectionVariables.get(\"todoSchema\"))).to.be.true;\r",
 											"});\r",
 											"pm.test(\"Body matches string\", function () {\r",
-											"    pm.expect(pm.response.text()).to.include(pm.collectionVariables.get(\"todoU1NewTitle\"));\r",
-											"});\r",
-											"pm.test(\"Body matches string\", function () {\r",
-											"    pm.expect(pm.response.text()).to.include(pm.collectionVariables.get(\"todoStatusNotDoneHtmlText\"));\r",
+											"    var jsonData = pm.response.json();\r",
+											"    // On vérifie que la réponse contient le nouveau titre\r",
+											"    pm.expect(jsonData.title).to.eql(pm.collectionVariables.get(\"todoU1NewTitle\"));\r",
 											"});"
 										],
 										"type": "text/javascript"
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -9153,7 +9404,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -9397,15 +9649,28 @@
 											"pm.test(\"Status code is 200\", function () {\r",
 											"    pm.response.to.have.status(200);\r",
 											"});\r",
-											"// On vérifie que la page contient bien le titre du todo\r",
+											"pm.test(\"Content-Type is JSON\", function () {\r",
+											"    pm.response.to.have.header(\"Content-Type\");\r",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+											"});\r",
+											"pm.test(\"Response is a JSON object\", function () {\r",
+											"    pm.expect(pm.response.json()).to.be.an('object');\r",
+											"});\r",
 											"pm.test(\"Body matches string\", function () {\r",
-											"    pm.expect(pm.response.text()).to.include(pm.collectionVariables.get(\"todoU1NewTitle\"));\r",
+											"    var jsonData = pm.response.json();\r",
+											"    // On vérifie que la réponse contient le nouveau titre\r",
+											"    pm.expect(jsonData.title).to.eql(pm.collectionVariables.get(\"todoU1NewTitle\"));\r",
 											"});"
 										],
 										"type": "text/javascript"
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -9421,7 +9686,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -9628,6 +9894,11 @@
 										"exec": [
 											"pm.test(\"Status code is 204\", function () {\r",
 											"    pm.response.to.have.status(204);\r",
+											"});\r",
+											"pm.test(\"Authorization is present\", function () {\r",
+											"    pm.response.to.have.header(\"Authorization\");\r",
+											"    var authHeader = pm.response.headers.get(\"Authorization\");\r",
+											"    pm.collectionVariables.set(\"bearerToken\", authHeader.startsWith(\"Bearer \") ? authHeader.substring(7) : authHeader);\r",
 											"});"
 										],
 										"type": "text/javascript"
@@ -9904,24 +10175,28 @@
 											"pm.test(\"Status code is 200\", function () {\r",
 											"    pm.response.to.have.status(200);\r",
 											"});\r",
-											"// On vérifie que la page contient bien le hash, le titre, le statut et le login du user assigné du todo\r",
-											"pm.test(\"Body matches string\", function () {\r",
-											"    pm.expect(pm.response.text()).to.include(pm.collectionVariables.get(\"todoU1Id\"));\r",
+											"pm.test(\"Content-Type is JSON\", function () {\r",
+											"    pm.response.to.have.header(\"Content-Type\");\r",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+											"});\r",
+											"pm.test('Schema is valid', function () {\r",
+											"    pm.expect(tv4.validate(pm.response.json(), pm.collectionVariables.get(\"todoSchema\"))).to.be.true;\r",
 											"});\r",
 											"pm.test(\"Body matches string\", function () {\r",
-											"    pm.expect(pm.response.text()).to.include(pm.collectionVariables.get(\"todoU1NewTitle\"));\r",
-											"});\r",
-											"pm.test(\"Body matches string\", function () {\r",
-											"    pm.expect(pm.response.text()).to.include(pm.collectionVariables.get(\"todoStatusNotDoneHtmlText\"));\r",
-											"});\r",
-											"pm.test(\"Body matches string\", function () {\r",
-											"    pm.expect(pm.response.text()).to.include(pm.collectionVariables.get(\"login1\"));\r",
+											"    var jsonData = pm.response.json();\r",
+											"    // On vérifie que la réponse contient le login de l'user 1\r",
+											"    pm.expect(jsonData.assignee).to.eql(pm.collectionVariables.get(\"login1\"));\r",
 											"});"
 										],
 										"type": "text/javascript"
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -9937,7 +10212,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -10181,15 +10457,28 @@
 											"pm.test(\"Status code is 200\", function () {\r",
 											"    pm.response.to.have.status(200);\r",
 											"});\r",
-											"// On vérifie que la page contient bien le login du user assigné du todo\r",
+											"pm.test(\"Content-Type is JSON\", function () {\r",
+											"    pm.response.to.have.header(\"Content-Type\");\r",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+											"});\r",
+											"pm.test(\"Response is a JSON object\", function () {\r",
+											"    pm.expect(pm.response.json()).to.be.an('object');\r",
+											"});\r",
 											"pm.test(\"Body matches string\", function () {\r",
-											"    pm.expect(pm.response.text()).to.include(pm.collectionVariables.get(\"login1\"));\r",
+											"    var jsonData = pm.response.json();\r",
+											"    // On vérifie que la réponse contient le login de l'user 1\r",
+											"    pm.expect(jsonData.assignee).to.eql(pm.collectionVariables.get(\"login1\"));\r",
 											"});"
 										],
 										"type": "text/javascript"
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -10205,7 +10494,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -10460,6 +10750,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -10472,7 +10767,13 @@
 									]
 								},
 								"method": "GET",
-								"header": [],
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
 								"url": {
 									"raw": "{{baseUrl}}/todos/:todoId/assignee/name",
 									"host": [
@@ -10989,24 +11290,28 @@
 											"pm.test(\"Status code is 200\", function () {\r",
 											"    pm.response.to.have.status(200);\r",
 											"});\r",
-											"// On vérifie que la page contient bien le hash, le titre, le login du user assigné et le nouveau statut du todo\r",
-											"pm.test(\"Body matches string\", function () {\r",
-											"    pm.expect(pm.response.text()).to.include(pm.collectionVariables.get(\"todoU1Id\"));\r",
+											"pm.test(\"Content-Type is JSON\", function () {\r",
+											"    pm.response.to.have.header(\"Content-Type\");\r",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+											"});\r",
+											"pm.test('Schema is valid', function () {\r",
+											"    pm.expect(tv4.validate(pm.response.json(), pm.collectionVariables.get(\"todoSchema\"))).to.be.true;\r",
 											"});\r",
 											"pm.test(\"Body matches string\", function () {\r",
-											"    pm.expect(pm.response.text()).to.include(pm.collectionVariables.get(\"todoU1NewTitle\"));\r",
-											"});\r",
-											"pm.test(\"Body matches string\", function () {\r",
-											"    pm.expect(pm.response.text()).to.include(pm.collectionVariables.get(\"login1\"));\r",
-											"});\r",
-											"pm.test(\"Body matches string\", function () {\r",
-											"    pm.expect(pm.response.text()).to.include(pm.collectionVariables.get(\"todoStatusDoneHtmlText\"));\r",
+											"    var jsonData = pm.response.json();\r",
+											"    // On vérifie que la valeur de completed est true\r",
+											"    pm.expect(jsonData.completed).to.eql(true);\r",
 											"});"
 										],
 										"type": "text/javascript"
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -11022,7 +11327,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -11266,15 +11572,28 @@
 											"pm.test(\"Status code is 200\", function () {\r",
 											"    pm.response.to.have.status(200);\r",
 											"});\r",
-											"// On vérifie que la page contient bien le nouveau statut du todo\r",
+											"pm.test(\"Content-Type is JSON\", function () {\r",
+											"    pm.response.to.have.header(\"Content-Type\");\r",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+											"});\r",
+											"pm.test(\"Response is a JSON object\", function () {\r",
+											"    pm.expect(pm.response.json()).to.be.an('object');\r",
+											"});\r",
 											"pm.test(\"Body matches string\", function () {\r",
-											"    pm.expect(pm.response.text()).to.include(pm.collectionVariables.get(\"todoStatusDoneHtmlText\"));\r",
+											"    var jsonData = pm.response.json();\r",
+											"    // On vérifie que la valeur de completed est true\r",
+											"    pm.expect(jsonData.completed).to.eql(true);\r",
 											"});"
 										],
 										"type": "text/javascript"
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -11290,7 +11609,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -11760,24 +12080,28 @@
 											"pm.test(\"Status code is 200\", function () {\r",
 											"    pm.response.to.have.status(200);\r",
 											"});\r",
-											"// On vérifie que la page contient bien le hash, le titre, le login du user assigné et le nouveau statut du todo\r",
-											"pm.test(\"Body matches string\", function () {\r",
-											"    pm.expect(pm.response.text()).to.include(pm.collectionVariables.get(\"todoU1Id\"));\r",
+											"pm.test(\"Content-Type is JSON\", function () {\r",
+											"    pm.response.to.have.header(\"Content-Type\");\r",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+											"});\r",
+											"pm.test('Schema is valid', function () {\r",
+											"    pm.expect(tv4.validate(pm.response.json(), pm.collectionVariables.get(\"todoSchema\"))).to.be.true;\r",
 											"});\r",
 											"pm.test(\"Body matches string\", function () {\r",
-											"    pm.expect(pm.response.text()).to.include(pm.collectionVariables.get(\"todoU1NewTitle\"));\r",
-											"});\r",
-											"pm.test(\"Body matches string\", function () {\r",
-											"    pm.expect(pm.response.text()).to.include(pm.collectionVariables.get(\"login1\"));\r",
-											"});\r",
-											"pm.test(\"Body matches string\", function () {\r",
-											"    pm.expect(pm.response.text()).to.include(pm.collectionVariables.get(\"todoStatusNotDoneHtmlText\"));\r",
+											"    var jsonData = pm.response.json();\r",
+											"    // On vérifie que la valeur de completed est false\r",
+											"    pm.expect(jsonData.completed).to.eql(false);\r",
 											"});"
 										],
 										"type": "text/javascript"
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -11793,7 +12117,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -12037,9 +12362,17 @@
 											"pm.test(\"Status code is 200\", function () {\r",
 											"    pm.response.to.have.status(200);\r",
 											"});\r",
-											"// On vérifie que la page contient bien le nouveau statut du todo\r",
+											"pm.test(\"Content-Type is JSON\", function () {\r",
+											"    pm.response.to.have.header(\"Content-Type\");\r",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+											"});\r",
+											"pm.test(\"Response is a JSON object\", function () {\r",
+											"    pm.expect(pm.response.json()).to.be.an('object');\r",
+											"});\r",
 											"pm.test(\"Body matches string\", function () {\r",
-											"    pm.expect(pm.response.text()).to.include(pm.collectionVariables.get(\"todoStatusNotDoneHtmlText\"));\r",
+											"    var jsonData = pm.response.json();\r",
+											"    // On vérifie que la valeur de completed est false\r",
+											"    pm.expect(jsonData.completed).to.eql(false);\r",
 											"});\r",
 											"\r",
 											"postman.setNextRequest(\"Mettre à jour le nom de l'utilisateur #1 - U1\");"
@@ -12048,6 +12381,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -12063,7 +12401,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -12281,6 +12620,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -12296,7 +12640,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -12809,14 +13154,35 @@
 											"pm.test(\"Status code is 200\", function () {\r",
 											"    pm.response.to.have.status(200);\r",
 											"});\r",
+											"pm.test(\"Content-Type is JSON\", function () {\r",
+											"    pm.response.to.have.header(\"Content-Type\");\r",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+											"});\r",
+											"pm.test('Schema is valid', function () {\r",
+											"    pm.expect(tv4.validate(pm.response.json(), pm.collectionVariables.get(\"todoSchema\"))).to.be.true;\r",
+											"});\r",
 											"pm.test(\"Body matches string\", function () {\r",
-											"    pm.expect(pm.response.text()).to.include(pm.collectionVariables.get(\"todoStatusNotDoneHtmlText\"));\r",
+											"    var jsonData = pm.response.json();\r",
+											"    // On vérifie que la valeur de completed est false (n'a pas été modifiée)\r",
+											"    pm.expect(jsonData.completed).to.eql(false);\r",
+											"});\r",
+											"pm.test(\"Object does not have property or value\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    // On vérifie que la réponse ne contient pas le login de l'user 1 (on est logué en tant qu'user 2)\r",
+											"    for(const prop in jsonData) {\r",
+											"        pm.expect(jsonData[prop]).not.to.eql(pm.collectionVariables.get(\"login1\"));\r",
+											"    }\r",
 											"});"
 										],
 										"type": "text/javascript"
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -12832,7 +13198,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -13076,14 +13443,28 @@
 											"pm.test(\"Status code is 200\", function () {\r",
 											"    pm.response.to.have.status(200);\r",
 											"});\r",
+											"pm.test(\"Content-Type is JSON\", function () {\r",
+											"    pm.response.to.have.header(\"Content-Type\");\r",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+											"});\r",
+											"pm.test(\"Response is a JSON object\", function () {\r",
+											"    pm.expect(pm.response.json()).to.be.an('object');\r",
+											"});\r",
 											"pm.test(\"Body matches string\", function () {\r",
-											"    pm.expect(pm.response.text()).to.include(pm.collectionVariables.get(\"todoStatusNotDoneHtmlText\"));\r",
+											"    var jsonData = pm.response.json();\r",
+											"    // On vérifie que la valeur de completed est false\r",
+											"    pm.expect(jsonData.completed).to.eql(false);\r",
 											"});"
 										],
 										"type": "text/javascript"
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -13099,7 +13480,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -13306,6 +13688,11 @@
 										"exec": [
 											"pm.test(\"Status code is 204\", function () {\r",
 											"    pm.response.to.have.status(204);\r",
+											"});\r",
+											"pm.test(\"Authorization is present\", function () {\r",
+											"    pm.response.to.have.header(\"Authorization\");\r",
+											"    var authHeader = pm.response.headers.get(\"Authorization\");\r",
+											"    pm.collectionVariables.set(\"bearerToken\", authHeader.startsWith(\"Bearer \") ? authHeader.substring(7) : authHeader);\r",
 											"});"
 										],
 										"type": "text/javascript"
@@ -13582,15 +13969,28 @@
 											"pm.test(\"Status code is 200\", function () {\r",
 											"    pm.response.to.have.status(200);\r",
 											"});\r",
-											"// On vérifie que la page contient bien le login du second user\r",
+											"pm.test(\"Content-Type is JSON\", function () {\r",
+											"    pm.response.to.have.header(\"Content-Type\");\r",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+											"});\r",
+											"pm.test('Schema is valid', function () {\r",
+											"    pm.expect(tv4.validate(pm.response.json(), pm.collectionVariables.get(\"todoSchema\"))).to.be.true;\r",
+											"});\r",
 											"pm.test(\"Body matches string\", function () {\r",
-											"    pm.expect(pm.response.text()).to.include(pm.collectionVariables.get(\"login2\"));\r",
+											"    var jsonData = pm.response.json();\r",
+											"    // On vérifie que la réponse contient le login de l'user 2\r",
+											"    pm.expect(jsonData.assignee).to.eql(pm.collectionVariables.get(\"login2\"));\r",
 											"});"
 										],
 										"type": "text/javascript"
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -13606,7 +14006,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -13850,15 +14251,28 @@
 											"pm.test(\"Status code is 200\", function () {\r",
 											"    pm.response.to.have.status(200);\r",
 											"});\r",
-											"// On vérifie que la page contient bien le login du second user\r",
+											"pm.test(\"Content-Type is JSON\", function () {\r",
+											"    pm.response.to.have.header(\"Content-Type\");\r",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+											"});\r",
+											"pm.test(\"Response is a JSON object\", function () {\r",
+											"    pm.expect(pm.response.json()).to.be.an('object');\r",
+											"});\r",
 											"pm.test(\"Body matches string\", function () {\r",
-											"    pm.expect(pm.response.text()).to.include(pm.collectionVariables.get(\"login2\"));\r",
+											"    var jsonData = pm.response.json();\r",
+											"    // On vérifie que la réponse contient le login de l'user 2\r",
+											"    pm.expect(jsonData.assignee).to.eql(pm.collectionVariables.get(\"login2\"));\r",
 											"});"
 										],
 										"type": "text/javascript"
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -13874,7 +14288,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -14329,18 +14744,28 @@
 											"pm.test(\"Status code is 200\", function () {\r",
 											"    pm.response.to.have.status(200);\r",
 											"});\r",
-											"\r",
-											"pm.test(\"Body matches string\", function () {\r",
-											"    pm.expect(pm.response.text()).to.include(pm.collectionVariables.get(\"todoU1Id\"));\r",
+											"pm.test(\"Content-Type is JSON\", function () {\r",
+											"    pm.response.to.have.header(\"Content-Type\");\r",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+											"});\r",
+											"pm.test(\"Response is a JSON array\", function () {\r",
+											"    pm.expect(pm.response.json()).to.be.an('array');\r",
 											"});\r",
 											"pm.test(\"Body matches string\", function () {\r",
-											"    pm.expect(pm.response.text()).to.include(pm.collectionVariables.get(\"todo2Id\"));\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData).to.include(Number(pm.collectionVariables.get(\"todoU1Id\")));\r",
+											"    pm.expect(jsonData).to.include(Number(pm.collectionVariables.get(\"todo2Id\")));\r",
 											"});"
 										],
 										"type": "text/javascript"
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -14356,7 +14781,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -14452,6 +14878,11 @@
 										"exec": [
 											"pm.test(\"Status code is 204\", function () {\r",
 											"    pm.response.to.have.status(204);\r",
+											"});\r",
+											"pm.test(\"Authorization is present\", function () {\r",
+											"    pm.response.to.have.header(\"Authorization\");\r",
+											"    var authHeader = pm.response.headers.get(\"Authorization\");\r",
+											"    pm.collectionVariables.set(\"bearerToken\", authHeader.startsWith(\"Bearer \") ? authHeader.substring(7) : authHeader);\r",
 											"});"
 										],
 										"type": "text/javascript"
@@ -14728,18 +15159,29 @@
 											"pm.test(\"Status code is 200\", function () {\r",
 											"    pm.response.to.have.status(200);\r",
 											"});\r",
-											"// On vérifie que la page contient bien le nouveau titre et le login du second user\r",
-											"pm.test(\"Body matches string\", function () {\r",
-											"    pm.expect(pm.response.text()).to.include(pm.collectionVariables.get(\"todo2NewTitle\"));\r",
+											"pm.test(\"Content-Type is JSON\", function () {\r",
+											"    pm.response.to.have.header(\"Content-Type\");\r",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+											"});\r",
+											"pm.test('Schema is valid', function () {\r",
+											"    pm.expect(tv4.validate(pm.response.json(), pm.collectionVariables.get(\"todoSchema\"))).to.be.true;\r",
 											"});\r",
 											"pm.test(\"Body matches string\", function () {\r",
-											"    pm.expect(pm.response.text()).to.include(pm.collectionVariables.get(\"login2\"));\r",
+											"    var jsonData = pm.response.json();\r",
+											"    // On vérifie que la réponse contient le nouveau titre et le login de l'user 2\r",
+											"    pm.expect(jsonData.title).to.eql(pm.collectionVariables.get(\"todo2NewTitle\"));\r",
+											"    pm.expect(jsonData.assignee).to.eql(pm.collectionVariables.get(\"login2\"));\r",
 											"});"
 										],
 										"type": "text/javascript"
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -14755,7 +15197,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -14999,15 +15442,28 @@
 											"pm.test(\"Status code is 200\", function () {\r",
 											"    pm.response.to.have.status(200);\r",
 											"});\r",
-											"// On vérifie que la page contient bien le login du second user\r",
+											"pm.test(\"Content-Type is JSON\", function () {\r",
+											"    pm.response.to.have.header(\"Content-Type\");\r",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+											"});\r",
+											"pm.test(\"Response is a JSON object\", function () {\r",
+											"    pm.expect(pm.response.json()).to.be.an('object');\r",
+											"});\r",
 											"pm.test(\"Body matches string\", function () {\r",
-											"    pm.expect(pm.response.text()).to.include(pm.collectionVariables.get(\"login2\"));\r",
+											"    var jsonData = pm.response.json();\r",
+											"    // On vérifie que la réponse contient le login de l'user 2\r",
+											"    pm.expect(jsonData.assignee).to.eql(pm.collectionVariables.get(\"login2\"));\r",
 											"});"
 										],
 										"type": "text/javascript"
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -15023,7 +15479,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -15273,15 +15730,28 @@
 											"pm.test(\"Status code is 200\", function () {\r",
 											"    pm.response.to.have.status(200);\r",
 											"});\r",
-											"// On vérifie que la page contient bien le nouveau titre\r",
+											"pm.test(\"Content-Type is JSON\", function () {\r",
+											"    pm.response.to.have.header(\"Content-Type\");\r",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+											"});\r",
+											"pm.test(\"Response is a JSON object\", function () {\r",
+											"    pm.expect(pm.response.json()).to.be.an('object');\r",
+											"});\r",
 											"pm.test(\"Body matches string\", function () {\r",
-											"    pm.expect(pm.response.text()).to.include(pm.collectionVariables.get(\"todo2NewTitle\"));\r",
+											"    var jsonData = pm.response.json();\r",
+											"    // On vérifie que la réponse contient le nouveau titre\r",
+											"    pm.expect(jsonData.title).to.eql(pm.collectionVariables.get(\"todo2NewTitle\"));\r",
 											"});"
 										],
 										"type": "text/javascript"
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -15297,7 +15767,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -15932,12 +16403,17 @@
 											"pm.test(\"Status code is 200\", function () {\r",
 											"    pm.response.to.have.status(200);\r",
 											"});\r",
-											"\r",
-											"pm.test(\"Body does not match string\", function () {\r",
-											"    pm.expect(pm.response.text()).not.to.include(pm.collectionVariables.get(\"todoU1Id\"));\r",
+											"pm.test(\"Content-Type is JSON\", function () {\r",
+											"    pm.response.to.have.header(\"Content-Type\");\r",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+											"});\r",
+											"pm.test(\"Response is a JSON array\", function () {\r",
+											"    pm.expect(pm.response.json()).to.be.an('array');\r",
 											"});\r",
 											"pm.test(\"Body does not match string\", function () {\r",
-											"    pm.expect(pm.response.text()).not.to.include(pm.collectionVariables.get(\"todoU2Id\"));\r",
+											"    var jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData).not.to.include(pm.collectionVariables.get(\"todoU1Id\"));\r",
+											"    pm.expect(jsonData).not.to.include(pm.collectionVariables.get(\"todo2Id\"));\r",
 											"});\r",
 											"postman.setNextRequest(\"Créer ou mettre à jour l'utilisateur #1 Copy - U2\");"
 										],
@@ -15945,6 +16421,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -15960,7 +16441,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -16052,6 +16534,16 @@
 			]
 		}
 	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{bearerToken}}",
+				"type": "string"
+			}
+		]
+	},
 	"event": [
 		{
 			"listen": "prerequest",
@@ -16089,7 +16581,7 @@
 			"type": "string"
 		},
 		{
-			"key": "newPasswd1",
+			"key": "newPassword1",
 			"value": "5678"
 		},
 		{
@@ -16156,6 +16648,20 @@
 		{
 			"key": "newNewName1",
 			"value": "Totototo"
+		},
+		{
+			"key": "bearerToken",
+			"value": ""
+		},
+		{
+			"key": "userSchema",
+			"value": "{\n    \"type\": \"object\",\n    \"properties\": {\n        \"login\": \"string\",\n        \"name\": \"string\",\n        \"assignedTodos\": \"array\"\n    },\n    \"required\": [\"login\", \"name\"]\n}",
+			"type": "string"
+		},
+		{
+			"key": "todoSchema",
+			"value": "{\n    \"type\": \"object\",\n    \"properties\": {\n        \"hash\": \"number\",\n        \"title\": \"string\",\n        \"assignee\": \"string\",\n        \"completed\": \"boolean\"\n    },\n    \"required\": [\"hash\", \"title\", \"completed\"]\n}",
+			"type": "string"
 		}
 	]
 }

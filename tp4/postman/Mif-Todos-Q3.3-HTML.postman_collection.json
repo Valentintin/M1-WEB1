@@ -1,8 +1,8 @@
 {
 	"info": {
-		"_postman_id": "ff3215c8-fd7f-42b4-a977-d98a9ee8e4ec",
-		"name": "Mif-Todos-Q1.5-JSON",
-		"description": "**Collection de requêtes issue de la description de l'API Swagger pour \"MIF-Todos\".**\n\nVersion question 1.5 : corps des requêtes en JSON\n\nPour tester : cliquer sur le nom de la collection -> `Runs` -> `Run Collection`\n\nIdée générale :\n\n- Tester les todos en mode non connecté -> doit renvoyer des 401\n- Créer les utilisateurs\n- Loguer le premier user et tester les requêtes users et todos -> success\n- Loguer le deuxième user et tester les requêtes users et todos -> certaines doivent marcher et d'autres donner des 403.\n- Remettre \"à zéro\" pour pouvoir relancer un nouveau run\n    \n\nVous pouvez rajouter des tests ou modifier l'ordre / le workflow d'un run à partir de la [doc de Postman](https://learning.postman.com/docs/writing-scripts/test-scripts/).",
+		"_postman_id": "bef7d57f-bcc1-4d94-b383-bed2f7121f15",
+		"name": "Mif-Todos-Q3.3-HTML",
+		"description": "**Collection de requêtes issue de la description de l'API Swagger pour \"MIF-Todos\".**\n\nVersion question 3.3\n\n- Contenu des requêtes : application/x-www-form-urlencoded\n    \n- Format de réponses demandé : text/html\n    \n\nPour tester : cliquer sur le nom de la collection -> `Runs` -> `Run Collection`\n\nIdée générale :\n\n- Tester les todos en mode non connecté -> doit renvoyer des 401\n- Créer les utilisateurs\n- Loguer le premier user et tester les requêtes users et todos -> success\n- Loguer le deuxième user et tester les requêtes users et todos -> certaines doivent marcher et d'autres donner des 403.\n- Remettre \"à zéro\" pour pouvoir relancer un nouveau run\n    \n\nVous pouvez rajouter des tests ou modifier l'ordre / le workflow d'un run à partir de la [doc de Postman](https://learning.postman.com/docs/writing-scripts/test-scripts/).",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "30541291"
 	},
@@ -36,19 +36,24 @@
 											"function generateString(length) {\r",
 											"    return Math.random().toString(36).substr(2, length);\r",
 											"}\r",
-											"pm.collectionVariables.set(\"login1\",generateString(5));\r",
-											"pm.collectionVariables.set(\"login2\",generateString(5));"
+											"console.log(generateString(5));"
 										],
 										"type": "text/javascript"
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"method": "GET",
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "text/html",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -120,26 +125,35 @@
 									}
 								}
 							],
-							"protocolProfileBehavior": {
-								"disabledSystemHeaders": {}
-							},
 							"request": {
 								"method": "POST",
 								"header": [
 									{
 										"key": "Content-Type",
-										"value": "application/x-www-form-urlencoded",
-										"disabled": true
+										"value": "application/x-www-form-urlencoded"
 									}
 								],
 								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"login\": \"{{login1}}\",\r\n    \"password\": \"{{passwd1}}\",\r\n    \"name\": \"{{name1}}\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "login",
+											"value": "{{login1}}"
+										},
+										{
+											"key": "password",
+											"value": "{{passwd1}}"
+										},
+										{
+											"key": "name",
+											"value": "{{name1}}"
+										},
+										{
+											"key": "Origin",
+											"value": "https://editor-next.swagger.io",
+											"type": "text"
 										}
-									}
+									]
 								},
 								"url": {
 									"raw": "{{baseUrl}}/users",
@@ -310,12 +324,18 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"method": "GET",
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "text/html",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -391,15 +411,25 @@
 									]
 								},
 								"method": "PUT",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"password\": \"{{passwd1}}\",\r\n    \"name\": \"{{name1}}\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/x-www-form-urlencoded"
 									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "name",
+											"value": "{{newName1}}",
+											"description": "(Required) "
+										},
+										{
+											"key": "password",
+											"value": "{{newPassword1}}"
+										}
+									]
 								},
 								"url": {
 									"raw": "{{baseUrl}}/users/:userId",
@@ -773,6 +803,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -788,7 +823,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "text/html",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -996,6 +1032,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -1011,7 +1052,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "text/html",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -1027,7 +1069,7 @@
 									"variable": [
 										{
 											"key": "userId",
-											"value": "<string>",
+											"value": "{{login1}}",
 											"description": "(Required) Login de l'utilisateur"
 										}
 									]
@@ -1182,6 +1224,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -1197,7 +1244,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "text/html",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -1368,6 +1416,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -1380,7 +1433,13 @@
 									]
 								},
 								"method": "GET",
-								"header": [],
+								"header": [
+									{
+										"key": "Accept",
+										"value": "text/html",
+										"type": "text"
+									}
+								],
 								"url": {
 									"raw": "{{baseUrl}}/users/:userId/assignedTodos/1/test",
 									"host": [
@@ -1609,15 +1668,28 @@
 							],
 							"request": {
 								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"login\": \"{{login2}}\",\r\n    \"password\": \"{{passwd2}}\",\r\n    \"name\": \"{{name2}}\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/x-www-form-urlencoded"
 									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "login",
+											"value": "{{login2}}"
+										},
+										{
+											"key": "password",
+											"value": "{{passwd2}}"
+										},
+										{
+											"key": "name",
+											"value": "{{name2}}"
+										}
+									]
 								},
 								"url": {
 									"raw": "{{baseUrl}}/users",
@@ -1790,12 +1862,18 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"method": "GET",
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "text/html",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -1859,6 +1937,12 @@
 											"pm.test(\"Status code is 204\", function () {\r",
 											"    pm.response.to.have.status(204);\r",
 											"});\r",
+											"pm.test(\"Authorization is present\", function () {\r",
+											"    pm.response.to.have.header(\"Authorization\");\r",
+											"    var authHeader = pm.response.headers.get(\"Authorization\");\r",
+											"    pm.collectionVariables.set(\"bearerToken\", authHeader.startsWith(\"Bearer \") ? authHeader.substring(7) : authHeader);\r",
+											"});\r",
+											"\r",
 											"postman.setNextRequest(\"Récupérer la collection de todos - U1\");"
 										],
 										"type": "text/javascript"
@@ -1867,15 +1951,30 @@
 							],
 							"request": {
 								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\"login\":\"{{login1}}\",\"password\":\"{{passwd1}}\"}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/x-www-form-urlencoded"
 									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "login",
+											"value": "{{login1}}"
+										},
+										{
+											"key": "password",
+											"value": "{{passwd1}}"
+										},
+										{
+											"key": "Origin",
+											"value": "https://editor-next.swagger.io",
+											"type": "text",
+											"disabled": true
+										}
+									]
 								},
 								"url": {
 									"raw": "{{baseUrl}}/users/login",
@@ -2088,15 +2187,21 @@
 									]
 								},
 								"method": "PUT",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"name\": \"{{newName1}}\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/x-www-form-urlencoded"
 									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "name",
+											"value": "{{newName1}}",
+											"description": "(Required) "
+										}
+									]
 								},
 								"url": {
 									"raw": "{{baseUrl}}/users/:userId",
@@ -2478,6 +2583,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -2493,7 +2603,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "text/html",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -2704,6 +2815,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -2719,7 +2835,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "text/html",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -2894,6 +3011,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -2909,7 +3031,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "text/html",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -3080,6 +3203,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -3092,7 +3220,13 @@
 									]
 								},
 								"method": "GET",
-								"header": [],
+								"header": [
+									{
+										"key": "Accept",
+										"value": "text/html",
+										"type": "text"
+									}
+								],
 								"url": {
 									"raw": "{{baseUrl}}/users/:userId/assignedTodos/:todoId/title",
 									"host": [
@@ -3326,15 +3460,20 @@
 									]
 								},
 								"method": "PUT",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"password\": \"{{newPasswd1}}\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/x-www-form-urlencoded"
 									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "password",
+											"value": "{{newPassword1}}"
+										}
+									]
 								},
 								"url": {
 									"raw": "{{baseUrl}}/users/:userId",
@@ -3779,6 +3918,11 @@
 										"exec": [
 											"pm.test(\"Status code is 204\", function () {\r",
 											"    pm.response.to.have.status(204);\r",
+											"});\r",
+											"pm.test(\"Authorization is present\", function () {\r",
+											"    pm.response.to.have.header(\"Authorization\");\r",
+											"    var authHeader = pm.response.headers.get(\"Authorization\");\r",
+											"    pm.collectionVariables.set(\"bearerToken\", authHeader.startsWith(\"Bearer \") ? authHeader.substring(7) : authHeader);\r",
 											"});"
 										],
 										"type": "text/javascript"
@@ -3787,15 +3931,30 @@
 							],
 							"request": {
 								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\"login\":\"{{login1}}\",\"password\":\"{{newPasswd1}}\"}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/x-www-form-urlencoded"
 									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "login",
+											"value": "{{login1}}"
+										},
+										{
+											"key": "password",
+											"value": "{{newPassword1}}"
+										},
+										{
+											"key": "Origin",
+											"value": "https://editor-next.swagger.io",
+											"type": "text",
+											"disabled": true
+										}
+									]
 								},
 								"url": {
 									"raw": "{{baseUrl}}/users/login",
@@ -3988,6 +4147,9 @@
 									"listen": "test",
 									"script": {
 										"exec": [
+											"pm.test(\"Status code is 204\", function () {\r",
+											"    pm.response.to.have.status(204);\r",
+											"});\r",
 											"postman.setNextRequest(\"Connecter l'utilisateur #2 (opération métier) - NC\");"
 										],
 										"type": "text/javascript"
@@ -4071,6 +4233,12 @@
 											"pm.test(\"Status code is 204\", function () {\r",
 											"    pm.response.to.have.status(204);\r",
 											"});\r",
+											"pm.test(\"Authorization is present\", function () {\r",
+											"    pm.response.to.have.header(\"Authorization\");\r",
+											"    var authHeader = pm.response.headers.get(\"Authorization\");\r",
+											"    pm.collectionVariables.set(\"bearerToken\", authHeader.startsWith(\"Bearer \") ? authHeader.substring(7) : authHeader);\r",
+											"});\r",
+											"\r",
 											"postman.setNextRequest(\"Récupérer l'utilisateur auquel le premier todo est assigné - U2\");"
 										],
 										"type": "text/javascript"
@@ -4079,15 +4247,29 @@
 							],
 							"request": {
 								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\"login\":\"{{login2}}\",\"password\":\"{{passwd2}}\"}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/x-www-form-urlencoded"
 									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "login",
+											"value": "{{login2}}"
+										},
+										{
+											"key": "password",
+											"value": "{{passwd2}}"
+										},
+										{
+											"key": "Origin",
+											"value": "https://editor-next.swagger.io",
+											"type": "text"
+										}
+									]
 								},
 								"url": {
 									"raw": "{{baseUrl}}/users/login",
@@ -4300,15 +4482,25 @@
 									]
 								},
 								"method": "PUT",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"password\": \"{{newPasswd1}}\",\r\n    \"name\": \"{{newName1}}\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/x-www-form-urlencoded"
 									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "name",
+											"value": "{{newNewName1}}",
+											"description": "(Required) "
+										},
+										{
+											"key": "password",
+											"value": "{{newPassword1}}"
+										}
+									]
 								},
 								"url": {
 									"raw": "{{baseUrl}}/users/:userId",
@@ -4690,6 +4882,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -4705,7 +4902,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "text/html",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -4917,6 +5115,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -4932,7 +5135,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "text/html",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -5103,6 +5307,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -5118,7 +5327,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "text/html",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -5289,6 +5499,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -5301,7 +5516,13 @@
 									]
 								},
 								"method": "GET",
-								"header": [],
+								"header": [
+									{
+										"key": "Accept",
+										"value": "text/html",
+										"type": "text"
+									}
+								],
 								"url": {
 									"raw": "{{baseUrl}}/users/:userId/assignedTodos/test",
 									"host": [
@@ -5870,12 +6091,18 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"method": "GET",
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "text/html",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -6027,6 +6254,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -6041,8 +6273,9 @@
 								"method": "GET",
 								"header": [
 									{
-										"key": "Accept",
-										"value": "application/json"
+										"key": "a",
+										"value": "text/html",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -6156,15 +6389,24 @@
 									]
 								},
 								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\"title\": \"{{todoU1Title}}\",\"creator\": \"{{login1}}\"}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/x-www-form-urlencoded"
 									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "title",
+											"value": "<string>"
+										},
+										{
+											"key": "creator",
+											"value": "<string>"
+										}
+									]
 								},
 								"url": {
 									"raw": "{{baseUrl}}/todos",
@@ -6338,6 +6580,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -6352,8 +6599,9 @@
 								"method": "GET",
 								"header": [
 									{
-										"key": "Accept",
-										"value": "application/json"
+										"key": "Accept-Charset",
+										"value": "text/html",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -6368,7 +6616,7 @@
 									"variable": [
 										{
 											"key": "todoId",
-											"value": "<integer>",
+											"value": "{{todoU1Id}}",
 											"description": "(Required) Id du todo"
 										}
 									]
@@ -6602,6 +6850,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -6617,7 +6870,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "text/html",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -6633,7 +6887,7 @@
 									"variable": [
 										{
 											"key": "todoId",
-											"value": "<integer>",
+											"value": "{{todoU1Id}}",
 											"description": "(Required) Id du todo"
 										}
 									]
@@ -6830,6 +7084,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -6845,7 +7104,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "text/html",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -6861,7 +7121,7 @@
 									"variable": [
 										{
 											"key": "todoId",
-											"value": "<integer>",
+											"value": "{{todoU1Id}}",
 											"description": "(Required) Id du todo"
 										}
 									]
@@ -7100,6 +7360,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -7112,7 +7377,13 @@
 									]
 								},
 								"method": "GET",
-								"header": [],
+								"header": [
+									{
+										"key": "Accept",
+										"value": "text/html",
+										"type": "text"
+									}
+								],
 								"url": {
 									"raw": "{{baseUrl}}/todos/:todoId/assignee/name",
 									"host": [
@@ -7127,7 +7398,7 @@
 									"variable": [
 										{
 											"key": "todoId",
-											"value": "<integer>",
+											"value": "{{todoU1Id}}",
 											"description": "(Required) Id du todo"
 										}
 									]
@@ -7384,15 +7655,24 @@
 									]
 								},
 								"method": "PUT",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\"title\": \"{{todoU1NewTitle}}\",\"assignee\": \"{{login1}}\"}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/x-www-form-urlencoded"
 									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "title",
+											"value": "<string>"
+										},
+										{
+											"key": "assignee",
+											"value": "<string>"
+										}
+									]
 								},
 								"url": {
 									"raw": "{{baseUrl}}/todos/:todoId",
@@ -7661,30 +7941,23 @@
 								"method": "POST",
 								"header": [],
 								"body": {
-									"mode": "raw",
-									"raw": "{\"hash\":\"{{todoU1Id}}\"}",
-									"options": {
-										"raw": {
-											"language": "json"
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "hash",
+											"value": "{{todoU1Id}}",
+											"type": "text"
 										}
-									}
+									]
 								},
 								"url": {
-									"raw": "{{baseUrl}}/todos/:todoId/toggleStatus",
+									"raw": "{{baseUrl}}/todos/toggleStatus",
 									"host": [
 										"{{baseUrl}}"
 									],
 									"path": [
 										"todos",
-										":todoId",
 										"toggleStatus"
-									],
-									"variable": [
-										{
-											"key": "todoId",
-											"value": "{{todoU1Id}}",
-											"description": "(Required) Id du todo"
-										}
 									]
 								},
 								"description": "Passe le statut d'un todo de 'Not done' à 'Done' ou inversement. Seul l'utilisateur à qui est assigné le todo peut invoquer cette opération."
@@ -8137,6 +8410,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -8152,7 +8430,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "text/html",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -8277,15 +8556,24 @@
 									]
 								},
 								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\"title\": \"{{todoU1Title}}\",\"creator\": \"{{login1}}\"}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/x-www-form-urlencoded"
 									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "title",
+											"value": "{{todoU1Title}}"
+										},
+										{
+											"key": "creator",
+											"value": "{{login1}}"
+										}
+									]
 								},
 								"url": {
 									"raw": "{{baseUrl}}/todos",
@@ -8463,6 +8751,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -8478,7 +8771,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "text/html",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -8590,6 +8884,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -8605,7 +8904,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "text/html",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -8865,15 +9165,20 @@
 									]
 								},
 								"method": "PUT",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\"title\": \"{{todoU1NewTitle}}\"}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/x-www-form-urlencoded"
 									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "title",
+											"value": "{{todoU1NewTitle}}"
+										}
+									]
 								},
 								"url": {
 									"raw": "{{baseUrl}}/todos/:todoId",
@@ -9138,6 +9443,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -9153,7 +9463,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "text/html",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -9406,6 +9717,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -9421,7 +9737,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "text/html",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -9628,6 +9945,11 @@
 										"exec": [
 											"pm.test(\"Status code is 204\", function () {\r",
 											"    pm.response.to.have.status(204);\r",
+											"});\r",
+											"pm.test(\"Authorization is present\", function () {\r",
+											"    pm.response.to.have.header(\"Authorization\");\r",
+											"    var authHeader = pm.response.headers.get(\"Authorization\");\r",
+											"    pm.collectionVariables.set(\"bearerToken\", authHeader.startsWith(\"Bearer \") ? authHeader.substring(7) : authHeader);\r",
 											"});"
 										],
 										"type": "text/javascript"
@@ -9646,15 +9968,20 @@
 									]
 								},
 								"method": "PUT",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\"assignee\": \"{{login1}}\"}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/x-www-form-urlencoded"
 									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "assignee",
+											"value": "{{login1}}"
+										}
+									]
 								},
 								"url": {
 									"raw": "{{baseUrl}}/todos/:todoId",
@@ -9922,6 +10249,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -9937,7 +10269,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "text/html",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -10190,6 +10523,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -10205,7 +10543,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "text/html",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -10460,6 +10799,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -10472,7 +10816,13 @@
 									]
 								},
 								"method": "GET",
-								"header": [],
+								"header": [
+									{
+										"key": "Accept",
+										"value": "text/html",
+										"type": "text"
+									}
+								],
 								"url": {
 									"raw": "{{baseUrl}}/todos/:todoId/assignee/name",
 									"host": [
@@ -10746,13 +11096,14 @@
 								"method": "POST",
 								"header": [],
 								"body": {
-									"mode": "raw",
-									"raw": "{\"hash\":\"{{todoU1Id}}\"}",
-									"options": {
-										"raw": {
-											"language": "json"
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "hash",
+											"value": "{{todoU1Id}}",
+											"type": "text"
 										}
-									}
+									]
 								},
 								"url": {
 									"raw": "{{baseUrl}}/todos/toggleStatus",
@@ -11007,6 +11358,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -11022,7 +11378,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "text/html",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -11275,6 +11632,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -11290,7 +11652,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "text/html",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -11517,13 +11880,14 @@
 								"method": "POST",
 								"header": [],
 								"body": {
-									"mode": "raw",
-									"raw": "{\"hash\":\"{{todoU1Id}}\"}",
-									"options": {
-										"raw": {
-											"language": "json"
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "hash",
+											"value": "{{todoU1Id}}",
+											"type": "text"
 										}
-									}
+									]
 								},
 								"url": {
 									"raw": "{{baseUrl}}/todos/toggleStatus",
@@ -11778,6 +12142,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -11793,7 +12162,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "text/html",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -12048,6 +12418,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -12063,7 +12438,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "text/html",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -12281,6 +12657,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -12296,7 +12677,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "text/html",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -12566,13 +12948,14 @@
 								"method": "POST",
 								"header": [],
 								"body": {
-									"mode": "raw",
-									"raw": "{\"hash\":\"{{todoU1Id}}\"}",
-									"options": {
-										"raw": {
-											"language": "json"
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "hash",
+											"value": "{{todoU1Id}}",
+											"type": "text"
 										}
-									}
+									]
 								},
 								"url": {
 									"raw": "{{baseUrl}}/todos/toggleStatus",
@@ -12817,6 +13200,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -12832,7 +13220,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "text/html",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -13084,6 +13473,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -13099,7 +13493,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "text/html",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -13306,6 +13701,11 @@
 										"exec": [
 											"pm.test(\"Status code is 204\", function () {\r",
 											"    pm.response.to.have.status(204);\r",
+											"});\r",
+											"pm.test(\"Authorization is present\", function () {\r",
+											"    pm.response.to.have.header(\"Authorization\");\r",
+											"    var authHeader = pm.response.headers.get(\"Authorization\");\r",
+											"    pm.collectionVariables.set(\"bearerToken\", authHeader.startsWith(\"Bearer \") ? authHeader.substring(7) : authHeader);\r",
 											"});"
 										],
 										"type": "text/javascript"
@@ -13324,15 +13724,20 @@
 									]
 								},
 								"method": "PUT",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\"assignee\": \"{{login2}}\"}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/x-www-form-urlencoded"
 									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "assignee",
+											"value": "{{login2}}"
+										}
+									]
 								},
 								"url": {
 									"raw": "{{baseUrl}}/todos/:todoId",
@@ -13591,6 +13996,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -13606,7 +14016,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "text/html",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -13859,6 +14270,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -13874,7 +14290,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "text/html",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -14152,15 +14569,24 @@
 									]
 								},
 								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\"title\": \"{{todo2Title}}\",\"creator\": \"{{login2}}\"}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/x-www-form-urlencoded"
 									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "title",
+											"value": "{{todo2Title}}"
+										},
+										{
+											"key": "creator",
+											"value": "{{login2}}"
+										}
+									]
 								},
 								"url": {
 									"raw": "{{baseUrl}}/todos",
@@ -14341,6 +14767,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -14356,7 +14787,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "text/html",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -14452,6 +14884,11 @@
 										"exec": [
 											"pm.test(\"Status code is 204\", function () {\r",
 											"    pm.response.to.have.status(204);\r",
+											"});\r",
+											"pm.test(\"Authorization is present\", function () {\r",
+											"    pm.response.to.have.header(\"Authorization\");\r",
+											"    var authHeader = pm.response.headers.get(\"Authorization\");\r",
+											"    pm.collectionVariables.set(\"bearerToken\", authHeader.startsWith(\"Bearer \") ? authHeader.substring(7) : authHeader);\r",
 											"});"
 										],
 										"type": "text/javascript"
@@ -14470,15 +14907,24 @@
 									]
 								},
 								"method": "PUT",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\"title\": \"{{todo2NewTitle}}\",\"assignee\": \"{{login2}}\"}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/x-www-form-urlencoded"
 									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "title",
+											"value": "{{todo2NewTitle}}"
+										},
+										{
+											"key": "assignee",
+											"value": "{{login2}}"
+										}
+									]
 								},
 								"url": {
 									"raw": "{{baseUrl}}/todos/:todoId",
@@ -14740,6 +15186,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -14755,7 +15206,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "text/html",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -15008,6 +15460,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -15023,7 +15480,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "text/html",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -15282,6 +15740,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -15297,7 +15760,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "text/html",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -15945,6 +16409,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -15960,7 +16429,8 @@
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json"
+										"value": "text/html",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -16052,6 +16522,16 @@
 			]
 		}
 	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{bearerToken}}",
+				"type": "string"
+			}
+		]
+	},
 	"event": [
 		{
 			"listen": "prerequest",
@@ -16089,7 +16569,7 @@
 			"type": "string"
 		},
 		{
-			"key": "newPasswd1",
+			"key": "newPassword1",
 			"value": "5678"
 		},
 		{
@@ -16156,6 +16636,10 @@
 		{
 			"key": "newNewName1",
 			"value": "Totototo"
+		},
+		{
+			"key": "bearerToken",
+			"value": ""
 		}
 	]
 }

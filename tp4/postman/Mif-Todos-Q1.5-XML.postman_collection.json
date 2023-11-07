@@ -36,7 +36,8 @@
 											"function generateString(length) {\r",
 											"    return Math.random().toString(36).substr(2, length);\r",
 											"}\r",
-											"console.log(generateString(5));"
+											"pm.collectionVariables.set(\"login1\",generateString(5));\r",
+											"pm.collectionVariables.set(\"login2\",generateString(5));"
 										],
 										"type": "text/javascript"
 									}
