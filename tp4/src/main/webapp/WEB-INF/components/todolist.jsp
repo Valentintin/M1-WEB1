@@ -11,8 +11,8 @@
 <body>
 <title>Todo</title>
 <ul>
-    <c:forEach items="${requestScope.todos}" var="todo">
-        <li>${todo.title} : état ${todo.completed}</li>
+    <c:forEach items="${requestScope.model}" var="todo">
+        <li>${todo}</li>
     </c:forEach>
 </ul>
 </body>

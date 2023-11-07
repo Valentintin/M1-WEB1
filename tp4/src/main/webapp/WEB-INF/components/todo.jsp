@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="<%= request.getContextPath() %>/css/style.css">
     <meta http-equiv="refresh" content="5">
 </head>
-<c:set var="todo" value="${requestScope.todoDto}" scope="request"/>
+<c:set var="todo" value="${requestScope.model}" scope="request"/>
 
 <body>
     <title>Todo</title>

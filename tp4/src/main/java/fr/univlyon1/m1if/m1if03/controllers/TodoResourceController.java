@@ -21,6 +21,7 @@ import javax.naming.InvalidNameException;
 import javax.naming.NameAlreadyBoundException;
 import javax.naming.NameNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.IllegalFormatException;
 
@@ -48,8 +49,8 @@ public class TodoResourceController extends HttpServlet {
             String title = request.getParameter("title");
             String creator = request.getParameter("creator");
             try {
-                todoResource.create(title, creator);
-                response.setHeader("Location", "todos/" + title.hashCode());
+                int todoHash = todoResource.create(title, creator);
+                response.setHeader("Location", "todos/" + todoHash);
                 response.setStatus(HttpServletResponse.SC_CREATED);
             } catch (IllegalArgumentException | ForbiddenLoginException ex) {//erreur 400
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, ex.getMessage());
@@ -82,16 +83,10 @@ public class TodoResourceController extends HttpServlet {
         response.setHeader("X-test", "doGet");
         String[] url = UrlUtils.getUrlParts(request);
         if (url.length == 1) { // Renvoie la liste de tous les todos
-            // TEST RECUP ID MARCHE PAS
-            Collection<Todo> todos = todoResource.readAll();
-            for (Todo todo : todos) {
-                TodoResponseDto todoDto = todoMapper.toDto(todo);
-                System.out.println(todoDto.getHash());
-            }
-            //
-            request.setAttribute("todos", todoResource.readAll());
+
+            request.setAttribute("model", todoResource.readAll());
             // Transfère la gestion de l'interface à une JSP
-            request.getRequestDispatcher("/WEB-INF/components/todolist.jsp").include(request, response);
+            request.setAttribute("view", "todolist");
             return;
         }
         try {
@@ -99,18 +94,22 @@ public class TodoResourceController extends HttpServlet {
             TodoResponseDto todoDto = todoMapper.toDto(todo);
             switch (url.length) {
                 case 2 -> { // Renvoie un DTO de Todo (avec toutes les infos le concernant pour pouvoir le templater dans la vue)
-                    request.setAttribute("todoDto", todoDto);
-                    request.getRequestDispatcher("/WEB-INF/components/todo.jsp").include(request, response);
+                    request.setAttribute("model", todoDto);
+                    request.setAttribute("view", "todo");
                 }
                 case 3 -> { // Renvoie le nom d'un todo
                     switch (url[2]) {
                         case "title" -> {
-                            request.setAttribute("todoDto", new TodoResponseDto(todoDto.getTitle(), todoDto.getHash(), null));
-                            request.getRequestDispatcher("/WEB-INF/components/todoProperty.jsp").include(request, response);
+                            request.setAttribute("model", new TodoResponseDto(todoDto.getTitle(), todoDto.getHash(), null, todoDto.getCompleted(), todoDto.getImage()));
+                            request.setAttribute("view", "todoProperty");
                         }
                         case "assignee" -> {
-                            request.setAttribute("todoDto", new TodoResponseDto(null, todoDto.getHash(), todoDto.getAssignee()));
-                            request.getRequestDispatcher("/WEB-INF/components/todoProperty.jsp").include(request, response);
+                            request.setAttribute("model", new TodoResponseDto(null, todoDto.getHash(), todoDto.getAssignee(), todoDto.getCompleted(), todoDto.getImage()));
+                            request.setAttribute("view", "todoProperty");
+                        }
+                        case "status" -> {
+                            request.setAttribute("model", new TodoResponseDto(null, todoDto.getHash(), null, todoDto.getCompleted(), todoDto.getImage()));
+                            request.setAttribute("view", "todoProperty");
                         }
                         default -> response.sendError(HttpServletResponse.SC_BAD_REQUEST);
                     }
@@ -207,7 +206,7 @@ public class TodoResourceController extends HttpServlet {
             this.todoDao = todoDao;
         }
 
-        public void create(@NotNull String title, @NotNull String creator)
+        public Integer create(@NotNull String title, @NotNull String creator)
                 throws IllegalArgumentException, NameAlreadyBoundException, ForbiddenLoginException {
             if (title == null || title.isEmpty()) {
                 throw new IllegalArgumentException("Le title ne doit pas être null ou vide.");
@@ -219,12 +218,20 @@ public class TodoResourceController extends HttpServlet {
 //            if (login.equals("login") || login.equals("logout")) {
 //                throw new ForbiddenLoginException();
 //            }
-            todoDao.add(new Todo(title,creator));
+            Todo todo = new Todo(title, creator);
+            todoDao.add(todo);
+            return todo.hashCode();
         }
 
         public void modifStatut(@NotNull Integer hash)
                 throws IllegalArgumentException, NameAlreadyBoundException, ForbiddenLoginException, InvalidNameException, NameNotFoundException {
             Todo todo = todoDao.findByHash(hash);
+            if(todo.isCompleted()){
+                todo.setImage("&#x2610;");
+            }
+            else {
+                todo.setImage("&#x2611;");
+            }
             todo.setCompleted(!todo.isCompleted());
         }
         /**
@@ -232,8 +239,13 @@ public class TodoResourceController extends HttpServlet {
          *
          * @return la collection de todo
          */
-        public Collection<Todo> readAll() {
-            return todoDao.findAll();
+        public Collection<Integer> readAll() {
+            Collection<Integer> listhash = new ArrayList<>();
+            for (Todo todo : todoDao.findAll()) {
+                TodoResponseDto todoDto = todoMapper.toDto(todo);
+                listhash.add(todoDto.getHash());
+            }
+            return listhash;
         }
 
 

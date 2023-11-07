@@ -7,7 +7,7 @@
 --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
-<c:set var="todo" value="${requestScope.todoDto}" scope="request"/>
+<c:set var="todo" value="${requestScope.model}" scope="request"/>
 <html>
 <head>
     <title>Todo property</title>

@@ -15,6 +15,8 @@ public class Todo {
     private String assignee = null;
     private boolean completed = false;
 
+    private String image = "&#x2610;";
+
     /**
      * Création d'un TODO_.
      * @param title Texte indiqué dans le TODO_
@@ -51,6 +53,11 @@ public class Todo {
         return assignee;
     }
 
+    public String getImage() {
+        return image;
+    }
+
+
     /**
      * Assigne un utilisateur à la réalisation du TODO_.
      * @param assignee Login de l'utilisateur à assigner
@@ -58,6 +65,8 @@ public class Todo {
     public void setAssignee(String assignee) {
         this.assignee = assignee;
     }
+
+    public void setImage(String image) { this.image = image;}
 
     public boolean isCompleted() {
         return completed;

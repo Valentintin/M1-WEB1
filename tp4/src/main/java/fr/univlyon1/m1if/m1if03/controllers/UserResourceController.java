@@ -59,7 +59,7 @@ public class UserResourceController extends HttpServlet {
      * @throws IOException Voir doc...
      */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws   IOException {
         String[] url = UrlUtils.getUrlParts(request);
 
         if (url.length == 1) {// Création d'un utilisateur

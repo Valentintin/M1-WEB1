@@ -30,7 +30,7 @@ public class TodoDtoMapper {
      * @return Un <code>TodoResponseDto</code> avec tous les champs positionnés
      */
     public TodoResponseDto toDto(Todo todo) {
-        return new TodoResponseDto(todo.getTitle(), todo.hashCode(), todo.getAssignee(), todo.isCompleted());
+        return new TodoResponseDto(todo.getTitle(), todo.hashCode(), todo.getAssignee(), todo.isCompleted(), todo.getImage());
     }
 
     /**
