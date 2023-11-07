@@ -1,6 +1,7 @@
 package fr.univlyon1.m1if.m1if03.controllers;
 
 import fr.univlyon1.m1if.m1if03.dao.UserDao;
+import fr.univlyon1.m1if.m1if03.dto.user.UserRequestDto;
 import fr.univlyon1.m1if.m1if03.model.User;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
@@ -47,12 +48,10 @@ public class UserBusinessController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (request.getRequestURI().endsWith("login")) {
-            // TODO Parsing des paramètres "old school". Sera amélioré par la suite.
-            String login = request.getParameter("login");
-            String password = request.getParameter("password");
-            if (login != null && !login.isEmpty()) {
+            UserRequestDto requestDto = (UserRequestDto) request.getAttribute("dto");
+            if (requestDto.getLogin() != null && !requestDto.getLogin().isEmpty()) {
                 try {
-                    if (userBusiness.userLogin(login, password, request)) {
+                    if (userBusiness.userLogin(requestDto.getLogin(), requestDto.getPassword(), request)) {
                         response.setStatus(HttpServletResponse.SC_NO_CONTENT);
                     } else {
                         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Les login et mot de passe ne correspondent pas.");
@@ -60,7 +59,7 @@ public class UserBusinessController extends HttpServlet {
                 } catch (IllegalArgumentException ex) {
                     response.sendError(HttpServletResponse.SC_BAD_REQUEST, ex.getMessage());
                 } catch (NameNotFoundException e) {
-                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "L'utilisateur " + login + " n'existe pas.");
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "L'utilisateur " + requestDto.getLogin() + " n'existe pas.");
                 } catch (InvalidNameException ignored) {
                     // Ne doit pas arriver car les logins des utilisateurs sont des Strings
                 }

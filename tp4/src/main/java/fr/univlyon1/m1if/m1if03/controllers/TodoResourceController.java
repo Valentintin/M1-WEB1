@@ -4,6 +4,7 @@ import fr.univlyon1.m1if.m1if03.dao.TodoDao;
 import fr.univlyon1.m1if.m1if03.dto.todo.TodoDtoMapper;
 import fr.univlyon1.m1if.m1if03.dto.todo.TodoRequestDto;
 import fr.univlyon1.m1if.m1if03.dto.todo.TodoResponseDto;
+import fr.univlyon1.m1if.m1if03.dto.user.UserRequestDto;
 import fr.univlyon1.m1if.m1if03.exceptions.ForbiddenLoginException;
 import fr.univlyon1.m1if.m1if03.model.Todo;
 import fr.univlyon1.m1if.m1if03.model.User;
@@ -42,24 +43,22 @@ public class TodoResourceController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setHeader("X-test", "doPost");
         String[] url = UrlUtils.getUrlParts(request);
-
+        TodoRequestDto requestDto = (TodoRequestDto) request.getAttribute("dto");
         if (url.length == 1) {// Création d'un todo
             // TODO Parsing des paramètres "old school" ; sera amélioré dans la partie négociation de contenus...
             //jpeut être mettre le hash code du todo à la place du titre pour le setHeader
-            String title = request.getParameter("title");
-            String creator = request.getParameter("creator");
             try {
-                int todoHash = todoResource.create(title, creator);
+                int todoHash = todoResource.create(requestDto.getTitle(), requestDto.getCreator());
                 response.setHeader("Location", "todos/" + todoHash);
                 response.setStatus(HttpServletResponse.SC_CREATED);
             } catch (IllegalArgumentException | ForbiddenLoginException ex) {//erreur 400
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, ex.getMessage());
             } catch (NameAlreadyBoundException e) {
-                response.sendError(HttpServletResponse.SC_CONFLICT, "Le todo " + title + " n'est plus disponible.");
+                response.sendError(HttpServletResponse.SC_CONFLICT, "Le todo " + requestDto.getTitle() + " n'est plus disponible.");
             }
         } else if (url.length == 2) { // TOGGLE STATUS
             if (url[1].equals("toggleStatus")) {
-                Integer id = Integer.parseInt(request.getParameter("hash"));
+                Integer id = requestDto.getHash();
                 try {
                     todoResource.modifStatut(id);
                     response.setStatus(HttpServletResponse.SC_NO_CONTENT);
@@ -151,12 +150,11 @@ public class TodoResourceController extends HttpServlet {
         String[] url = UrlUtils.getUrlParts(request);
         Integer id = Integer.parseInt(url[1]);
         // TODO Parsing des paramètres "old school" ; sera amélioré dans la partie négociation de contenus...
-        String newtitle = request.getParameter("title");
-        String assignee = request.getParameter("assignee");
+        TodoRequestDto requestDto = (TodoRequestDto) request.getAttribute("dto");
 
         if (url.length == 2) {
             try {
-                todoResource.update(id, newtitle, assignee);
+                todoResource.update(id, requestDto.getTitle(), requestDto.getAssignee());
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             } catch (IllegalArgumentException ex) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, ex.getMessage());
