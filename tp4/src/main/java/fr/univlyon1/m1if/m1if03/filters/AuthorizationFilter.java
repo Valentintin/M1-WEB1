@@ -1,6 +1,7 @@
 package fr.univlyon1.m1if.m1if03.filters;
 
 import fr.univlyon1.m1if.m1if03.dao.TodoDao;
+import fr.univlyon1.m1if.m1if03.dto.todo.TodoRequestDto;
 import fr.univlyon1.m1if.m1if03.model.Todo;
 import fr.univlyon1.m1if.m1if03.model.User;
 import fr.univlyon1.m1if.m1if03.utils.UrlUtils;
@@ -87,9 +88,11 @@ public class AuthorizationFilter extends HttpFilter {
                 case "todos" -> {
                     try {
                         // Dans le cas du POST -> toggleStatus, le hash est dans le corps de la requête.
-                        // TODO Parsing des paramètres "old school". Sera amélioré par la suite.
-                        String todoHash = (url[1] != null && url[1].equals("toggleStatus")) ? request.getParameter("hash") : url[1];
-                        Todo todo = todoDao.findByHash(Integer.parseInt(todoHash));
+                        TodoRequestDto requestDto = (TodoRequestDto) request.getAttribute("dto");
+                        if (requestDto == null ) {
+                            requestDto = new TodoRequestDto(null, Integer.parseInt(url[1]), null, null);
+                        }
+                        Todo todo = todoDao.findByHash(requestDto.getHash());
                         if (todo.getAssignee() != null && todo.getAssignee().equals(((User) (request.getSession(false).getAttribute("user"))).getLogin())) {
                             chain.doFilter(request, response);
                         } else {

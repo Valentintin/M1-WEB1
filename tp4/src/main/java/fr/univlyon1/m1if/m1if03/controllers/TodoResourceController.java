@@ -43,10 +43,10 @@ public class TodoResourceController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setHeader("X-test", "doPost");
         String[] url = UrlUtils.getUrlParts(request);
+
         TodoRequestDto requestDto = (TodoRequestDto) request.getAttribute("dto");
+
         if (url.length == 1) {// Création d'un todo
-            // TODO Parsing des paramètres "old school" ; sera amélioré dans la partie négociation de contenus...
-            //jpeut être mettre le hash code du todo à la place du titre pour le setHeader
             try {
                 int todoHash = todoResource.create(requestDto.getTitle(), requestDto.getCreator());
                 response.setHeader("Location", "todos/" + todoHash);
@@ -57,22 +57,18 @@ public class TodoResourceController extends HttpServlet {
                 response.sendError(HttpServletResponse.SC_CONFLICT, "Le todo " + requestDto.getTitle() + " n'est plus disponible.");
             }
         } else if (url.length == 2) { // TOGGLE STATUS
-            if (url[1].equals("toggleStatus")) {
-                Integer id = requestDto.getHash();
-                try {
-                    todoResource.modifStatut(id);
-                    response.setStatus(HttpServletResponse.SC_NO_CONTENT);
-                } catch (IllegalArgumentException | ForbiddenLoginException ex) {
-                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, ex.getMessage());
-                } catch (NameNotFoundException e) {
-                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Le todo " + id + " n'existe pas.");
-                } catch (NameAlreadyBoundException e) {
-                    response.sendError(HttpServletResponse.SC_CONFLICT, "Le todo " + id + " n'est plus disponible.");
-                } catch (InvalidNameException e) {
-                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Le todo " + id + " n'existe pas.");
-                }
-            } else {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            Integer id = requestDto.getHash();
+            try {
+                todoResource.modifStatut(id);
+                response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+            } catch (IllegalArgumentException | ForbiddenLoginException ex) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, ex.getMessage());
+            } catch (NameNotFoundException e) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Le todo " + id + " n'existe pas.");
+            } catch (NameAlreadyBoundException e) {
+                response.sendError(HttpServletResponse.SC_CONFLICT, "Le todo " + id + " n'est plus disponible.");
+            } catch (InvalidNameException e) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Le todo " + id + " n'existe pas.");
             }
         }
     }
@@ -117,9 +113,9 @@ public class TodoResourceController extends HttpServlet {
                     if (url[2].equals("assignee")) {
                         // Construction de la fin de l'URL vers laquelle rediriger
                         String urlEnd = UrlUtils.getUrlEnd(request, 3);
-                        response.sendRedirect("users" + urlEnd);
+                        response.sendRedirect(request.getContextPath() + "users" + urlEnd);
                     } else {
-                        response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+                        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Trop de paramètres dans l'URI.");
                     }
                 }
             }
