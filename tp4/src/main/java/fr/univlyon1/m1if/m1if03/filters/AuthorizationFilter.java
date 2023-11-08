@@ -4,6 +4,7 @@ import fr.univlyon1.m1if.m1if03.dao.TodoDao;
 import fr.univlyon1.m1if.m1if03.dto.todo.TodoRequestDto;
 import fr.univlyon1.m1if.m1if03.model.Todo;
 import fr.univlyon1.m1if.m1if03.model.User;
+import fr.univlyon1.m1if.m1if03.utils.TodosM1if03JwtHelper;
 import fr.univlyon1.m1if.m1if03.utils.UrlUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;
@@ -29,6 +30,7 @@ import java.util.stream.Stream;
 @WebFilter
 public class AuthorizationFilter extends HttpFilter {
 
+    private TodosM1if03JwtHelper JWT;
     // Liste des ressources pour lesquelles renvoyer un 403 si l'utilisateur n'est pas le bon
     private static final String[][] RESOURCES_WITH_AUTHORIZATION = {
             {"PUT", "users", "*"},
@@ -53,24 +55,32 @@ public class AuthorizationFilter extends HttpFilter {
 
     @Override
     public void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
-        // Si l'utilisateur n'est pas authentifié (mais que la requête a passé le filtre d'authentification), c'est que ce filtre est sans objet
-        if(request.getSession(false) == null || request.getSession(false).getAttribute("user") == null) {
+        String token = response.getHeader("Authorization");//(String) request.getAttribute("Bearer token");//response.getHeader("Authorization");
+        if(token == null) {
             chain.doFilter(request, response);
             return;
         }
+        // FAIT au dessus
+        // Si l'utilisateur n'est pas authentifié (mais que la requête a passé le filtre d'authentification), c'est que ce filtre est sans objet
+//        if(request.getSession(false) == null || request.getSession(false).getAttribute("user") == null) {
+//            chain.doFilter(request, response);
+//            return;
+//        }
 
         TodoDao todoDao = (TodoDao) this.getServletContext().getAttribute("todoDao");
         String[] url = UrlUtils.getUrlParts(request);
 
         // S'il faut un attribut pour décider plus tard de l'affichage, par exemple d'une partie de la ressource.
         if (Stream.of(RESOURCES_WITH_LIMITATIONS).anyMatch(pattern -> UrlUtils.matchRequest(request, pattern))) {
+            User user = (User) request.getAttribute("user");
             if (url[0].equals("users")) {
-                request.setAttribute("authorizedUser", url[1].equals(((User) request.getSession(false).getAttribute("user")).getLogin()));
+                request.setAttribute("authorizedUser", url[1].equals(user.getLogin()));
             } else if (url[0].equals("todos")) {
                 try {
                     Todo todo = todoDao.findByHash(Integer.parseInt(url[1]));
                     request.setAttribute("authorizedUser", todo.getAssignee() != null &&
-                            todo.getAssignee().equals(request.getSession(false).getAttribute("user")));
+                            todo.getAssignee().equals(user));
+                    // Note request.getSession(false).getAttribute("user") ça c'était avant
                 } catch(Exception ignored) {} // Les exceptions sont traitées dans le contrôleur.
             }
         }
@@ -79,7 +89,8 @@ public class AuthorizationFilter extends HttpFilter {
         if (Stream.of(RESOURCES_WITH_AUTHORIZATION).anyMatch(pattern -> UrlUtils.matchRequest(request, pattern))) {
             switch (url[0]) {
                 case "users" -> {
-                    if (url[1].equals(((User) request.getSession(false).getAttribute("user")).getLogin())) {
+                    User user = (User)request.getAttribute("user");
+                    if (url[1].equals(user.getLogin())) {
                         chain.doFilter(request, response);
                     } else {
                         response.sendError(HttpServletResponse.SC_FORBIDDEN, "Vous n'avez pas accès aux informations de cet utilisateur.");
@@ -92,8 +103,10 @@ public class AuthorizationFilter extends HttpFilter {
                         if (requestDto == null ) {
                             requestDto = new TodoRequestDto(null, Integer.parseInt(url[1]), null, null);
                         }
+
                         Todo todo = todoDao.findByHash(requestDto.getHash());
-                        if (todo.getAssignee() != null && todo.getAssignee().equals(((User) (request.getSession(false).getAttribute("user"))).getLogin())) {
+                        token = (String) request.getAttribute("Bearer token");;
+                        if (todo.getAssignee() != null && JWT.isAssigned(token, todo.hashCode())) {
                             chain.doFilter(request, response);
                         } else {
                             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Vous n'êtes pas assigné.e à ce todo.");

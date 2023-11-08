@@ -1,5 +1,9 @@
 package fr.univlyon1.m1if.m1if03.filters;
 
+import fr.univlyon1.m1if.m1if03.dao.AbstractListDao;
+import fr.univlyon1.m1if.m1if03.dao.UserDao;
+import fr.univlyon1.m1if.m1if03.model.User;
+import fr.univlyon1.m1if.m1if03.utils.TodosM1if03JwtHelper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebFilter;
@@ -7,7 +11,11 @@ import jakarta.servlet.http.HttpFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import javax.naming.InvalidNameException;
+import javax.naming.NameNotFoundException;
 import java.io.IOException;
+
+import static fr.univlyon1.m1if.m1if03.utils.TodosM1if03JwtHelper.verifyToken;
 
 /**
  * Filtre d'authentification.
@@ -25,7 +33,7 @@ import java.io.IOException;
 public class AuthenticationFilter extends HttpFilter {
     private static final String[] WHITELIST = {"/", "/index.html", "/login.html", "/css/style.css", "/users", "/users/", "/users/login"};
 
-   @Override
+    @Override
     protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         // Permet de retrouver la fin de l'URL (après l'URL du contexte) -> indépendant de l'URL de déploiement
         String url = request.getRequestURI().replace(request.getContextPath(), "");
@@ -39,13 +47,32 @@ public class AuthenticationFilter extends HttpFilter {
         }
 
         // 2) Traite les requêtes qui doivent être authentifiées
-        // Note :
-        //   le paramètre false dans request.getSession(false) permet de récupérer null si la session n'est pas déjà créée.
-        //   Sinon, l'appel de la méthode getSession() la crée automatiquement.
-        if(request.getSession(false) != null && request.getSession(false).getAttribute("user") != null) {
-            chain.doFilter(request, response);
+
+        String token = request.getHeader("Authorization");
+        if(token != null && token.startsWith("Bearer ")) {
+                try {
+                    String login = verifyToken(token.replace("Bearer ", ""), request);
+                    UserDao userDao = (UserDao) request.getServletContext().getAttribute("userDao");
+                    User user = userDao.findOne(login);
+                    request.setAttribute("user", user);
+                    chain.doFilter(request, response);
+                    return;
+                }catch (NullPointerException e) {
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token non valide");
+                }catch (NameNotFoundException e) {
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token non valide");
+                } catch (InvalidNameException e) {
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token non valide");
+                }
             return;
         }
+        // Note : c'est fait au dessus
+        //   le paramètre false dans request.getSession(false) permet de récupérer null si la session n'est pas déjà créée.
+        //   Sinon, l'appel de la méthode getSession() la crée automatiquement.
+//        if(request.getSession(false) != null && request.getSession(false).getAttribute("user") != null) {
+//            chain.doFilter(request, response);
+//            return;
+//        }
 
         // 3) Bloque les autres requêtes
         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Vous devez vous connecter pour accéder au site.");

@@ -2,19 +2,24 @@ package fr.univlyon1.m1if.m1if03.controllers;
 
 import fr.univlyon1.m1if.m1if03.dao.UserDao;
 import fr.univlyon1.m1if.m1if03.dto.user.UserRequestDto;
+import fr.univlyon1.m1if.m1if03.dto.user.UserResponseDto;
 import fr.univlyon1.m1if.m1if03.model.User;
+import fr.univlyon1.m1if.m1if03.dto.user.UserDtoMapper;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.constraints.NotNull;
 
 import javax.naming.InvalidNameException;
 import javax.naming.NameNotFoundException;
 import java.io.IOException;
+
+import fr.univlyon1.m1if.m1if03.utils.TodosM1if03JwtHelper;
+
+import static fr.univlyon1.m1if.m1if03.utils.TodosM1if03JwtHelper.generateToken;
 
 /**
  * Contrôleur d'opérations métier "users".<br>
@@ -30,8 +35,7 @@ public class UserBusinessController extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        UserDao userDao = (UserDao) config.getServletContext().getAttribute("userDao");
-        userBusiness = new UserBusiness(userDao);
+        userBusiness = new UserBusiness(config);
     }
     //</editor-fold>
 
@@ -52,6 +56,7 @@ public class UserBusinessController extends HttpServlet {
             if (requestDto.getLogin() != null && !requestDto.getLogin().isEmpty()) {
                 try {
                     if (userBusiness.userLogin(requestDto.getLogin(), requestDto.getPassword(), request)) {
+                        response.setHeader("Authorization", "Bearer " + request.getAttribute("token"));
                         response.setStatus(HttpServletResponse.SC_NO_CONTENT);
                     } else {
                         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Les login et mot de passe ne correspondent pas.");
@@ -85,13 +90,17 @@ public class UserBusinessController extends HttpServlet {
      */
     private static class UserBusiness {
         private final UserDao userDao;
+        private UserDtoMapper userMapper;
+        private TodosM1if03JwtHelper JWT;
 
         /**
          * Constructeur avec une injection du DAO nécessaire aux opérations.
-         * @param userDao le DAO d'utilisateurs provenant du contexte applicatif
+         * @param config le contexte de la servlet
          */
-        UserBusiness(UserDao userDao) {
-            this.userDao = userDao;
+        UserBusiness(ServletConfig  config) {
+            this.userDao = (UserDao) config.getServletContext().getAttribute("userDao");
+
+            this.userMapper = new UserDtoMapper(config.getServletContext());
         }
 
         /**
@@ -108,8 +117,8 @@ public class UserBusinessController extends HttpServlet {
          * @param request  la requête car il faudra y créer une session uniquement à certaines conditions
          * @return <code>true</code> si les login et password correspondent, <code>false</code> sinon
          * @throws IllegalArgumentException Si le login est null ou vide ou si le password est null
-         * @throws InvalidNameException Ne doit pas arriver car les clés du DAO user sont des strings
-         * @throws NameNotFoundException Si le login ne correspond pas à un utilisateur existant
+         * @throws InvalidNameException     Ne doit pas arriver car les clés du DAO user sont des strings
+         * @throws NameNotFoundException    Si le login ne correspond pas à un utilisateur existant
          */
         public boolean userLogin(@NotNull String login, String password, HttpServletRequest request)
                 throws IllegalArgumentException, InvalidNameException, NameNotFoundException {
@@ -117,11 +126,15 @@ public class UserBusinessController extends HttpServlet {
                 throw new IllegalArgumentException("Le login ne doit pas être null ou vide.");
             }
             User user = userDao.findOne(login);
+            UserResponseDto userDto = userMapper.toDto(user);
             if (user.verifyPassword(password)) {
                 // Gestion de la session utilisateur
-                HttpSession session = request.getSession(true);
-                session.setAttribute("user", user);
-                return true;
+                String token = generateToken(login, userDto.getAssignedTodos(), request);
+                request.setAttribute("token", token);
+                //FAIT au dessus
+//                HttpSession session = request.getSession(true);
+//                session.setAttribute("user", user);
+                 return true;
             } else {
                 return false;
             }
@@ -135,7 +148,7 @@ public class UserBusinessController extends HttpServlet {
          * @param request  la requête qui contient la session à invalider
          */
         public void userLogout(HttpServletRequest request) {
-            request.getSession().invalidate();
+//            request.getSession().invalidate();
         }
         //</editor-fold>
     }

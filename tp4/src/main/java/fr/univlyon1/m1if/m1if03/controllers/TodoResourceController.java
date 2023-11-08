@@ -144,19 +144,21 @@ public class TodoResourceController extends HttpServlet {
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String[] url = UrlUtils.getUrlParts(request);
-        Integer id = Integer.parseInt(url[1]);
-        // TODO Parsing des paramètres "old school" ; sera amélioré dans la partie négociation de contenus...
         TodoRequestDto requestDto = (TodoRequestDto) request.getAttribute("dto");
 
         if (url.length == 2) {
             try {
+                Integer id = Integer.parseInt(url[1]);
                 todoResource.update(id, requestDto.getTitle(), requestDto.getAssignee());
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+            } catch (NumberFormatException e) {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
             } catch (IllegalArgumentException ex) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, ex.getMessage());
             } catch (NameNotFoundException e) {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Le todo " + id + " n'existe pas.");
-            } catch (InvalidNameException ignored) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Le todo id n'existe pas.");
+            }
+            catch (InvalidNameException ignored) {
                 // Ne devrait pas arriver car les paramètres sont déjà des Strings
             }
         } else {

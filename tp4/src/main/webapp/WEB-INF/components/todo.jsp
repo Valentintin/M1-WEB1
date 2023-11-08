@@ -13,7 +13,7 @@
 <body>
     <title>Todo</title>
     <ul>
-        <li>${todo.title}</li>
+        <li>${todo.title}, ${todo.assignee}, ${todo.image}, ${todo.hash}, ${todo.completed}</li>
     </ul>
 </body>
 </html>
