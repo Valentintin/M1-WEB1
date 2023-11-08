@@ -18,6 +18,16 @@
     <c:if test="${todo.assignee != null}">
         <li>Assignee : ${todo.assignee}</li>
     </c:if>
+    <c:if test="${todo.image != null}">
+        <li>Assignee : ${todo.image}</li>
+    </c:if>
+    <c:if test="${todo.hash != null}">
+        <li>Assignee : ${todo.hash}</li>
+    </c:if>
+    <c:if test="${todo.completed != null}">
+        <li>Assignee : ${todo.completed}</li>
+    </c:if>
+
 </head>
 <body>
 

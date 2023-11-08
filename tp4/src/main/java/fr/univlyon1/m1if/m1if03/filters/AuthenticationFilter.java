@@ -52,6 +52,7 @@ public class AuthenticationFilter extends HttpFilter {
         if(token != null && token.startsWith("Bearer ")) {
                 try {
                     String login = verifyToken(token.replace("Bearer ", ""), request);
+                    request.setAttribute("token", token);
                     UserDao userDao = (UserDao) request.getServletContext().getAttribute("userDao");
                     User user = userDao.findOne(login);
                     request.setAttribute("user", user);

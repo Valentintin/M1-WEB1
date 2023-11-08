@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="<%= request.getContextPath() %>/css/style.css">
 </head>
 <body>
-<c:set var="user" value="${requestScope.userDto}" scope="request"/>
+<c:set var="user" value="${requestScope.model}" scope="request"/>
 
 <h1>Propriété de l'utilisateur ${user.login}</h1>
 <ul>

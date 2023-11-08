@@ -55,7 +55,7 @@ public class AuthorizationFilter extends HttpFilter {
 
     @Override
     public void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
-        String token = response.getHeader("Authorization");//(String) request.getAttribute("Bearer token");//response.getHeader("Authorization");
+        String token = (String) request.getAttribute("token");//response.getHeader("Authorization");
         if(token == null) {
             chain.doFilter(request, response);
             return;
@@ -105,7 +105,6 @@ public class AuthorizationFilter extends HttpFilter {
                         }
 
                         Todo todo = todoDao.findByHash(requestDto.getHash());
-                        token = (String) request.getAttribute("Bearer token");;
                         if (todo.getAssignee() != null && JWT.isAssigned(token, todo.hashCode())) {
                             chain.doFilter(request, response);
                         } else {
