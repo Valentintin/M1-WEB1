@@ -28,6 +28,14 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
     <filter>
+        <filter-name>AuthenticationFilter</filter-name>
+        <filter-class>fr.univlyon1.m1if.m1if03.filters.AuthenticationFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>AuthenticationFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <filter>
         <filter-name>ContentNegotiationFilter</filter-name>
         <filter-class>fr.univlyon1.m1if.m1if03.filters.ContentNegotiationFilter</filter-class>
     </filter>
@@ -35,14 +43,6 @@
         <filter-name>ContentNegotiationFilter</filter-name>
         <url-pattern>/users/*</url-pattern>
         <url-pattern>/todos/*</url-pattern>
-    </filter-mapping>
-    <filter>
-        <filter-name>AuthenticationFilter</filter-name>
-        <filter-class>fr.univlyon1.m1if.m1if03.filters.AuthenticationFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>AuthenticationFilter</filter-name>
-        <url-pattern>/*</url-pattern>
     </filter-mapping>
     <filter>
         <filter-name>AuthorizationFilter</filter-name>

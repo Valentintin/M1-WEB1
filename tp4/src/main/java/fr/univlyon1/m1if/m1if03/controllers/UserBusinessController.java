@@ -1,8 +1,10 @@
 package fr.univlyon1.m1if.m1if03.controllers;
 
+import fr.univlyon1.m1if.m1if03.dao.TodoDao;
 import fr.univlyon1.m1if.m1if03.dao.UserDao;
 import fr.univlyon1.m1if.m1if03.dto.user.UserRequestDto;
 import fr.univlyon1.m1if.m1if03.dto.user.UserResponseDto;
+import fr.univlyon1.m1if.m1if03.model.Todo;
 import fr.univlyon1.m1if.m1if03.model.User;
 import fr.univlyon1.m1if.m1if03.dto.user.UserDtoMapper;
 import jakarta.servlet.ServletConfig;
@@ -125,11 +127,12 @@ public class UserBusinessController extends HttpServlet {
             if (login == null || login.isEmpty()) {
                 throw new IllegalArgumentException("Le login ne doit pas être null ou vide.");
             }
+            request.getAttribute("dto");
             User user = userDao.findOne(login);
-            UserResponseDto userDto = userMapper.toDto(user);
+            TodoDao todo = (TodoDao) request.getServletContext().getAttribute("todoDao");
             if (user.verifyPassword(password)) {
                 // Gestion de la session utilisateur
-                String token = generateToken(login, userDto.getAssignedTodos(), request);
+                String token = generateToken(login, todo.findByAssignee(user.getLogin()).stream().map(Todo::hashCode).toList(), request);
                 request.setAttribute("token", token);
                 //FAIT au dessus
 //                HttpSession session = request.getSession(true);

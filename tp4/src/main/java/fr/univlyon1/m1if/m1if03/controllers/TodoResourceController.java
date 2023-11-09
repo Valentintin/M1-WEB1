@@ -1,10 +1,13 @@
 package fr.univlyon1.m1if.m1if03.controllers;
 
 import fr.univlyon1.m1if.m1if03.dao.TodoDao;
+import fr.univlyon1.m1if.m1if03.dao.UserDao;
 import fr.univlyon1.m1if.m1if03.dto.todo.TodoDtoMapper;
 import fr.univlyon1.m1if.m1if03.dto.todo.TodoRequestDto;
 import fr.univlyon1.m1if.m1if03.dto.todo.TodoResponseDto;
+import fr.univlyon1.m1if.m1if03.dto.user.UserDtoMapper;
 import fr.univlyon1.m1if.m1if03.dto.user.UserRequestDto;
+import fr.univlyon1.m1if.m1if03.dto.user.UserResponseDto;
 import fr.univlyon1.m1if.m1if03.exceptions.ForbiddenLoginException;
 import fr.univlyon1.m1if.m1if03.model.Todo;
 import fr.univlyon1.m1if.m1if03.model.User;
@@ -25,6 +28,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.IllegalFormatException;
+
+import static fr.univlyon1.m1if.m1if03.utils.TodosM1if03JwtHelper.generateToken;
 
 @WebServlet(name = "TodoResourceController", urlPatterns = {"/todos", "/todos/*"})
 public class TodoResourceController extends HttpServlet {
@@ -149,7 +154,7 @@ public class TodoResourceController extends HttpServlet {
         if (url.length == 2) {
             try {
                 Integer id = Integer.parseInt(url[1]);
-                todoResource.update(id, requestDto.getTitle(), requestDto.getAssignee());
+                todoResource.update(id, requestDto.getTitle(), requestDto.getAssignee(), request, response);
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             } catch (NumberFormatException e) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
@@ -263,13 +268,17 @@ public class TodoResourceController extends HttpServlet {
          * @throws InvalidNameException Ne doit pas arriver car les clés du DAO user sont des strings
          * @throws NameNotFoundException Si le login ne correspond pas à un utilisateur existant
          */
-        public void update(@NotNull Integer id, String newtitle, String assignee) throws IllegalArgumentException, InvalidNameException, NameNotFoundException {
+        public void update(@NotNull Integer id, String newtitle, String assignee, HttpServletRequest request, HttpServletResponse response) throws IllegalArgumentException, InvalidNameException, NameNotFoundException {
             Todo todo = readOne(id);
             if (newtitle != null && !newtitle.isEmpty()) {
                 todo.setTitle(newtitle);
             }
             if (assignee != null && !assignee.isEmpty()) {
                 todo.setAssignee(assignee);
+                UserDao userDao = (UserDao) request.getServletContext().getAttribute("userDao");
+                User user = userDao.findOne(todo.getAssignee());
+                String token = generateToken(user.getLogin(), todoDao.findByAssignee(user.getLogin()).stream().map(Todo::hashCode).toList(), request);
+                response.setHeader("Authorization", "Bearer " + token );
             }
         }
 

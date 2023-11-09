@@ -48,10 +48,10 @@ public class AuthenticationFilter extends HttpFilter {
 
         // 2) Traite les requêtes qui doivent être authentifiées
 
-        String token = request.getHeader("Authorization");
-        if(token != null && token.startsWith("Bearer ")) {
+        String token = request.getHeader("Authorization").replace("Bearer ", "");
+        if(token != null) {
                 try {
-                    String login = verifyToken(token.replace("Bearer ", ""), request);
+                    String login = verifyToken(token, request);
                     request.setAttribute("token", token);
                     UserDao userDao = (UserDao) request.getServletContext().getAttribute("userDao");
                     User user = userDao.findOne(login);
@@ -61,6 +61,8 @@ public class AuthenticationFilter extends HttpFilter {
                 }catch (NullPointerException e) {
                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token non valide");
                 }catch (NameNotFoundException e) {
+                    //chain.doFilter(request, response);
+                    //return;
                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token non valide");
                 } catch (InvalidNameException e) {
                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token non valide");

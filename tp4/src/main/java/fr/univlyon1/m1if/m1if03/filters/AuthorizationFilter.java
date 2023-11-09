@@ -18,6 +18,8 @@ import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 
+import static fr.univlyon1.m1if.m1if03.utils.TodosM1if03JwtHelper.isAssigned;
+
 /**
  * Filtre d'autorisation.
  * <ul>
@@ -30,7 +32,6 @@ import java.util.stream.Stream;
 @WebFilter
 public class AuthorizationFilter extends HttpFilter {
 
-    private TodosM1if03JwtHelper JWT;
     // Liste des ressources pour lesquelles renvoyer un 403 si l'utilisateur n'est pas le bon
     private static final String[][] RESOURCES_WITH_AUTHORIZATION = {
             {"PUT", "users", "*"},
@@ -79,7 +80,7 @@ public class AuthorizationFilter extends HttpFilter {
                 try {
                     Todo todo = todoDao.findByHash(Integer.parseInt(url[1]));
                     request.setAttribute("authorizedUser", todo.getAssignee() != null &&
-                            todo.getAssignee().equals(user));
+                            todo.getAssignee().equals(user.getLogin()));
                     // Note request.getSession(false).getAttribute("user") ça c'était avant
                 } catch(Exception ignored) {} // Les exceptions sont traitées dans le contrôleur.
             }
@@ -105,7 +106,7 @@ public class AuthorizationFilter extends HttpFilter {
                         }
 
                         Todo todo = todoDao.findByHash(requestDto.getHash());
-                        if (todo.getAssignee() != null && JWT.isAssigned(token, todo.hashCode())) {
+                        if (todo.getAssignee() != null && isAssigned(token, todo.hashCode())) {
                             chain.doFilter(request, response);
                         } else {
                             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Vous n'êtes pas assigné.e à ce todo.");
