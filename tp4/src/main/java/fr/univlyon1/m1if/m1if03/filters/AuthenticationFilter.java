@@ -62,10 +62,9 @@ public class AuthenticationFilter extends HttpFilter {
                 }catch (NullPointerException e) {
                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token non valide");
                 }catch (NameNotFoundException e) {
-                    //chain.doFilter(request, response);
-                    //return;
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token non valide");
-                } catch (InvalidNameException e) {
+                    chain.doFilter(request, response);
+//                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token non valide");
+                }  catch (InvalidNameException e) {
                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token non valide");
                 }
             return;

@@ -4,7 +4,6 @@ import fr.univlyon1.m1if.m1if03.dao.TodoDao;
 import fr.univlyon1.m1if.m1if03.dto.todo.TodoRequestDto;
 import fr.univlyon1.m1if.m1if03.model.Todo;
 import fr.univlyon1.m1if.m1if03.model.User;
-import fr.univlyon1.m1if.m1if03.utils.TodosM1if03JwtHelper;
 import fr.univlyon1.m1if.m1if03.utils.UrlUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;
