@@ -93,7 +93,6 @@ public class UserBusinessController extends HttpServlet {
     private static class UserBusiness {
         private final UserDao userDao;
         private UserDtoMapper userMapper;
-        private TodosM1if03JwtHelper JWT;
 
         /**
          * Constructeur avec une injection du DAO nécessaire aux opérations.

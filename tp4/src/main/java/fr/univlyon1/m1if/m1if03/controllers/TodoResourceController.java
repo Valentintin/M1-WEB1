@@ -61,20 +61,6 @@ public class TodoResourceController extends HttpServlet {
             } catch (NameAlreadyBoundException e) {
                 response.sendError(HttpServletResponse.SC_CONFLICT, "Le todo " + requestDto.getTitle() + " n'est plus disponible.");
             }
-        } else if (url.length == 2) { // TOGGLE STATUS
-            Integer id = requestDto.getHash();
-            try {
-                todoResource.modifStatut(id);
-                response.setStatus(HttpServletResponse.SC_NO_CONTENT);
-            } catch (IllegalArgumentException | ForbiddenLoginException ex) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, ex.getMessage());
-            } catch (NameNotFoundException e) {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Le todo " + id + " n'existe pas.");
-            } catch (NameAlreadyBoundException e) {
-                response.sendError(HttpServletResponse.SC_CONFLICT, "Le todo " + id + " n'est plus disponible.");
-            } catch (InvalidNameException e) {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Le todo " + id + " n'existe pas.");
-            }
         }
     }
 
@@ -229,17 +215,6 @@ public class TodoResourceController extends HttpServlet {
             return todo.hashCode();
         }
 
-        public void modifStatut(@NotNull Integer hash)
-                throws IllegalArgumentException, NameAlreadyBoundException, ForbiddenLoginException, InvalidNameException, NameNotFoundException {
-            Todo todo = todoDao.findByHash(hash);
-            if(todo.isCompleted()){
-                todo.setImage("&#x2610;");
-            }
-            else {
-                todo.setImage("&#x2611;");
-            }
-            todo.setCompleted(!todo.isCompleted());
-        }
         /**
          * Renvoie les titres de tous les utilisateurs présents dans le DAO.
          *
@@ -253,7 +228,6 @@ public class TodoResourceController extends HttpServlet {
             }
             return listhash;
         }
-
 
         public Todo readOne(@NotNull Integer id) throws IllegalArgumentException, NameNotFoundException, InvalidNameException {
             if (id == null) {
