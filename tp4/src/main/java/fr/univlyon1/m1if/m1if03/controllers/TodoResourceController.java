@@ -94,6 +94,7 @@ public class TodoResourceController extends HttpServlet {
             TodoResponseDto todoDto = todoMapper.toDto(todo);
             switch (url.length) {
                 case 2 -> { // Renvoie un DTO de Todo (avec toutes les infos le concernant pour pouvoir le templater dans la vue)
+                    response.setHeader("Location", "todos/"+todoDto.getHash());
                     if(request.getAttribute("authorizedUser").equals(false)){
                         todoDto = new TodoResponseDto(todoDto.getTitle(), todoDto.getHash(), "", todoDto.getCompleted(), todoDto.getImage());
                     }
@@ -158,6 +159,7 @@ public class TodoResourceController extends HttpServlet {
             try {
                 Integer id = Integer.parseInt(url[1]);
                 todoResource.update(id, requestDto.getTitle(), requestDto.getAssignee(), request, response);
+                response.setHeader("Location", "todos/"+requestDto.getHash());
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             } catch (NumberFormatException e) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED);

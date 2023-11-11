@@ -84,12 +84,14 @@ public class ContentNegotiationFilter extends HttpFilter {
                             }
                             case "application/xml" -> {
                                 response.setHeader("Content-Type", "application/xml");
+                                response.setHeader("Link", request.getRequestURI());
                                 XmlMapper xmlMapper = new XmlMapper();
                                 xmlMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
                                 xmlMapper.writeValue(response.getWriter(), request.getAttribute("model"));
                             }
                             case "application/json" -> {
                                 response.setHeader("Content-Type", "application/json");
+                                response.setHeader("Link", request.getRequestURI());
                                 ObjectMapper objectMapper = new ObjectMapper();
                                 objectMapper.writeValue(response.getWriter(), request.getAttribute("model"));
                             }
