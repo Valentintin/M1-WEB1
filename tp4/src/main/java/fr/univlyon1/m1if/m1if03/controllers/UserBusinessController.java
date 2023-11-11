@@ -127,7 +127,7 @@ public class UserBusinessController extends HttpServlet {
             if (login == null || login.isEmpty()) {
                 throw new IllegalArgumentException("Le login ne doit pas être null ou vide.");
             }
-            request.getAttribute("dto");
+            //request.getAttribute("dto");
             User user = userDao.findOne(login);
             TodoDao todo = (TodoDao) request.getServletContext().getAttribute("todoDao");
             if (user.verifyPassword(password)) {

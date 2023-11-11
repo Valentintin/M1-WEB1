@@ -12,7 +12,7 @@
 <title>Todo</title>
 <ul>
     <c:forEach items="${requestScope.model}" var="todo">
-        <li>${todo}</li>
+        <li><a href="${pageContext.request.contextPath}/todos/${todo}">${todo}</a></li>
     </c:forEach>
 </ul>
 </body>

@@ -48,9 +48,10 @@ public class AuthenticationFilter extends HttpFilter {
 
         // 2) Traite les requêtes qui doivent être authentifiées
 
-        String token = request.getHeader("Authorization").replace("Bearer ", "");
+        String token = request.getHeader("Authorization");
         if(token != null) {
                 try {
+                    token = token.replace("Bearer ", "");
                     String login = verifyToken(token, request);
                     request.setAttribute("token", token);
                     UserDao userDao = (UserDao) request.getServletContext().getAttribute("userDao");

@@ -38,11 +38,25 @@
     <filter>
         <filter-name>ContentNegotiationFilter</filter-name>
         <filter-class>fr.univlyon1.m1if.m1if03.filters.ContentNegotiationFilter</filter-class>
+        <init-param>
+            <param-name>cheminVues</param-name>
+            <param-value>/WEB-INF/components/</param-value>
+        </init-param>
+        <init-param>
+            <param-name>suffixeVues</param-name>
+            <param-value>.jsp</param-value>
+        </init-param>
+        <init-param>
+            <param-name>defaultMIME</param-name>
+            <param-value>text/html</param-value>
+        </init-param>
     </filter>
     <filter-mapping>
         <filter-name>ContentNegotiationFilter</filter-name>
         <url-pattern>/users/*</url-pattern>
         <url-pattern>/todos/*</url-pattern>
+        <url-pattern>/users</url-pattern>
+        <url-pattern>/todos</url-pattern>
     </filter-mapping>
     <filter>
         <filter-name>AuthorizationFilter</filter-name>

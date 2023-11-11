@@ -13,7 +13,16 @@
 <body>
     <title>Todo</title>
     <ul>
-        <li>${todo.title}, ${todo.assignee}, ${todo.image}, ${todo.hash}, ${todo.completed}</li>
+        <li>
+            Todo:
+            <ul>
+                <li>Titre: <a href="${pageContext.request.contextPath}/todos/${todo.hash}/title">${todo.title}</a></li>
+                <li>Assignee: <a href="${pageContext.request.contextPath}/todos/${todo.hash}/assignee">${todo.assignee}</a></li>
+                <li>Image: <a href="${pageContext.request.contextPath}/todos/${todo.hash}/image">${todo.image}</a></li>
+                <li>Completed: <a href="${pageContext.request.contextPath}/todos/${todo.hash}/completed">${todo.completed}</a></li>
+                <li>Hash: <a href="${pageContext.request.contextPath}/todos/${todo.hash}">${todo.hash}</a></li>
+            </ul>
+        </li>
     </ul>
 </body>
 </html>

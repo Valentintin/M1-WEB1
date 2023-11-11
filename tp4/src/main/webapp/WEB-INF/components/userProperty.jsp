@@ -10,10 +10,10 @@
 <body>
 <c:set var="user" value="${requestScope.model}" scope="request"/>
 
-<h1>Propriété de l'utilisateur ${user.login}</h1>
+<h1>Propriété de l'utilisateur <a href="${pageContext.request.contextPath}/users/${user}/login">${user.login}</a></h1>
 <ul>
     <c:if test="${user.name != null}">
-        <li>Nom : ${user.name}</li>
+        <li>Nom : <a href="${pageContext.request.contextPath}/users/${user}/name">${user.name}</a></li>
     </c:if>
     <c:if test="${user.assignedTodos != null}">
         <li>
