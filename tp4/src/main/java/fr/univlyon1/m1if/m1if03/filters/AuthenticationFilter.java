@@ -1,5 +1,6 @@
 package fr.univlyon1.m1if.m1if03.filters;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import fr.univlyon1.m1if.m1if03.dao.AbstractListDao;
 import fr.univlyon1.m1if.m1if03.dao.UserDao;
 import fr.univlyon1.m1if.m1if03.model.User;
@@ -64,8 +65,10 @@ public class AuthenticationFilter extends HttpFilter {
                 }catch (NameNotFoundException e) {
                     chain.doFilter(request, response);
 //                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token non valide");
-                }  catch (InvalidNameException e) {
+                }catch (InvalidNameException e) {
                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token non valide");
+                }catch (JWTVerificationException e){
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token expiré");
                 }
             return;
         }

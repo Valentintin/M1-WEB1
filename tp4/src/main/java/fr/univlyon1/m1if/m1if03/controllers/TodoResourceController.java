@@ -94,6 +94,9 @@ public class TodoResourceController extends HttpServlet {
             TodoResponseDto todoDto = todoMapper.toDto(todo);
             switch (url.length) {
                 case 2 -> { // Renvoie un DTO de Todo (avec toutes les infos le concernant pour pouvoir le templater dans la vue)
+                    if(request.getAttribute("authorizedUser").equals(false)){
+                        todoDto = new TodoResponseDto(todoDto.getTitle(), todoDto.getHash(), "", todoDto.getCompleted(), todoDto.getImage());
+                    }
                     request.setAttribute("model", todoDto);
                     request.setAttribute("view", "todo");
                 }
