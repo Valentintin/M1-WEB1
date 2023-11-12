@@ -15,7 +15,7 @@ import java.util.Map;
 /**
  * filtre de cache.
  */
-@WebFilter(filterName = "Cache", urlPatterns = {"/todolist"})
+@WebFilter
 public class CacheFilter extends HttpFilter {
     private Map<String, Date> dateMap;
     private String lastTodoTitle;
@@ -28,6 +28,7 @@ public class CacheFilter extends HttpFilter {
 
     @Override
     protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+
         //1 requete POST ajout todo ou Get sur liste
         boolean isGetList = (request.getMethod().equals("GET"));
         boolean isPost = (request.getMethod().equals("POST") && request.getParameter("operation").equals("add"));
