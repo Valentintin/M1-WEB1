@@ -1,6 +1,7 @@
 package fr.univlyon1.m1if.m1if03.filters;
 
 import fr.univlyon1.m1if.m1if03.dto.todo.TodoRequestDto;
+import fr.univlyon1.m1if.m1if03.utils.BufferlessHttpServletResponseWrapper;
 import fr.univlyon1.m1if.m1if03.utils.UrlUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;
@@ -32,23 +33,38 @@ public class CacheFilter extends HttpFilter {
     @Override
     protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
 
+        Date now = new Date();
+
         //1 requete POST ajout todo ou Get sur liste
         boolean isGetList = (request.getMethod().equals("GET"));
         String[] url = UrlUtils.getUrlParts(request);
         boolean isPost = ((request.getMethod().equals("POST")) || request.getMethod().equals("DELETE") || request.getMethod().equals("PUT"));
         boolean todo = (url.length >= 2);
         if(isPost){
+            //On veut que le filtre s'excute à la fin pour qu'il y ait un hash dans le dto
+            HttpServletResponse wrapper = new BufferlessHttpServletResponseWrapper(response);
+            super.doFilter(request, wrapper, chain);
+
             //passez la main à l'élément suivant de la chaîne
             chain.doFilter(request, response);
             //stockez la date courante dans la map ci-dessus.
             TodoRequestDto requestDto = (TodoRequestDto) request.getAttribute("dto");
-            Integer hashTmp = requestDto.getHash();
+            Integer hashTmp = null;
+            if (requestDto != null) {
+                hashTmp = requestDto.getHash();
+            }
+            if (request.getMethod().equals("DELETE")) {// Dans le DELETE il n'y a pas de dto qui est passé
+                hashTmp = Integer.parseInt(url[1]);
+            }
             if(hashTmp != null) {
                 lastTodoHash = hashTmp;
                 System.out.println(lastTodoHash);
-                this.dateMap.put(lastTodoHash, new Date());
+                this.dateMap.put(lastTodoHash, now);
             }
-            this.dateMap.put(0, new Date());
+            this.dateMap.put(0, now);
+
+            //fermer la socket sinon ça fonctionne pas
+            response.getWriter().close();
         }
         if(isGetList) {
             //générez un en-tête de réponse Last-Modified, à l'aide de la méthode response.setDateHeader(...).
@@ -60,13 +76,13 @@ public class CacheFilter extends HttpFilter {
             System.out.println(lastModified.getTime());
             System.out.println(ifModifiedSince);
             if (lastModified != null && ifModifiedSince > 0 && ifModifiedSince >=  lastModified.getTime()) {
-                // If the resource hasn't been modified since the client's If-Modified-Since date,
+                // If the resource hasn't been modified since the client's Modified-Since date,
                 // respond with a 304 (Not Modified) status.
                 response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
             } else {
                 // If the resource has been modified or If-Modified-Since header is not provided,
                 // generate a new Last-Modified header and process the request as usual.
-                response.setDateHeader("Last-Modified", new Date().getTime());
+                response.setDateHeader("Last-Modified", now.getTime());
                 chain.doFilter(request, response);
             }
             //génération de la page + en-tête Last-Modified ou
