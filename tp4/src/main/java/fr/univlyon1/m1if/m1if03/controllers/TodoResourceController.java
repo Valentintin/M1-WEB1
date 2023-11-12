@@ -35,13 +35,13 @@ import static fr.univlyon1.m1if.m1if03.utils.TodosM1if03JwtHelper.generateToken;
  * </ul>
  * Cette servlet fait appel à une <i>nested class</i> <code>TodoResource</code> qui se charge des appels au DAO.
  * Les opérations métier spécifiques (login &amp; logout) sont réalisées par la servlet <a href="TodoBusinessController.html"><code>TodoBusinessController</code></a>.
- *
  */
 @WebServlet(name = "TodoResourceController", urlPatterns = {"/todos", "/todos/*"})
 public class TodoResourceController extends HttpServlet {
 
     private TodoDtoMapper todoMapper;
     private TodoResource todoResource;
+
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
@@ -88,8 +88,8 @@ public class TodoResourceController extends HttpServlet {
                 // Renvoie un DTO de Todo
                 //  (avec toutes les infos le concernant pour pouvoir le templater dans la vue)
                 case 2 -> {
-                    response.setHeader("Location", "todos/"+todoDto.getHash());
-                    if(request.getAttribute("authorizedUser").equals(false)){
+                    response.setHeader("Location", "todos/" + todoDto.getHash());
+                    if (request.getAttribute("authorizedUser").equals(false)) {
                         todoDto = new TodoResponseDto(
                                 todoDto.getTitle(),
                                 todoDto.getHash(),
@@ -153,7 +153,7 @@ public class TodoResourceController extends HttpServlet {
      * Réalise la modification d'un todo.
      * En fonction du title passé dans l'URL :
      * <ul>
-
+     *
      *     <li>Mise à jour d'un todo</li>
      * </ul>
      * Renvoie un code de statut 204 (No Content) en cas de succès ou une erreur HTTP appropriée sinon.
@@ -171,7 +171,7 @@ public class TodoResourceController extends HttpServlet {
             try {
                 Integer id = Integer.parseInt(url[1]);
                 todoResource.update(id, requestDto.getTitle(), requestDto.getAssignee(), request, response);
-                response.setHeader("Location", "todos/"+requestDto.getHash());
+                response.setHeader("Location", "todos/" + requestDto.getHash());
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             } catch (NumberFormatException e) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
@@ -179,8 +179,7 @@ public class TodoResourceController extends HttpServlet {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, ex.getMessage());
             } catch (NameNotFoundException e) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, "Le todo id n'existe pas.");
-            }
-            catch (InvalidNameException ignored) {
+            } catch (InvalidNameException ignored) {
                 // Ne devrait pas arriver car les paramètres sont déjà des Strings
             }
         } else {
@@ -216,10 +215,10 @@ public class TodoResourceController extends HttpServlet {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
         }
     }
+
     /**
      * Nested class qui réalise les opérations "simples" (CRUD) de gestion des ressources de type <code>Todo</code>.
      * Son utilité est surtout de prendre en charge les différentes exceptions qui peuvent être levées par le DAO.
-     *
      */
     public class TodoResource {
         private final TodoDao todoDao;
@@ -270,12 +269,12 @@ public class TodoResourceController extends HttpServlet {
          * Met à jour un todo en fonction des param.<br>
          * Si l'un des paramètres est nul ou vide, le champ correspondant n'est pas mis à jour.
          *
-         * @param id     Le title de la todo
+         * @param id       Le title de la todo
          * @param newtitle Le tile à modifier. Ou pas.
-         * @param assignee      Le assignee à modifier. Ou pas.
+         * @param assignee Le assignee à modifier. Ou pas.
          * @throws IllegalArgumentException Si le login est null ou vide
-         * @throws InvalidNameException Ne doit pas arriver car les clés du DAO user sont des strings
-         * @throws NameNotFoundException Si le login ne correspond pas à un utilisateur existant
+         * @throws InvalidNameException     Ne doit pas arriver car les clés du DAO user sont des strings
+         * @throws NameNotFoundException    Si le login ne correspond pas à un utilisateur existant
          */
         public void update(@NotNull Integer id, String newtitle, String assignee,
                            HttpServletRequest request, HttpServletResponse response)
@@ -298,11 +297,11 @@ public class TodoResourceController extends HttpServlet {
          *
          * @param hash L'id du todo à supprimer
          * @throws IllegalArgumentException Si le login est null ou vide
-         * @throws NameNotFoundException Si le login ne correspond à aucune entrée dans le DAO
-         * @throws InvalidNameException Ne doit pas arriver car les clés du DAO user sont des strings
+         * @throws NameNotFoundException    Si le login ne correspond à aucune entrée dans le DAO
+         * @throws InvalidNameException     Ne doit pas arriver car les clés du DAO user sont des strings
          */
         public void delete(@NotNull Integer hash) throws IllegalArgumentException, NameNotFoundException, InvalidNameException {
-            int id  = todoDao.getId(todoDao.findByHash(hash));
+            int id = todoDao.getId(todoDao.findByHash(hash));
             todoDao.deleteById(id);
         }
     }

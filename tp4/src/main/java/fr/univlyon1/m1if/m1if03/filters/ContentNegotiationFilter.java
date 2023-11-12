@@ -25,7 +25,10 @@ import java.io.UnsupportedEncodingException;
 @WebFilter(filterName = "ContentNegotiationFilter")
 public class ContentNegotiationFilter extends HttpFilter {
 
-    private String cheminVues, suffixeVues, defaultMIME;
+    private String cheminVues;
+    private String suffixeVues;
+    private String defaultMIME;
+
     public void init(FilterConfig config) throws ServletException {
         cheminVues = config.getInitParameter("cheminVues");
         suffixeVues = config.getInitParameter("suffixeVues");

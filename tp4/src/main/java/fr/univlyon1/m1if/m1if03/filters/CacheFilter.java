@@ -57,11 +57,11 @@ public class CacheFilter extends HttpFilter {
             if(todo){
                 lastModified = dateMap.get(Integer.parseInt(url[1]));
             }
-            System.out.println(lastModified.getTime());
-            System.out.println(ifModifiedSince);
             if (lastModified != null && ifModifiedSince > 0 && ifModifiedSince >=  lastModified.getTime()) {
                 // If the resource hasn't been modified since the client's If-Modified-Since date,
                 // respond with a 304 (Not Modified) status.
+                System.out.println(lastModified.getTime());
+                System.out.println(ifModifiedSince);
                 response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
             } else {
                 // If the resource has been modified or If-Modified-Since header is not provided,
