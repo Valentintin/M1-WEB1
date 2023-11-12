@@ -2,6 +2,7 @@
 
 ## Partie1
 Pour commencer l'implémentation des requêtes lié au todo nous nous sommes grandement inspiré du code fournis notamment de UserBusinnesController et UserRessourceController.
+Nous avons également rapidement utilisé le ContentNegotiation qui récupère tout les informations qu'on veut et permet de renvoyer dans le bon format.
 
 ## Partie2
 Dans cette partie, on a chercher a utiliser des jetons. Les jetons vont permettre de gérer différents la connexion des utilisateurs.
@@ -65,3 +66,23 @@ Par exemple en faisant
 ```
 On récupère avec `pageContext.request.contextPath` l'url de base puis on va sur todos/id du todo.
 ## Partie5
+
+Dans cette partie nous avons pu récupérer une partie de notre code du TP3 est l'adapté.
+Dans un premier temps nous avons choisit, lors de la création d'un todo nous avons décider de rajouter le Hash dans le dto.
+```java
+requestDto.setHash(todoHash);
+```
+Maintenant dans le cacheFilter, nous avons créer une Map<Integer, Date>.
+Ainsi nous stockons les id des Todo car stocké les titres ne serait pas cohérent parce que on peut avoir deux todo avec le même nom.
+
+Nous découpons ensuite notre code en deux avec les rêquete POST, DELETE et PUT et de l'autre coté les rêquete GET.
+
+Pour le premier cas on va donc devoir attendre que la création d'un todo soit finit, on utilise donc
+````java
+HttpServletResponse wrapper = new BufferlessHttpServletResponseWrapper(response);
+super.doFilter(request, wrapper, chain);
+````
+Ce qui nous permet également de redonner la main aux autres filtres. On cherche ensuite a récupérer le todo, soit depuis le TodoRequestDto soit depuis l'url.
+Si on récupère un id on le mettra donc dans la map avec la date actuelle. Dans tout les cas on rajoute également a la map pour un id 0 ce qui nous sera utile dans le cas où on veut la liste de todo.
+
+Maintenant pour le GET, on va cherche a comparer la date de la dernière modification

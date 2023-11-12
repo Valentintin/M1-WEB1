@@ -2,7 +2,6 @@ package fr.univlyon1.m1if.m1if03.filters;
 
 import fr.univlyon1.m1if.m1if03.dao.TodoDao;
 import fr.univlyon1.m1if.m1if03.dao.UserDao;
-import fr.univlyon1.m1if.m1if03.dto.user.UserRequestDto;
 import fr.univlyon1.m1if.m1if03.model.Todo;
 import fr.univlyon1.m1if.m1if03.model.User;
 import fr.univlyon1.m1if.m1if03.utils.UrlUtils;
@@ -25,9 +24,11 @@ import java.util.List;
 @WebFilter
 public class CacheUserFilter extends HttpFilter {
     private UserDao userDao;
+
     public CacheUserFilter() {
         userDao = null;
     }
+
     @Override
     public void init(FilterConfig config) throws ServletException {
         super.init(config);
@@ -38,7 +39,14 @@ public class CacheUserFilter extends HttpFilter {
     protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         String[] url = UrlUtils.getUrlParts(request);
         if (request.getMethod().equals("GET") && url.length >= 2) {
-            long tagHeader = request.getDateHeader("If-None-Match");
+            if (userDao == null) {
+                userDao = (UserDao) getServletContext().getAttribute("userDao");
+            }
+            String ifNoneMatch = request.getHeader("If-None-Match");
+            long tagHeader = 0;
+            if (ifNoneMatch != null) {
+                tagHeader = Long.parseLong(ifNoneMatch);
+            }
             //UserRequestDto requestDto = (UserRequestDto) request.getAttribute("dto");
             String login = url[1];
             User user = null;
@@ -49,27 +57,29 @@ public class CacheUserFilter extends HttpFilter {
             } catch (InvalidNameException e) {
                 throw new RuntimeException(e);
             }
-            long tagUser = getTag(user, request);
+            long tagUser = getTag(user);
 
             //Comparaison pour l'erreur 304
-            if (tagHeader > 0){
+            if (tagHeader > 0 || ifNoneMatch != null) {
                 if (tagHeader == tagUser) {
                     response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
                 }
             } else {
-              response.setHeader("ETag", String.valueOf(tagUser));
+                response.setHeader("ETag", Long.valueOf(tagUser).toString());
             }
         }
+        chain.doFilter(request, response);
     }
 
-    private Integer getTag(User user, HttpServletRequest request){
-        TodoDao todo = (TodoDao) request.getServletContext().getAttribute("todoDao");
-        Integer userHash =  user.getLogin().hashCode();
-        List<Integer> assignedTodoHashList =  todo.findByAssignee(user.getLogin()).stream().map(Todo::hashCode).toList();
-        Integer assignedTodoHash = null;
-        for(Integer assigned: assignedTodoHashList) {
+    private Integer getTag(User user) {
+        TodoDao todo = (TodoDao) getServletContext().getAttribute("todoDao");
+        Integer userHashLogin = user.getLogin().hashCode();
+        Integer userHashName = user.getName().hashCode();
+        List<Integer> assignedTodoHashList = todo.findByAssignee(user.getLogin()).stream().map(Todo::hashCode).toList();
+        Integer assignedTodoHash = 0;
+        for (Integer assigned : assignedTodoHashList) {
             assignedTodoHash += assigned;
         }
-        return userHash + assignedTodoHash;
+        return userHashLogin + userHashName + assignedTodoHash;
     }
 }
