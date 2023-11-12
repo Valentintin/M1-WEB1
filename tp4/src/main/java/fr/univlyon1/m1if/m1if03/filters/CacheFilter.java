@@ -39,7 +39,6 @@ public class CacheFilter extends HttpFilter {
         boolean isGetList = (request.getMethod().equals("GET"));
         String[] url = UrlUtils.getUrlParts(request);
         boolean isPost = ((request.getMethod().equals("POST")) || request.getMethod().equals("DELETE") || request.getMethod().equals("PUT"));
-        boolean todo = (url.length >= 2);
         if(isPost){
             //On veut que le filtre s'excute à la fin pour qu'il y ait un hash dans le dto
             HttpServletResponse wrapper = new BufferlessHttpServletResponseWrapper(response);
@@ -69,27 +68,19 @@ public class CacheFilter extends HttpFilter {
         }
         if(isGetList) {
             //générez un en-tête de réponse Last-Modified, à l'aide de la méthode response.setDateHeader(...).
-            long ifModifiedSince = request.getDateHeader("If-Modified-Since");
-            Date lastModified  = dateMap.get(0);
-            if(todo){
-                lastModified = dateMap.get(Integer.parseInt(url[1]));
+            long client = request.getDateHeader("If-Modified-Since");
+            long serveur  = dateMap.get(0).getTime();
+            if(url.length >= 2){
+                serveur = dateMap.get(Integer.parseInt(url[1])).getTime();
             }
-<<<<<<< HEAD
-            if (lastModified != null && ifModifiedSince > 0 && ifModifiedSince >=  lastModified.getTime()) {
-                // If the resource hasn't been modified since the client's If-Modified-Since date,
-=======
-            System.out.println(lastModified.getTime());
-            System.out.println(ifModifiedSince);
-            if (lastModified != null && (int)(ifModifiedSince/1000.)*1000 > 0 && (int)(ifModifiedSince/1000.)*1000 >=  (int)(lastModified.getTime()/1000.)*1000) {
+            if (serveur > 0 && client > 0 && (int)(client/1000)*1000 >= (int)(serveur/1000)*1000) {
                 // If the resource hasn't been modified since the client's Modified-Since date,
->>>>>>> 50cc4b97beed58123605fc81fdf198df41e537b2
                 // respond with a 304 (Not Modified) status.
-                System.out.println(lastModified.getTime());
-                System.out.println(ifModifiedSince);
                 response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
             } else {
                 // If the resource has been modified or If-Modified-Since header is not provided,
                 // generate a new Last-Modified header and process the request as usual.
+                dateMap.put(0, now);
                 response.setDateHeader("Last-Modified", now.getTime());
                 chain.doFilter(request, response);
             }
