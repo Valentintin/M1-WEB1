@@ -61,6 +61,7 @@ public class TodoResourceController extends HttpServlet {
             try {
                 int todoHash = todoResource.create(requestDto.getTitle(), requestDto.getCreator());
                 response.setHeader("Location", "todos/" + todoHash);
+                requestDto.setHash(todoHash);//README
                 response.setStatus(HttpServletResponse.SC_CREATED);
             } catch (IllegalArgumentException | ForbiddenLoginException ex) {//erreur 400
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, ex.getMessage());
