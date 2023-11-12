@@ -85,4 +85,19 @@ super.doFilter(request, wrapper, chain);
 Ce qui nous permet également de redonner la main aux autres filtres. On cherche ensuite a récupérer le todo, soit depuis le TodoRequestDto soit depuis l'url.
 Si on récupère un id on le mettra donc dans la map avec la date actuelle. Dans tout les cas on rajoute également a la map pour un id 0 ce qui nous sera utile dans le cas où on veut la liste de todo.
 
-Maintenant pour le GET, on va cherche a comparer la date de la dernière modification
+Maintenant pour le GET, on va cherche a comparer la date de la dernière modification depuis le client et depuis le serveur. Pour cela on va notamment récupérer l'id du todo si on réalise une requete avec 
+/todo/id et récupérer dans la map du serveur. Depuis le client, on récupère la date de la dernière modification avec 
+```java
+request.getDateHeader("If-Modified-Since");
+```
+S'il n'y a pas eu de modification récente on envoi une réponse 304 sinon on fait
+```java
+response.setDateHeader("Last-Modified", now.getTime());
+```
+
+Par la suite nous avons décider de réaliser un filtre seulement pour user qui ferait effet seulement pour /users/id.
+
+Si on fais une requete GET, on récupère le user il nous servira pour créer un Etag. Ce etag est calculé en fonction du nom du user, de son login mais également des todos qui lui sont assignée.
+
+On va ensuite chercher si un etag existe et s'il y en a un, on le compareavec le Etag créer pour l'utilisateur, si c'est la même chose on envoie
+une réponse 304. Sinon on met a jour le etag dans le header.
