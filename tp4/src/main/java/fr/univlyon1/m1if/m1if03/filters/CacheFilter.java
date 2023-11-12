@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
 /**
  * filtre de cache.
  */
@@ -58,7 +59,7 @@ public class CacheFilter extends HttpFilter {
             }
             System.out.println(lastModified.getTime());
             System.out.println(ifModifiedSince);
-            if (lastModified != null && ifModifiedSince > 0 && ifModifiedSince >=  lastModified.getTime() ) {
+            if (lastModified != null && ifModifiedSince > 0 && ifModifiedSince >=  lastModified.getTime()) {
                 // If the resource hasn't been modified since the client's If-Modified-Since date,
                 // respond with a 304 (Not Modified) status.
                 response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);

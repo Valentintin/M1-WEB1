@@ -66,7 +66,9 @@ public class Todo {
         this.assignee = assignee;
     }
 
-    public void setImage(String image) { this.image = image;}
+    public void setImage(String image) {
+        this.image = image;
+    }
 
     public boolean isCompleted() {
         return completed;

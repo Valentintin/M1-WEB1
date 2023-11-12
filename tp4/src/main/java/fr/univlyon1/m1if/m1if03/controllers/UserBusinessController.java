@@ -3,7 +3,6 @@ package fr.univlyon1.m1if.m1if03.controllers;
 import fr.univlyon1.m1if.m1if03.dao.TodoDao;
 import fr.univlyon1.m1if.m1if03.dao.UserDao;
 import fr.univlyon1.m1if.m1if03.dto.user.UserRequestDto;
-import fr.univlyon1.m1if.m1if03.dto.user.UserResponseDto;
 import fr.univlyon1.m1if.m1if03.model.Todo;
 import fr.univlyon1.m1if.m1if03.model.User;
 import fr.univlyon1.m1if.m1if03.dto.user.UserDtoMapper;
@@ -18,8 +17,6 @@ import jakarta.validation.constraints.NotNull;
 import javax.naming.InvalidNameException;
 import javax.naming.NameNotFoundException;
 import java.io.IOException;
-
-import fr.univlyon1.m1if.m1if03.utils.TodosM1if03JwtHelper;
 
 import static fr.univlyon1.m1if.m1if03.utils.TodosM1if03JwtHelper.generateToken;
 

@@ -65,7 +65,7 @@ public class TodoBusinessController extends HttpServlet {
     }
 
     /**
-     * Nested class qui réalise les opérations de changement de statut d'un todos<br>
+     * Nested class qui réalise les opérations de changement de statut d'un todos<br>.
      *
      */
     private static class TodoBusiness {
@@ -83,17 +83,16 @@ public class TodoBusinessController extends HttpServlet {
         }
 
         /**
-         * Réalise la modification du statut de la todo
+         * Réalise la modification du statut de la todo.
          *
          * @param hash le hash du todo a modifier
          */
         public void modifStatut(@NotNull Integer hash)
                 throws IllegalArgumentException, NameAlreadyBoundException, ForbiddenLoginException, InvalidNameException, NameNotFoundException {
             Todo todo = todoDao.findByHash(hash);
-            if(todo.isCompleted()){
+            if(todo.isCompleted()) {
                 todo.setImage("&#x2610;");
-            }
-            else {
+            } else {
                 todo.setImage("&#x2611;");
             }
             todo.setCompleted(!todo.isCompleted());

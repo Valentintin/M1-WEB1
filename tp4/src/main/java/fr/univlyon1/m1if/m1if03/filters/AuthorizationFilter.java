@@ -55,7 +55,7 @@ public class AuthorizationFilter extends HttpFilter {
 
     @Override
     public void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
-        String token = (String) request.getAttribute("token");//response.getHeader("Authorization");
+        String token = (String) request.getAttribute("token"); //response.getHeader("Authorization");
         if(token == null) {
             chain.doFilter(request, response);
             return;
@@ -100,7 +100,7 @@ public class AuthorizationFilter extends HttpFilter {
                     try {
                         // Dans le cas du POST -> toggleStatus, le hash est dans le corps de la requête.
                         TodoRequestDto requestDto = (TodoRequestDto) request.getAttribute("dto");
-                        if (requestDto == null ) {
+                        if (requestDto == null) {
                             requestDto = new TodoRequestDto(null, Integer.parseInt(url[1]), null, null);
                         }
 

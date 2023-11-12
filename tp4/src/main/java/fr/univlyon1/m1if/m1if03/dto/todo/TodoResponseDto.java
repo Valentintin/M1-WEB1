@@ -34,7 +34,9 @@ public class TodoResponseDto {
         return assignee;
     }
 
-    public String getImage() { return image;}
+    public String getImage() {
+        return image;
+    }
 
     /**
      * Récupère la valeur du champ <code>completed</code>.
