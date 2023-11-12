@@ -73,7 +73,15 @@
     </filter>
     <filter-mapping>
         <filter-name>CacheFilter</filter-name>
-<!--        <url-pattern>/todos/*</url-pattern>-->
+        <url-pattern>/todos/*</url-pattern>
         <url-pattern>/todos</url-pattern>
+    </filter-mapping>
+    <filter>
+        <filter-name>CacheUserFilter</filter-name>
+        <filter-class>fr.univlyon1.m1if.m1if03.filters.CacheUserFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>CacheUserFilter</filter-name>
+        <url-pattern>/users/*</url-pattern>
     </filter-mapping>
 </web-app>

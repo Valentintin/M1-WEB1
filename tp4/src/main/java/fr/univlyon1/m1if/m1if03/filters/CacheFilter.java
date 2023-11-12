@@ -53,7 +53,7 @@ public class CacheFilter extends HttpFilter {
             if (requestDto != null) {
                 hashTmp = requestDto.getHash();
             }
-            if (request.getMethod().equals("DELETE")) {// Dans le DELETE il n'y a pas de dto qui est passé
+            if (request.getMethod().equals("DELETE") || request.getMethod().equals("PUT")) {// Dans le DELETE il n'y a pas de dto qui est passé
                 hashTmp = Integer.parseInt(url[1]);
             }
             if(hashTmp != null) {
@@ -69,13 +69,14 @@ public class CacheFilter extends HttpFilter {
         if(isGetList) {
             //générez un en-tête de réponse Last-Modified, à l'aide de la méthode response.setDateHeader(...).
             long client = request.getDateHeader("If-Modified-Since");
-            long serveur  = dateMap.get(0).getTime();
+            Date serveur  = dateMap.get(0);
             if(url.length >= 2){
-                serveur = dateMap.get(Integer.parseInt(url[1])).getTime();
+                serveur = dateMap.get(Integer.parseInt(url[1]));
             }
-            if (serveur > 0 && client > 0 && (int)(client/1000)*1000 >= (int)(serveur/1000)*1000) {
+            if (serveur != null && client > 0 && (client/1000)*1000 >= (serveur.getTime()/1000)*1000) {
                 // If the resource hasn't been modified since the client's Modified-Since date,
                 // respond with a 304 (Not Modified) status.
+
                 response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
             } else {
                 // If the resource has been modified or If-Modified-Since header is not provided,
