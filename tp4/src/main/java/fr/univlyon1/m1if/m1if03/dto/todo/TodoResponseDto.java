@@ -12,12 +12,14 @@ public class TodoResponseDto {
     private final int hash;
     private final String assignee;
     private final Boolean completed;
+    private  final String image;
 
-    public TodoResponseDto(String title, int hash, String assignee, Boolean completed) {
+    public TodoResponseDto(String title, int hash, String assignee, Boolean completed, String image) {
         this.title = title;
         this.hash = hash;
         this.assignee = assignee;
         this.completed = completed;
+        this.image = image;
     }
 
     public String getTitle() {
@@ -30,6 +32,10 @@ public class TodoResponseDto {
 
     public String getAssignee() {
         return assignee;
+    }
+
+    public String getImage() {
+        return image;
     }
 
     /**

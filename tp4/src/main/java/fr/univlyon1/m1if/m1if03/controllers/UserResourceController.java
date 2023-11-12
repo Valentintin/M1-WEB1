@@ -19,7 +19,6 @@ import javax.naming.InvalidNameException;
 import javax.naming.NameAlreadyBoundException;
 import javax.naming.NameNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -59,7 +58,7 @@ public class UserResourceController extends HttpServlet {
      * @throws IOException Voir doc...
      */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws   IOException {
         String[] url = UrlUtils.getUrlParts(request);
 
         if (url.length == 1) {// Création d'un utilisateur
@@ -112,7 +111,10 @@ public class UserResourceController extends HttpServlet {
             UserResponseDto userDto = userMapper.toDto(user);
             switch (url.length) {
                 case 2 -> { // Renvoie un DTO d'utilisateur (avec les infos nécessaires pour pouvoir le templater dans la vue)
-                    request.setAttribute("model", ((boolean) request.getAttribute("authorizedUser")) ? userDto : new UserResponseDto(userDto.getLogin(), userDto.getName(), null));
+                    request.setAttribute("model", ((boolean) request.getAttribute("authorizedUser")) ?
+                            userDto :
+                            new UserResponseDto(userDto.getLogin(), userDto.getName(), null)
+                    );
                     request.setAttribute("view", "user");
                 }
                 case 3 -> { // Renvoie une propriété d'un utilisateur

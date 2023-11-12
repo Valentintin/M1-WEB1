@@ -8,12 +8,12 @@
     <link rel="stylesheet" href="<%= request.getContextPath() %>/css/style.css">
 </head>
 <body>
-<c:set var="user" value="${requestScope.userDto}" scope="request"/>
+<c:set var="user" value="${requestScope.model}" scope="request"/>
 
 <h1>Utilisateur ${user.login}</h1>
 <ul>
-    <li>Login : ${user.login}</li>
-    <li>Nom : ${user.name}</li>
+    <li>Login : <a href="${pageContext.request.contextPath}/users/${user.hashCode()}/login">${user.login}</a></li>
+    <li>Nom : <a href="${pageContext.request.contextPath}/users/${user.hashCode()}/name">${user.name}</a></li>
     <c:if test="${requestScope.authorizedUser}">
     <li>
         Todos:

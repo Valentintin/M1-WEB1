@@ -11,10 +11,10 @@
 <body>
 
 <h2>Liste des utilisateurs</h2>
-<p>Il y a actuellement ${requestScope.users.size()} utilisateur(s) :</p>
+<p>Il y a actuellement ${requestScope.model.size()} utilisateur(s) :</p>
 <ul>
-    <c:forEach items="${requestScope.users}" var="user">
-        <li>${user.login} : <strong><a href="${pageContext.request.contextPath}/users/${user.login}">${user.name}</a></strong></li>
+    <c:forEach items="${requestScope.model}" var="user">
+        <li>${user} : <strong><a href="${pageContext.request.contextPath}/users/${user}">${user}</a></strong></li>
     </c:forEach>
 </ul>
 </body>

@@ -9,6 +9,7 @@ import fr.univlyon1.m1if.m1if03.utils.BufferlessHttpServletResponseWrapper;
 import fr.univlyon1.m1if.m1if03.utils.ContentNegotiationHelper;
 import fr.univlyon1.m1if.m1if03.utils.UrlUtils;
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpFilter;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,8 +19,22 @@ import jakarta.servlet.annotation.WebFilter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
+/**
+ * filtre contentNegotiation.
+ */
 @WebFilter(filterName = "ContentNegotiationFilter")
 public class ContentNegotiationFilter extends HttpFilter {
+
+    private String cheminVues;
+    private String suffixeVues;
+    private String defaultMIME;
+
+    public void init(FilterConfig config) throws ServletException {
+        cheminVues = config.getInitParameter("cheminVues");
+        suffixeVues = config.getInitParameter("suffixeVues");
+        defaultMIME = config.getInitParameter("defaultMIME");
+    }
+
     @Override
     protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         String[] url = UrlUtils.getUrlParts(request);
@@ -67,20 +82,22 @@ public class ContentNegotiationFilter extends HttpFilter {
                     if (response.getStatus() == HttpServletResponse.SC_OK) {
                         String accept = request.getHeader("Accept");
                         // Type de retour par défaut :
-                        accept = (accept == null || accept.equals("*/*")) ? "text/html" : accept;
+                        accept = (accept == null || accept.equals("*/*")) ? defaultMIME : accept;
                         switch (ContentNegotiationHelper.parseMimeHeader(accept)) {
                             case "text/html" -> {
                                 response.setHeader("Content-Type", "text/html");
-                                request.getRequestDispatcher("/WEB-INF/components/" + request.getAttribute("view") + ".jsp").include(request, response);
+                                request.getRequestDispatcher(cheminVues + request.getAttribute("view") + suffixeVues).include(request, response);
                             }
                             case "application/xml" -> {
                                 response.setHeader("Content-Type", "application/xml");
+                                response.setHeader("Link", request.getRequestURI());
                                 XmlMapper xmlMapper = new XmlMapper();
                                 xmlMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
                                 xmlMapper.writeValue(response.getWriter(), request.getAttribute("model"));
                             }
                             case "application/json" -> {
                                 response.setHeader("Content-Type", "application/json");
+                                response.setHeader("Link", request.getRequestURI());
                                 ObjectMapper objectMapper = new ObjectMapper();
                                 objectMapper.writeValue(response.getWriter(), request.getAttribute("model"));
                             }
