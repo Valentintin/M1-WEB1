@@ -2400,7 +2400,7 @@
 											"    // Nom original\r",
 											"    pm.expect(jsonData.name).to.eql(pm.collectionVariables.get(\"name1\"));\r",
 											"    // On doit voir les todos puisqu'on est l'utilisateur connecté\r",
-											"    pm.expect(jsonData.assignedTodos).to.be.an('array').that.includes(Number(pm.collectionVariables.get(\"todoU1Id\")));\r",
+											"    pm.expect(jsonData.assignedTodos).to.be.an('array').that.includes.oneOf([Number(pm.collectionVariables.get(\"todoU1Id\")), \"todos/\" + Number(pm.collectionVariables.get(\"todoU1Id\"))]);\r",
 											"});\r",
 											"\r",
 											"pm.test(\"ETag is present\", function () {\r",
@@ -3280,7 +3280,7 @@
 											"    // Nom modifié par PUT\r",
 											"    pm.expect(jsonData.name).to.eql(pm.collectionVariables.get(\"newName1\"));\r",
 											"    // On doit voir les todos puisqu'on est l'utilisateur connecté\r",
-											"    pm.expect(jsonData.assignedTodos).to.be.an('array').that.includes(Number(pm.collectionVariables.get(\"todoU1Id\")));\r",
+											"    pm.expect(jsonData.assignedTodos).to.be.an('array').that.includes.oneOf([Number(pm.collectionVariables.get(\"todoU1Id\")), \"todos/\" + Number(pm.collectionVariables.get(\"todoU1Id\"))]);\r",
 											"});\r",
 											"\r",
 											"pm.test(\"ETag is present\", function () {\r",
@@ -11891,7 +11891,7 @@
 											"pm.test(\"Body matches string\", function () {\r",
 											"    var jsonData = pm.response.json();\r",
 											"    // On vérifie que la réponse contient le login de l'user 1\r",
-											"    pm.expect(jsonData.assignee).to.eql(pm.collectionVariables.get(\"login1\"));\r",
+											"    pm.expect(jsonData.assignee.replace(\"users/\",\"\")).to.eql(pm.collectionVariables.get(\"login1\"));\r",
 											"});\r",
 											"\r",
 											"pm.test(\"Last-Modified is present\", function () {\r",
@@ -12461,7 +12461,7 @@
 											"pm.test(\"Body matches string\", function () {\r",
 											"    var jsonData = pm.response.json();\r",
 											"    // On vérifie que la réponse contient le login de l'user 1\r",
-											"    pm.expect(jsonData.assignee).to.eql(pm.collectionVariables.get(\"login1\"));\r",
+											"    pm.expect(jsonData.assignee.replace(\"users/\",\"\")).to.eql(pm.collectionVariables.get(\"login1\"));\r",
 											"});"
 										],
 										"type": "text/javascript"
@@ -16271,7 +16271,7 @@
 											"pm.test(\"Body matches string\", function () {\r",
 											"    var jsonData = pm.response.json();\r",
 											"    // On vérifie que la réponse contient le login de l'user 2\r",
-											"    pm.expect(jsonData.assignee).to.eql(pm.collectionVariables.get(\"login2\"));\r",
+											"    pm.expect(jsonData.assignee.replace(\"users/\",\"\")).to.eql(pm.collectionVariables.get(\"login2\"));\r",
 											"});"
 										],
 										"type": "text/javascript"
@@ -16553,7 +16553,7 @@
 											"pm.test(\"Body matches string\", function () {\r",
 											"    var jsonData = pm.response.json();\r",
 											"    // On vérifie que la réponse contient le login de l'user 2\r",
-											"    pm.expect(jsonData.assignee).to.eql(pm.collectionVariables.get(\"login2\"));\r",
+											"    pm.expect(jsonData.assignee.replace(\"users/\",\"\")).to.eql(pm.collectionVariables.get(\"login2\"));\r",
 											"});"
 										],
 										"type": "text/javascript"
@@ -17462,7 +17462,7 @@
 											"    var jsonData = pm.response.json();\r",
 											"    // On vérifie que la réponse contient le nouveau titre et le login de l'user 2\r",
 											"    pm.expect(jsonData.title).to.eql(pm.collectionVariables.get(\"todo2NewTitle\"));\r",
-											"    pm.expect(jsonData.assignee).to.eql(pm.collectionVariables.get(\"login2\"));\r",
+											"    pm.expect(jsonData.assignee.replace(\"users/\",\"\")).to.eql(pm.collectionVariables.get(\"login2\"));\r",
 											"});"
 										],
 										"type": "text/javascript"
@@ -17744,7 +17744,7 @@
 											"pm.test(\"Body matches string\", function () {\r",
 											"    var jsonData = pm.response.json();\r",
 											"    // On vérifie que la réponse contient le login de l'user 2\r",
-											"    pm.expect(jsonData.assignee).to.eql(pm.collectionVariables.get(\"login2\"));\r",
+											"    pm.expect(jsonData.assignee.replace(\"users/\",\"\")).to.eql(pm.collectionVariables.get(\"login2\"));\r",
 											"});"
 										],
 										"type": "text/javascript"
