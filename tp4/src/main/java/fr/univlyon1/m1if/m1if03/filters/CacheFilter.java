@@ -46,7 +46,8 @@ public class CacheFilter extends HttpFilter {
             super.doFilter(request, wrapper, chain);
 
             //passez la main à l'élément suivant de la chaîne
-            chain.doFilter(request, response);
+            //chain.doFilter(request, response);
+
             //stockez la date courante dans la map ci-dessus.
             TodoRequestDto requestDto = (TodoRequestDto) request.getAttribute("dto");
             Integer hashTmp = null;
@@ -75,7 +76,7 @@ public class CacheFilter extends HttpFilter {
             }
             System.out.println(lastModified.getTime());
             System.out.println(ifModifiedSince);
-            if (lastModified != null && ifModifiedSince > 0 && ifModifiedSince >=  lastModified.getTime()) {
+            if (lastModified != null && (int)(ifModifiedSince/1000.)*1000 > 0 && (int)(ifModifiedSince/1000.)*1000 >=  (int)(lastModified.getTime()/1000.)*1000) {
                 // If the resource hasn't been modified since the client's Modified-Since date,
                 // respond with a 304 (Not Modified) status.
                 response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
