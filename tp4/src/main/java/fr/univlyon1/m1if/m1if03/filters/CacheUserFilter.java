@@ -5,6 +5,7 @@ import fr.univlyon1.m1if.m1if03.dao.UserDao;
 import fr.univlyon1.m1if.m1if03.dto.user.UserRequestDto;
 import fr.univlyon1.m1if.m1if03.model.Todo;
 import fr.univlyon1.m1if.m1if03.model.User;
+import fr.univlyon1.m1if.m1if03.utils.UrlUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletException;
@@ -35,18 +36,22 @@ public class CacheUserFilter extends HttpFilter {
 
     @Override
     protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-        if (request.getMethod().equals("GET")) {
-            long tagHeader = Long.parseLong(request.getHeader("If-None-Match"));
-            UserRequestDto requestDto = (UserRequestDto) request.getAttribute("dto");
+        String[] url = UrlUtils.getUrlParts(request);
+        if (request.getMethod().equals("GET") && url.length >= 2) {
+            long tagHeader = request.getDateHeader("If-None-Match");
+            //UserRequestDto requestDto = (UserRequestDto) request.getAttribute("dto");
+            String login = url[1];
             User user = null;
             try {
-                user = userDao.findOne(requestDto.getLogin());
+                user = userDao.findOne(login);
             } catch (NameNotFoundException e) {
                 throw new RuntimeException(e);
             } catch (InvalidNameException e) {
                 throw new RuntimeException(e);
             }
             long tagUser = getTag(user, request);
+
+            //Comparaison pour l'erreur 304
             if (tagHeader > 0){
                 if (tagHeader == tagUser) {
                     response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
@@ -59,7 +64,7 @@ public class CacheUserFilter extends HttpFilter {
 
     private Integer getTag(User user, HttpServletRequest request){
         TodoDao todo = (TodoDao) request.getServletContext().getAttribute("todoDao");
-        Integer userHash =  user.toString().hashCode();
+        Integer userHash =  user.getLogin().hashCode();
         List<Integer> assignedTodoHashList =  todo.findByAssignee(user.getLogin()).stream().map(Todo::hashCode).toList();
         Integer assignedTodoHash = null;
         for(Integer assigned: assignedTodoHashList) {

@@ -83,5 +83,6 @@
     <filter-mapping>
         <filter-name>CacheUserFilter</filter-name>
         <url-pattern>/users/*</url-pattern>
+        <url-pattern>/users</url-pattern>
     </filter-mapping>
 </web-app>
