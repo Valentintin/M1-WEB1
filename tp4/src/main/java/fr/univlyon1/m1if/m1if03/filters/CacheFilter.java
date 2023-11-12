@@ -1,5 +1,7 @@
 package fr.univlyon1.m1if.m1if03.filters;
 
+import fr.univlyon1.m1if.m1if03.dto.todo.TodoRequestDto;
+import fr.univlyon1.m1if.m1if03.utils.UrlUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletException;
@@ -17,8 +19,8 @@ import java.util.Map;
  */
 @WebFilter
 public class CacheFilter extends HttpFilter {
-    private Map<String, Date> dateMap;
-    private String lastTodoTitle;
+    private Map<Integer, Date> dateMap;
+    private Integer lastTodoHash;
 
     @Override
     public void init(FilterConfig config) throws ServletException {
@@ -31,34 +33,39 @@ public class CacheFilter extends HttpFilter {
 
         //1 requete POST ajout todo ou Get sur liste
         boolean isGetList = (request.getMethod().equals("GET"));
-        boolean isPost = (request.getMethod().equals("POST") && request.getParameter("operation").equals("add"));
+        String[] url = UrlUtils.getUrlParts(request);
+        boolean isPost = ((request.getMethod().equals("POST")) || request.getMethod().equals("DELETE") || request.getMethod().equals("PUT"));
+        boolean todo = (url.length >= 2);
         if(isPost){
             //passez la main à l'élément suivant de la chaîne
             chain.doFilter(request, response);
             //stockez la date courante dans la map ci-dessus.
-            String titleTmp = request.getParameter("title");
-            if(titleTmp != null) {
-                lastTodoTitle = titleTmp;
-                System.out.println(lastTodoTitle);
+            TodoRequestDto requestDto = (TodoRequestDto) request.getAttribute("dto");
+            Integer hashTmp = requestDto.getHash();
+            if(hashTmp != null) {
+                lastTodoHash = hashTmp;
+                System.out.println(lastTodoHash);
+                this.dateMap.put(lastTodoHash, new Date());
             }
+            this.dateMap.put(0, new Date());
         }
-        this.dateMap.put(lastTodoTitle, new Date());
         if(isGetList) {
             //générez un en-tête de réponse Last-Modified, à l'aide de la méthode response.setDateHeader(...).
             long ifModifiedSince = request.getDateHeader("If-Modified-Since");
-            Date lastModified  = dateMap.get(this.lastTodoTitle);
+            Date lastModified  = dateMap.get(0);
+            if(todo){
+                lastModified = dateMap.get(Integer.parseInt(url[1]));
+            }
             System.out.println(lastModified.getTime());
             System.out.println(ifModifiedSince);
-            if (lastModified != null && ifModifiedSince > 0 && lastModified.getTime() >= ifModifiedSince) {
+            if (lastModified != null && ifModifiedSince > 0 && ifModifiedSince >=  lastModified.getTime() ) {
                 // If the resource hasn't been modified since the client's If-Modified-Since date,
                 // respond with a 304 (Not Modified) status.
                 response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
             } else {
                 // If the resource has been modified or If-Modified-Since header is not provided,
                 // generate a new Last-Modified header and process the request as usual.
-                if (lastModified != null) {
-                    response.setDateHeader("Last-Modified", lastModified.getTime());
-                }
+                response.setDateHeader("Last-Modified", new Date().getTime());
                 chain.doFilter(request, response);
             }
             //génération de la page + en-tête Last-Modified ou
