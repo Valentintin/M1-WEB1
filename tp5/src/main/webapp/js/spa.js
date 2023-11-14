@@ -111,7 +111,13 @@ function connect() {
             console.error("In login: " + err);
         })
 
-    renderTemplate('template_header', { name: 'toto' }, 'target');
+    renderTemplate('template_header', { name: 'toto' }, 'target_header');
+    renderTemplate('template_myAccount', {login : 'Toto', name : 'toto', todos: [
+            "6874687",
+            "6546544"
+        ]
+    }, 'target_myAccount');//Attention dans le tableau todos, les elements récup par API se sera de forme todos/48257987413 du coup faudra faire un split pour récup l'id
+    //On voudra également récupérer le nom: quand on aura l'id seul On fera une requete pour récup le name
 }
 
 function deco() {

@@ -17,7 +17,7 @@
 <header>
     <h1 class="header-titre">MIF-TODOS</h1>
     <div class="wrapper">
-        <p class="header-user requiresConnection" id="target"><strong> Loading...</strong></p>
+        <p class="header-user requiresConnection" id="target_header"><strong> Loading...</strong></p>
         <script id="template_header" type="x-tmpl-mustache">Bonjour {{ name }}!</script>
         <p class="header-deco requiresConnection"><a href='#deco'>Déconnexion</a></p>
     </div>
@@ -47,7 +47,7 @@
             <h2>L'application des trucs à faire</h2>
             <p>Actuellement : <strong id="nbUsers">...</strong> utilisateurs inscrits.</p>
             <!--
-                TODO A vous de modifier cette section pour qu'elle affiche les bonnes données et qu'elle se recharge toutes les 5 secondes.
+                TODO on assume que ça fonctionne, juste le connecte
             -->
             <script>
 
@@ -77,12 +77,15 @@
         </section>
 
         <section id='monCompte' class='inactive'>
+            <div id="target_myAccount"></div>
+        </section>
+        <script id="template_myAccount" type="x-tmpl-mustache">
             <h2>Mon compte</h2>
             <table id='compteList'>
-                <tr><td>Login : </td><td><span id="login">toto</span></td></tr>
+                <tr><td>Login : </td><td><span id="login">{{login}}</span></td></tr>
                 <tr>
                     <td>Nom : </td>
-                    <td><span id="nom_update_input" contenteditable="true">Toto</span></td>
+                    <td><span id="nom_update_input" contenteditable="true">{{name}}</span></td>
                     <td><button type="button" class="btn btn-secondary" id="user_update_button">Modifier</button></td>
                 </tr>
                 <tr>
@@ -93,14 +96,15 @@
             </table>
             <div>Assigné à :
                 <ul>
-                    <li><a href="#todoList/idTodo1">Titre du premier todo</a></li>
-                    <li><a href="#todoList/idTodo3">Titre du troisième todo</a></li>
+                    {{#todos}}
+                        <li><a href="#todoList/{{.}}">todos/{{.}}</a></li>
+                    {{/todos}}
                 </ul>
             </div>
-            <!--
-                TODO afficher les informations dans les champs, récupérer les informations sur les todos et générer les éléments et leurs IDs.
-            -->
-        </section>
+        </script>
+        <!--
+               TODO afficher les informations dans les champs, récupérer les informations sur les todos et générer les éléments et leurs IDs.
+           -->
 
         <section id='todoList' class='inactive'>
             <h2><strong>Liste des todos</strong></h2>
