@@ -1,0 +1,128 @@
+/* Sélecteur universel */
+* {
+    font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 14px; outline: 0;
+}
+
+body {
+    height: 100%;
+}
+
+header, aside, article, footer {
+    border: 1px #808080 dotted;
+    border-radius: 5px;
+    padding: 5px;
+    margin: 5px;
+}
+
+header {
+    max-height: 20%;
+}
+
+.wrapper {
+    /* Conteneurs principaux (horizontaux) */
+    display: flex;
+    flex-wrap: wrap;
+}
+article, aside {
+    /* Conteneurs secondaires (verticaux) */
+    display: flex;
+    flex-direction: column;
+    max-height: 80%;
+}
+.header-titre {
+    text-align: center;
+    flex-grow: 3;
+}
+.header-user, .header-deco {
+    width: 50%;
+    flex-grow: 1;
+}
+
+.header-deco {
+    text-align: right;
+}
+
+.menu {
+    flex-grow: 1;
+}
+.contenu {
+    flex-grow: 4;
+}
+footer div {
+    text-align: center;
+    flex-grow: 1;
+}
+p {
+    margin-bottom: auto;
+}
+
+li, tr {
+    padding: 15px 0 15px 0;
+}
+
+td {
+    padding-right: 25px;
+}
+
+h1 {
+    font-size: 1.4em;
+}
+
+h2 {
+    font-size: 1.2em;
+}
+
+h3 {
+    font-size: 1.0em;
+}
+
+input, select, button {
+    background-color: white;
+    padding: 3px;
+    border: #000000 1px solid;
+}
+
+select {
+    padding: 4px;
+}
+
+button {
+    border-radius: 5px;
+}
+
+button:active {
+    font-weight: bold;
+}
+
+/* Affichage des sections dans la SPA */
+
+.active {
+    display: block;
+}
+
+.inactive {
+    display: none;
+}
+
+/* Classe de style pour l'affichage des éléments qui nécessitent une connexion */
+
+.requiresConnection {
+    visibility: collapse;
+}
+
+/* Affichage de la liste dans un bloc de hauteur fixe */
+
+.list {
+    max-height: 80%;
+    overflow: auto;
+    width: 100%;
+    text-align: left;
+}
+
+/* Mise en évidence d'un élément d'une liste */
+
+.special {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #721c24;
+}
