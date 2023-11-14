@@ -110,6 +110,8 @@ function connect() {
         .catch((err) => {
             console.error("In login: " + err);
         })
+
+    renderTemplate('template_header', { name: 'toto' }, 'target');
 }
 
 function deco() {
@@ -119,3 +121,10 @@ function deco() {
 }
 setInterval(getNumberOfUsers, 5000);
 // </editor-fold>
+
+// Functions pour Templates
+function renderTemplate(id, data, idHtml) {
+    const template = document.getElementById(id).innerHTML;
+    const rendered = Mustache.render(template, data);
+    document.getElementById(idHtml).innerHTML = rendered;
+}

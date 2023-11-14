@@ -10,12 +10,15 @@
     <link rel="stylesheet" href="css/app.css">
     <script type="application/javascript" src="js/api-base.js"></script>
     <script type="application/javascript" src="js/spa.js"></script>
+    <script src="https://unpkg.com/mustache@latest"></script>
+
 </head>
 <body>
 <header>
     <h1 class="header-titre">MIF-TODOS</h1>
     <div class="wrapper">
-        <p class="header-user requiresConnection">Bonjour <strong>Toto</strong></p>
+        <p class="header-user requiresConnection" id="target"><strong> Loading...</strong></p>
+        <script id="template_header" type="x-tmpl-mustache">Bonjour {{ name }}!</script>
         <p class="header-deco requiresConnection"><a href='#deco'>Déconnexion</a></p>
     </div>
     <!--
@@ -46,6 +49,9 @@
             <!--
                 TODO A vous de modifier cette section pour qu'elle affiche les bonnes données et qu'elle se recharge toutes les 5 secondes.
             -->
+            <script>
+
+            </script>
         </section>
 
         <section id='connect' class='inactive'>
