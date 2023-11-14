@@ -79,10 +79,49 @@ function getNumberOfUsers() {
         });
 }
 
+function getName(name) {
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+    const body = {
+        login: document.getElementById("login_input").value,
+        password: document.getElementById("password_input").value
+    };
+    const requestConfig = {
+        method: "GET",
+        headers: headers,
+        body: JSON.stringify(body),
+        mode: "cors" // pour le cas où vous utilisez un serveur différent pour l'API et le client.
+    };
+
+    fetch(baseUrl + "users/" + name, requestConfig)
+        .then((response) => {
+            if(response.status === 200) {
+                console.log(response.data);
+                return response.data;
+                // displayRequestResult("Connexion réussie", "alert-success");
+                // console.log("In login: Authorization = " + response.headers.get("Authorization"));
+                // token = response.headers.get("Authorization");
+                // token.replace("Bearer ", "");
+                // login = document.getElementById("login_input").value;
+                // location.hash = "#index";
+
+            } else {
+                displayRequestResult("Connexion refusée ou impossible", "alert-danger");
+                throw new Error("Bad response code (" + response.status + ").");
+            }
+        })
+        .catch((err) => {
+            console.error("In login: " + err);
+        })
+
+}
+
 /**
  * Envoie la requête de login en fonction du contenu des champs de l'interface.
  */
 function connect() {
+    let token = null;
+    let login = null;
     displayConnected(true);
     const headers = new Headers();
     headers.append("Content-Type", "application/json");
@@ -101,6 +140,9 @@ function connect() {
             if(response.status === 204) {
                 displayRequestResult("Connexion réussie", "alert-success");
                 console.log("In login: Authorization = " + response.headers.get("Authorization"));
+                token = response.headers.get("Authorization");
+                token.replace("Bearer ", "");
+                login = body.login;
                 location.hash = "#index";
             } else {
                 displayRequestResult("Connexion refusée ou impossible", "alert-danger");
@@ -111,13 +153,44 @@ function connect() {
             console.error("In login: " + err);
         })
 
-    renderTemplate('template_header', { name: 'toto' }, 'target_header');
-    renderTemplate('template_myAccount', {login : 'Toto', name : 'toto', todos: [
-            "6874687",
-            "6546544"
+    renderTemplate('template_header', { login: login }, 'target_header');
+    renderTemplate('template_myAccount', {login : login, name : getName(login), todos: [
+            {
+                "id": "6874687",
+                "name": "todo 1"
+            },
+            {
+                "id": "6546544",
+                "name": "todo 2"
+            },
+            {
+                "id": "6546426",
+                "name": "todo 3"
+            }
         ]
     }, 'target_myAccount');//Attention dans le tableau todos, les elements récup par API se sera de forme todos/48257987413 du coup faudra faire un split pour récup l'id
     //On voudra également récupérer le nom: quand on aura l'id seul On fera une requete pour récup le name
+    renderTemplate('template_todoList', {todos: [
+            {
+                "id": "6874687",
+                "name": "todo 1",
+                "image": "&#x2611;",
+                "assignee": "Bob"
+            },
+            {
+                "id": "6546544",
+                "name": "todo 2",
+                "image": '&#x2610;',
+                "assignee": "Toto"
+            },
+            {
+                "id": "6546426",
+                "name": "todo 3",
+                "image": "&#x2611;",
+                "assignee": "Bob"
+            }
+        ]
+    }, 'target_todoList');
 }
 
 function deco() {
