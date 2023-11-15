@@ -79,39 +79,27 @@ function getNumberOfUsers() {
         });
 }
 
-function getName(name) {
+function  getName(login, token) {
     const headers = new Headers();
     headers.append("Content-Type", "application/json");
-    const body = {
-        login: document.getElementById("login_input").value,
-        password: document.getElementById("password_input").value
-    };
+    headers.append("Authorization", token);
     const requestConfig = {
         method: "GET",
         headers: headers,
-        body: JSON.stringify(body),
         mode: "cors" // pour le cas où vous utilisez un serveur différent pour l'API et le client.
     };
-
-    fetch(baseUrl + "users/" + name, requestConfig)
+    fetch(baseUrl + "users/" + login + "/name", requestConfig)
         .then((response) => {
             if(response.status === 200) {
-                console.log(response.data);
-                return response.data;
-                // displayRequestResult("Connexion réussie", "alert-success");
-                // console.log("In login: Authorization = " + response.headers.get("Authorization"));
-                // token = response.headers.get("Authorization");
-                // token.replace("Bearer ", "");
-                // login = document.getElementById("login_input").value;
-                // location.hash = "#index";
-
+                console.log(response.json());
+                return response.body;
             } else {
                 displayRequestResult("Connexion refusée ou impossible", "alert-danger");
                 throw new Error("Bad response code (" + response.status + ").");
             }
         })
         .catch((err) => {
-            console.error("In login: " + err);
+            console.error("In getName: " + err);
         })
 
 }
@@ -122,6 +110,7 @@ function getName(name) {
 function connect() {
     let token = null;
     let login = null;
+    let name = null;
     displayConnected(true);
     const headers = new Headers();
     headers.append("Content-Type", "application/json");
@@ -135,14 +124,16 @@ function connect() {
         body: JSON.stringify(body),
         mode: "cors" // pour le cas où vous utilisez un serveur différent pour l'API et le client.
     };
+    const bodyJSON = JSON.parse(requestConfig.body);
+    login = bodyJSON.login;
     fetch(baseUrl + "users/login", requestConfig)
         .then((response) => {
             if(response.status === 204) {
                 displayRequestResult("Connexion réussie", "alert-success");
                 console.log("In login: Authorization = " + response.headers.get("Authorization"));
                 token = response.headers.get("Authorization");
-                token.replace("Bearer ", "");
-                login = body.login;
+                //token.replace("Bearer ", "");
+                name = getName(login, token);
                 location.hash = "#index";
             } else {
                 displayRequestResult("Connexion refusée ou impossible", "alert-danger");
@@ -153,8 +144,9 @@ function connect() {
             console.error("In login: " + err);
         })
 
+    console.log("Le login : " + login);
     renderTemplate('template_header', { login: login }, 'target_header');
-    renderTemplate('template_myAccount', {login : login, name : getName(login), todos: [
+    renderTemplate('template_myAccount', {login : login, name : name , todos: [
             {
                 "id": "6874687",
                 "name": "todo 1"
