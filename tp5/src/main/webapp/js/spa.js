@@ -91,12 +91,13 @@ function  getName(login, token) {
     fetch(baseUrl + "users/" + login + "/name", requestConfig)
         .then((response) => {
             if(response.status === 200) {
-                console.log(response.json());
-                return response.body;
+                return response.json();
             } else {
                 displayRequestResult("Connexion refusée ou impossible", "alert-danger");
                 throw new Error("Bad response code (" + response.status + ").");
             }
+        }).then((json) => {
+            console.log(JSON.stringify(json.body));
         })
         .catch((err) => {
             console.error("In getName: " + err);
