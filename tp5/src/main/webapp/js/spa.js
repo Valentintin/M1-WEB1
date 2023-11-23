@@ -90,14 +90,13 @@ function  getName(login, token) {
     };
     fetch(baseUrl + "users/" + login + "/name", requestConfig)
         .then((response) => {
-            if(response.status === 200) {
+            if(response.status === 200 && response.headers.get("Content-Type").includes("application/json")) {
                 return response.json();
             } else {
-                displayRequestResult("Connexion refusée ou impossible", "alert-danger");
                 throw new Error("Bad response code (" + response.status + ").");
             }
         }).then((json) => {
-            console.log(JSON.stringify(json.body));
+            console.log(JSON.parse(JSON.stringify(json)));
         })
         .catch((err) => {
             console.error("In getName: " + err);
@@ -134,7 +133,7 @@ function connect() {
                 console.log("In login: Authorization = " + response.headers.get("Authorization"));
                 token = response.headers.get("Authorization");
                 //token.replace("Bearer ", "");
-                name = getName(login, token);
+                getName(login, token);
                 location.hash = "#index";
             } else {
                 displayRequestResult("Connexion refusée ou impossible", "alert-danger");
