@@ -79,29 +79,31 @@ function getNumberOfUsers() {
         });
 }
 
-function  getName(login, token) {
-    const headers = new Headers();
-    headers.append("Content-Type", "application/json");
-    headers.append("Authorization", token);
-    const requestConfig = {
-        method: "GET",
-        headers: headers,
-        mode: "cors" // pour le cas où vous utilisez un serveur différent pour l'API et le client.
-    };
-    fetch(baseUrl + "users/" + login + "/name", requestConfig)
-        .then((response) => {
-            if(response.status === 200 && response.headers.get("Content-Type").includes("application/json")) {
-                return response.json();
-            } else {
-                throw new Error("Bad response code (" + response.status + ").");
-            }
-        }).then((json) => {
-            console.log(JSON.parse(JSON.stringify(json)));
+function  getName(login, token, name) {
+    return new Promise((resolve, reject) => {
+        const headers = new Headers();
+        headers.append("Accept", "application/json");
+        headers.append("Authorization", token);
+        const requestConfig = {
+            method: "GET",
+            headers: headers,
+            mode: "cors" // pour le cas où vous utilisez un serveur différent pour l'API et le client.
+        };
+        fetch(baseUrl + "users/" + login + "/name", requestConfig)
+            .then((response) => {
+                if (response.status === 200 && response.headers.get("Content-Type").includes("application/json")) {
+                    return response.json();
+                } else {
+                    throw new Error("Bad response code (" + response.status + ") or does not contain JSON (" + response.headers.get("Content-Type") + ").");
+                }
+            }).then((json) => {
+            name = json.name;
+            resolve(name);
         })
-        .catch((err) => {
-            console.error("In getName: " + err);
-        })
-
+            .catch((err) => {
+                console.error("In getName: " + err);
+            })
+    });
 }
 
 /**
@@ -133,18 +135,23 @@ function connect() {
                 console.log("In login: Authorization = " + response.headers.get("Authorization"));
                 token = response.headers.get("Authorization");
                 //token.replace("Bearer ", "");
-                getName(login, token);
-                location.hash = "#index";
+                return getName(login, token, name);
             } else {
                 displayRequestResult("Connexion refusée ou impossible", "alert-danger");
                 throw new Error("Bad response code (" + response.status + ").");
             }
         })
+        .then((nameGetName) => {
+            name = nameGetName;
+            renderAll(login, name);
+            location.hash = "#index";
+        })
         .catch((err) => {
             console.error("In login: " + err);
         })
+}
 
-    console.log("Le login : " + login);
+function renderAll(login, name){
     renderTemplate('template_header', { login: login }, 'target_header');
     renderTemplate('template_myAccount', {login : login, name : name , todos: [
             {
