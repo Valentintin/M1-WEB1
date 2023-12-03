@@ -79,7 +79,7 @@ function getNumberOfUsers() {
         });
 }
 
-function  getName(login, token, name) {
+function  getName(login, token) {
     return new Promise((resolve, reject) => {
         const headers = new Headers();
         headers.append("Accept", "application/json");
@@ -97,12 +97,105 @@ function  getName(login, token, name) {
                     throw new Error("Bad response code (" + response.status + ") or does not contain JSON (" + response.headers.get("Content-Type") + ").");
                 }
             }).then((json) => {
-            name = json.name;
-            resolve(name);
+            resolve(json.name);
         })
             .catch((err) => {
                 console.error("In getName: " + err);
             })
+    });
+}
+
+function getAssignedTodos(token, login){
+    return new Promise((resolve, reject) => {
+        const headers = new Headers();
+        headers.append("Accept", "application/json");
+        headers.append("Authorization", token);
+        const requestConfig = {
+            method: "GET",
+            headers: headers,
+            mode: "cors" // pour le cas où vous utilisez un serveur différent pour l'API et le client.
+        };
+        fetch(baseUrl + "users/" + login + "/assignedTodos", requestConfig)
+            .then((response) => {
+                if (response.status === 200 && response.headers.get("Content-Type").includes("application/json")) {
+                    return response.json();
+                } else {
+                    throw new Error("Bad response code (" + response.status + ") or does not contain JSON (" + response.headers.get("Content-Type") + ").");
+                }
+            }).then((json) => {
+                return getInformationForTodos(token, json.assignedTodos);
+            }).then((assignedTodos) => {
+                resolve(assignedTodos);
+            })
+            .catch((err) => {
+                console.error("In getAssignedTodos: " + err);
+            })
+    });
+}
+
+function getAllTodos(token){
+    return new Promise((resolve, reject) => {
+        const headers = new Headers();
+        headers.append("Accept", "application/json");
+        headers.append("Authorization", token);
+        const requestConfig = {
+            method: "GET",
+            headers: headers,
+            mode: "cors" // pour le cas où vous utilisez un serveur différent pour l'API et le client.
+        };
+        fetch(baseUrl + "todos" , requestConfig)
+            .then((response) => {
+                if (response.status === 200 && response.headers.get("Content-Type").includes("application/json")) {
+                    return response.json();
+                } else {
+                    throw new Error("Bad response code (" + response.status + ") or does not contain JSON (" + response.headers.get("Content-Type") + ").");
+                }
+            }).then((json) => {
+            return getInformationForTodos(token, json);
+        }).then((allTodos) => {
+            resolve(allTodos);
+        })
+            .catch((err) => {
+                console.error("In getAssignedTodos: " + err);
+            })
+    });
+}
+
+function getInformationForTodos(token, listOfTodos){
+    return new Promise((resolve, reject) => {
+        let compteur = 0; // compteur pour savoir quand envoyer la promesse
+
+        const checkCompteur = () => {
+            if(compteur == listOfTodos.length){
+                resolve(listOfTodos);
+            }
+        }
+
+        for (let i=0;i<listOfTodos.length;i++){
+            const headers = new Headers();
+            headers.append("Accept", "application/json");
+            headers.append("Authorization", token);
+            const requestConfig = {
+                method: "GET",
+                headers: headers,
+                mode: "cors" // pour le cas où vous utilisez un serveur différent pour l'API et le client.
+            };
+            fetch(baseUrl + "todos/" + listOfTodos[i] , requestConfig)
+                .then((response) => {
+                    if (response.status === 200 && response.headers.get("Content-Type").includes("application/json")) {
+                        return response.json();
+                    } else {
+                        throw new Error("Bad response code (" + response.status + ") or does not contain JSON (" + response.headers.get("Content-Type") + ").");
+                    }
+                }).then((json) => {
+                    listOfTodos[i] = json;
+                    compteur++;
+                    checkCompteur();
+                })
+                .catch((err) => {
+                    console.error("In getTodo: " + err);
+                })
+        }
     });
 }
 
@@ -135,15 +228,19 @@ function connect() {
                 console.log("In login: Authorization = " + response.headers.get("Authorization"));
                 token = response.headers.get("Authorization");
                 //token.replace("Bearer ", "");
-                return getName(login, token, name);
+                return Promise.all([
+                    getName(login, token),
+                    getAssignedTodos(token,login),
+                    getAllTodos(token)
+                ])
             } else {
                 displayRequestResult("Connexion refusée ou impossible", "alert-danger");
                 throw new Error("Bad response code (" + response.status + ").");
             }
         })
-        .then((nameGetName) => {
-            name = nameGetName;
-            renderAll(login, name);
+        .then(([name, assignedTodos, allTodos]) => {
+            console.log(allTodos);
+            renderAll(login, name, assignedTodos, allTodos);
             location.hash = "#index";
         })
         .catch((err) => {
@@ -151,45 +248,11 @@ function connect() {
         })
 }
 
-function renderAll(login, name){
+function renderAll(login, name, assignedTodos, allTodos){
     renderTemplate('template_header', { login: login }, 'target_header');
-    renderTemplate('template_myAccount', {login : login, name : name , todos: [
-            {
-                "id": "6874687",
-                "name": "todo 1"
-            },
-            {
-                "id": "6546544",
-                "name": "todo 2"
-            },
-            {
-                "id": "6546426",
-                "name": "todo 3"
-            }
-        ]
-    }, 'target_myAccount');//Attention dans le tableau todos, les elements récup par API se sera de forme todos/48257987413 du coup faudra faire un split pour récup l'id
-    //On voudra également récupérer le nom: quand on aura l'id seul On fera une requete pour récup le name
-    renderTemplate('template_todoList', {todos: [
-            {
-                "id": "6874687",
-                "name": "todo 1",
-                "image": "&#x2611;",
-                "assignee": "Bob"
-            },
-            {
-                "id": "6546544",
-                "name": "todo 2",
-                "image": '&#x2610;',
-                "assignee": "Toto"
-            },
-            {
-                "id": "6546426",
-                "name": "todo 3",
-                "image": "&#x2611;",
-                "assignee": "Bob"
-            }
-        ]
-    }, 'target_todoList');
+    renderTemplate('template_myAccount', {login : login, name : name , todos: assignedTodos
+    }, 'target_myAccount');
+    renderTemplate('template_todoList', {todos: allTodos}, 'target_todoList');
 }
 
 function deco() {

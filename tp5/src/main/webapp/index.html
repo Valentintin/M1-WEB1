@@ -97,7 +97,7 @@
             <div>Assigné à :
                 <ul>
                     {{#todos}}
-                        <li><a href="#todoList/{{id}}">{{name}}</a></li>
+                        <li><a href="#todoList/{{id}}">{{title}}</a></li>
                     {{/todos}}
                 </ul>
             </div>
@@ -127,6 +127,7 @@
                 {{#todos}}
                     <tr class="special">
                         <td>{{image}}</td>
+                        <td>{{title}}</td>
                         <td>{{name}}</td>
                         <td><a href="#user/{{assignee}}">{{assignee}}</a></td>
                         <td><button type="button" class="btn btn-secondary" id="idTodo1_removeUser_button">Me retirer ce todo</button></td>
