@@ -123,7 +123,7 @@ function getAssignedTodos(token, login){
                     throw new Error("Bad response code (" + response.status + ") or does not contain JSON (" + response.headers.get("Content-Type") + ").");
                 }
             }).then((json) => {
-                return getInformationForTodos(token, json.assignedTodos);
+                return getInformationForTodos(token, json.assignedTodos, login);
             }).then((assignedTodos) => {
                 resolve(assignedTodos);
             })
@@ -133,7 +133,7 @@ function getAssignedTodos(token, login){
     });
 }
 
-function getAllTodos(token){
+function getAllTodos(token, login){
     return new Promise((resolve, reject) => {
         const headers = new Headers();
         headers.append("Accept", "application/json");
@@ -151,7 +151,7 @@ function getAllTodos(token){
                     throw new Error("Bad response code (" + response.status + ") or does not contain JSON (" + response.headers.get("Content-Type") + ").");
                 }
             }).then((json) => {
-            return getInformationForTodos(token, json);
+            return getInformationForTodos(token, json, login);
         }).then((allTodos) => {
             resolve(allTodos);
         })
@@ -161,7 +161,7 @@ function getAllTodos(token){
     });
 }
 
-function getInformationForTodos(token, listOfTodos){
+function getInformationForTodos(token, listOfTodos, login){
     return new Promise((resolve, reject) => {
         let compteur = 0; // compteur pour savoir quand envoyer la promesse
 
@@ -189,6 +189,7 @@ function getInformationForTodos(token, listOfTodos){
                     }
                 }).then((json) => {
                     listOfTodos[i] = json;
+                    listOfTodos[i].userIsAssignee = (login === json.assignee); //savoir si l'utilisateur connecté et celui qui possède le todo
                     compteur++;
                     checkCompteur();
                 })
@@ -231,7 +232,7 @@ function connect() {
                 return Promise.all([
                     getName(login, token),
                     getAssignedTodos(token,login),
-                    getAllTodos(token)
+                    getAllTodos(token, login)
                 ])
             } else {
                 displayRequestResult("Connexion refusée ou impossible", "alert-danger");
@@ -252,7 +253,7 @@ function renderAll(login, name, assignedTodos, allTodos){
     renderTemplate('template_header', { login: login }, 'target_header');
     renderTemplate('template_myAccount', {login : login, name : name , todos: assignedTodos
     }, 'target_myAccount');
-    renderTemplate('template_todoList', {todos: allTodos}, 'target_todoList');
+    renderTemplate('template_todoList', {todos: allTodos, name: name}, 'target_todoList');
 }
 
 function deco() {
