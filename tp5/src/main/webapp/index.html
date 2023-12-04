@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MIF-TODOS</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="css/bootstrap.css">
+
+    <link rel="stylesheet" href="css/app.css">
+    <script type="application/javascript" src="js/api-base.js"></script>
+    <script type="application/javascript" src="js/spa.js"></script>
+</head>
+<body>
+<header>
+    <h1 class="header-titre">MIF-TODOS</h1>
+    <div class="wrapper">
+        <p class="header-user requiresConnection">Bonjour <strong>Toto</strong></p>
+        <p class="header-deco requiresConnection"><a href='#deco'>Déconnexion</a></p>
+    </div>
+    <!--
+        TODO faire en sorte de n'afficher la dernière div que si l'utilisateur est connecté.
+    -->
+</header>
+
+<div class="wrapper">
+    <aside class="menu">
+        <h2>Menu</h2>
+        <ul class="nav flex-column">
+            <li class="nav-item"><a href='#index'>Accueil</a></li>
+            <li class="nav-item"><a href='#connect'>Connexion</a></li>
+            <li class="requiresConnection nav-item"><a href='#monCompte'>Mon compte</a></li>
+            <li class="requiresConnection nav-item"><a href='#todoList'>Todos</a></li>
+        </ul>
+        <!--
+            TODO n'afficher "Mon compte" et "Todos" que si l'utilisateur est connecté.
+        -->
+    </aside>
+
+    <article class="contenu">
+        <div id="requestResult" class="alert"></div>
+
+        <section id='index' class='active'>
+            <h2>L'application des trucs à faire</h2>
+            <p>Actuellement : <strong id="nbUsers">...</strong> utilisateurs inscrits.</p>
+            <!--
+                TODO A vous de modifier cette section pour qu'elle affiche les bonnes données et qu'elle se recharge toutes les 5 secondes.
+            -->
+        </section>
+
+        <section id='connect' class='inactive'>
+            <h2>Connectez-vous pour accéder aux todos</h2>
+                <table>
+                    <tr><td><label for="login_input">Login :</label></td><td><input class="form-control" type="text" id="login_input"></td></tr>
+                    <tr><td><label for="password_input">Mot de passe :</label></td><td><input class="form-control" type="password" id="password_input"></td></tr>
+                    <tr><td><button type="button" class="btn btn-secondary" id="login_button" onclick="connect()">Connexion</button></td></tr>
+                </table>
+            <!--
+                TODO envoyer la requête puis récupérer et stocker le token.
+            -->
+        </section>
+
+        <section id='deco' class='inactive'>
+            <h2>Déconnexion</h2>
+            <p>Cliquez ici pour vous déconnecter :
+                <button type="button" class="btn btn-secondary" id="logout_button" onclick="deco()">Déconnexion</button>
+            </p>
+            <!--
+                TODO envoyer la requête de logout et afficher la page d'accueil sans les éléments pour lesquels il faut être connecté.
+            -->
+        </section>
+
+        <section id='monCompte' class='inactive'>
+            <h2>Mon compte</h2>
+            <table id='compteList'>
+                <tr><td>Login : </td><td><span id="login">toto</span></td></tr>
+                <tr>
+                    <td>Nom : </td>
+                    <td><span id="nom_update_input" contenteditable="true">Toto</span></td>
+                    <td><button type="button" class="btn btn-secondary" id="user_update_button">Modifier</button></td>
+                </tr>
+                <tr>
+                    <td><label for="password_update_input">Mot de passe :</label></td>
+                    <td><input class="form-control" type="password" id="password_update_input"></td>
+                    <td><button type="button" class="btn btn-secondary" id="password_update_button">Modifier</button></td>
+                </tr>
+            </table>
+            <div>Assigné à :
+                <ul>
+                    <li><a href="#todoList/idTodo1">Titre du premier todo</a></li>
+                    <li><a href="#todoList/idTodo3">Titre du troisième todo</a></li>
+                </ul>
+            </div>
+            <!--
+                TODO afficher les informations dans les champs, récupérer les informations sur les todos et générer les éléments et leurs IDs.
+            -->
+        </section>
+
+        <section id='todoList' class='inactive'>
+            <h2><strong>Liste des todos</strong></h2>
+            <p>Il y a actuellement <strong>...</strong> todo(s).</p>
+            <!--
+                TODO afficher le nombre de todos
+            -->
+            <div class="list">
+            <table>
+                <tr>
+                    <th></th>
+                    <th>Titre</th>
+                    <th>Assigné à</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                <tr class="special">
+                    <td>&#x2611;</td>
+                    <td>Titre du premier todo</td>
+                    <td><a href="#user/toto">Toto</a></td>
+                    <td><button type="button" class="btn btn-secondary" id="idTodo1_removeUser_button">Me retirer ce todo</button></td>
+                    <td><button type="button" class="btn btn-secondary" id="idTodo1_removeTodo_button">Supprimer ce todo</button></td>
+                </tr>
+                <tr>
+                    <td>&#x2610;</td>
+                    <td>Titre du deuxième todo</td>
+                    <td><a href="#user/titi">Titi</a></td>
+                    <td><button type="button" class="btn btn-secondary" id="idTodo2_assignUser_button">M'attribuer ce todo</button></td>
+                    <td><button type="button" class="btn btn-secondary" id="idTodo2_removeTodo_button">Supprimer ce todo</button></td>
+                </tr>
+                <tr class="special">
+                    <td>&#x2610;</td>
+                    <td>Titre du troisième todo</td>
+                    <td><a href="#user/toto">Toto</a></td>
+                    <td><button type="button" class="btn btn-secondary" id="idTodo3_removeUser_button">Me retirer ce todo</button></td>
+                    <td><button type="button" class="btn btn-secondary" id="idTodo3_removeTodo_button">Supprimer ce todo</button></td>
+                </tr>
+                <tr>
+                    <td>&#x2610;</td>
+                    <td>Titre du quatrième todo</td>
+                    <td></td>
+                    <td><button type="button" class="btn btn-secondary" id="idTodoN_assignUser_button">M'attribuer ce todo</button></td>
+                    <td><button type="button" class="btn btn-secondary" id="idTodoN_removeTodo_button">Supprimer ce todo</button></td>
+                </tr>
+            </table>
+            </div>
+            <!--
+                TODO mettre en place une boucle sur les todos et afficher les données.
+                TODO recharger les informations toutes les 5 secondes.
+            -->
+
+            <div class="container d-flex">
+                <div class ="row ">
+                    <div class="col-sm-2">
+                        <label class="form-label" for="text">Titre :</label>
+                    </div>
+                    <div class="col-sm-8">
+                        <input class="form-control" type="text" id="text" size="50">
+                    </div>
+                    <div class="col-sm-2">
+                        <button type="button" class="btn btn-secondary" id="addTodo_button">Créer un nouveau todo</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </article>
+</div>
+
+<footer>
+    <div>Licence : <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/3.0/fr/"><img
+            alt="Licence Creative Commons" style="border-width:0; vertical-align:middle;"
+            src="https://i.creativecommons.org/l/by-nc-sa/3.0/fr/88x31.png"/></a></div>
+</footer>
+
+<!-- Bootstrap JS -->
+<script src="js/vendor/jquery.js"></script>
+<script src="js/vendor/popper.min.js"></script>
+<script src="js/bootstrap.js"></script>
+
+</body>
+</html>
