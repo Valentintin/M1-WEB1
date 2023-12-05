@@ -138,7 +138,6 @@ function getAssignedTodos(){
 }
 
 function getAllTodos(){
-    const login = localStorage.getItem("login");
     const token = localStorage.getItem("token");
     return new Promise((resolve, reject) => {
         const headers = new Headers();
@@ -162,7 +161,7 @@ function getAllTodos(){
             resolve(allTodos);
         })
             .catch((err) => {
-                console.error("In getAssignedTodos: " + err);
+                console.error("In getAllTodos: " + err);
             })
     });
 }
@@ -196,13 +195,14 @@ function getInformationForTodos(listOfTodos){
                         throw new Error("Bad response code (" + response.status + ") or does not contain JSON (" + response.headers.get("Content-Type") + ").");
                     }
                 }).then((json) => {
+                    console.log(json);
                     listOfTodos[i] = json;
                     listOfTodos[i].userIsAssignee = (login === json.assignee); //savoir si l'utilisateur connecté et celui qui possède le todo
                     compteur++;
                     checkCompteur();
                 })
                 .catch((err) => {
-                    console.error("In getTodo: " + err);
+                    console.error("In getInformationForTodos: " + err);
                 })
         }
     });
@@ -212,10 +212,7 @@ function getInformationForTodos(listOfTodos){
  * Envoie la requête de login en fonction du contenu des champs de l'interface.
  */
 function connect() {
-    let token = null;
     let login = null;
-    let name = null;
-    displayConnected(true);
     const headers = new Headers();
     headers.append("Content-Type", "application/json");
     const body = {
@@ -233,11 +230,10 @@ function connect() {
     fetch(baseUrl + "users/login", requestConfig)
         .then((response) => {
             if(response.status === 204) {
+                displayConnected(true);
                 displayRequestResult("Connexion réussie", "alert-success");
-                console.log("In login: Authorization = " + response.headers.get("Authorization"));
                 localStorage.setItem("token", response.headers.get("Authorization"));
                 localStorage.setItem("login", login);
-                //token.replace("Bearer ", "");
                 return Promise.all([
                     getName(),
                     getAssignedTodos(),
@@ -344,6 +340,89 @@ function modifyPassword(){
         })
         .catch((err) => {
             console.error("In modify Password: " + err);
+        })
+}
+
+function  changeAssignee(hash, user= null){
+    const token = localStorage.getItem("token");
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+    headers.append("Authorization", token);
+    const body = {
+        assignee: user,
+    };
+    const requestConfig = {
+        method: "PUT",
+        headers: headers,
+        body: JSON.stringify(body),
+        mode: "cors" // pour le cas où vous utilisez un serveur différent pour l'API et le client.
+    };
+    fetch(baseUrl + "todos/" + hash, requestConfig)
+        .then((response) => {
+            //voir pour gérer le cas d'une erreur 201
+            if(response.status === 204) {
+                displayRequestResult("Todos modifié (Assignee)", "alert-success");
+            } else {
+                displayRequestResult("Impossible de modifier l'assignee", "alert-danger");
+                throw new Error("Bad response code (" + response.status + ").");
+            }
+        })
+        .catch((err) => {
+            console.error("In changeAssignee: " + err);
+        })
+}
+
+function changeStatus(hash){
+    const token = localStorage.getItem("token");
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+    headers.append("Authorization", token);
+    const body = {
+        hash: hash,
+    };
+    const requestConfig = {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify(body),
+        mode: "cors" // pour le cas où vous utilisez un serveur différent pour l'API et le client.
+    };
+    fetch(baseUrl + "todos/toggleStatus", requestConfig)
+        .then((response) => {
+            if(response.status === 204) {
+                displayRequestResult("Statut modifié", "alert-success");
+            } else {
+                displayRequestResult("Impossible de modifié le status du todo", "alert-danger");
+                throw new Error("Bad response code (" + response.status + ").");
+            }
+        })
+        .catch((err) => {
+            console.error("In changeStatus: " + err);
+        })
+}
+
+function deleteTodo(hash){
+    const token = localStorage.getItem("token");
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+    headers.append("Authorization", token);
+
+    const requestConfig = {
+        method: "DELETE",
+        headers: headers,
+        mode: "cors" // pour le cas où vous utilisez un serveur différent pour l'API et le client.
+    };
+    fetch(baseUrl + "todos/" + hash, requestConfig)
+        .then((response) => {
+            //voir pour gérer le cas d'une erreur 201
+            if(response.status === 204) {
+                displayRequestResult("Todo supprimé", "alert-success");
+            } else {
+                displayRequestResult("Impossible de supprimer le todo", "alert-danger");
+                throw new Error("Bad response code (" + response.status + ").");
+            }
+        })
+        .catch((err) => {
+            console.error("In deleteTodo: " + err);
         })
 }
 
