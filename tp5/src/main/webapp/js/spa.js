@@ -79,7 +79,9 @@ function getNumberOfUsers() {
         });
 }
 
-function  getName(login, token) {
+function  getName() {
+    const login = localStorage.getItem("login");
+    const token = localStorage.getItem("token");
     return new Promise((resolve, reject) => {
         const headers = new Headers();
         headers.append("Accept", "application/json");
@@ -105,7 +107,9 @@ function  getName(login, token) {
     });
 }
 
-function getAssignedTodos(token, login){
+function getAssignedTodos(){
+    const login = localStorage.getItem("login");
+    const token = localStorage.getItem("token");
     return new Promise((resolve, reject) => {
         const headers = new Headers();
         headers.append("Accept", "application/json");
@@ -123,7 +127,7 @@ function getAssignedTodos(token, login){
                     throw new Error("Bad response code (" + response.status + ") or does not contain JSON (" + response.headers.get("Content-Type") + ").");
                 }
             }).then((json) => {
-                return getInformationForTodos(token, json.assignedTodos, login);
+                return getInformationForTodos(json.assignedTodos);
             }).then((assignedTodos) => {
                 resolve(assignedTodos);
             })
@@ -133,7 +137,9 @@ function getAssignedTodos(token, login){
     });
 }
 
-function getAllTodos(token, login){
+function getAllTodos(){
+    const login = localStorage.getItem("login");
+    const token = localStorage.getItem("token");
     return new Promise((resolve, reject) => {
         const headers = new Headers();
         headers.append("Accept", "application/json");
@@ -151,7 +157,7 @@ function getAllTodos(token, login){
                     throw new Error("Bad response code (" + response.status + ") or does not contain JSON (" + response.headers.get("Content-Type") + ").");
                 }
             }).then((json) => {
-            return getInformationForTodos(token, json, login);
+            return getInformationForTodos(json);
         }).then((allTodos) => {
             resolve(allTodos);
         })
@@ -161,7 +167,9 @@ function getAllTodos(token, login){
     });
 }
 
-function getInformationForTodos(token, listOfTodos, login){
+function getInformationForTodos(listOfTodos){
+    const login = localStorage.getItem("login");
+    const token = localStorage.getItem("token");
     return new Promise((resolve, reject) => {
         let compteur = 0; // compteur pour savoir quand envoyer la promesse
 
@@ -227,12 +235,13 @@ function connect() {
             if(response.status === 204) {
                 displayRequestResult("Connexion réussie", "alert-success");
                 console.log("In login: Authorization = " + response.headers.get("Authorization"));
-                token = response.headers.get("Authorization");
+                localStorage.setItem("token", response.headers.get("Authorization"));
+                localStorage.setItem("login", login);
                 //token.replace("Bearer ", "");
                 return Promise.all([
-                    getName(login, token),
-                    getAssignedTodos(token,login),
-                    getAllTodos(token, login)
+                    getName(),
+                    getAssignedTodos(),
+                    getAllTodos()
                 ])
             } else {
                 displayRequestResult("Connexion refusée ou impossible", "alert-danger");
@@ -240,8 +249,7 @@ function connect() {
             }
         })
         .then(([name, assignedTodos, allTodos]) => {
-            console.log(allTodos);
-            renderAll(login, name, assignedTodos, allTodos);
+            renderAll(name, assignedTodos, allTodos);
             location.hash = "#index";
         })
         .catch((err) => {
@@ -249,13 +257,102 @@ function connect() {
         })
 }
 
-function renderAll(login, name, assignedTodos, allTodos){
-    renderTemplate('template_header', { login: login }, 'target_header');
-    renderTemplate('template_myAccount', {login : login, name : name , todos: assignedTodos
-    }, 'target_myAccount');
-    renderTemplate('template_todoList', {todos: allTodos, name: name}, 'target_todoList');
+function createTodo(){
+    const login = localStorage.getItem("login");
+    const token = localStorage.getItem("token");
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+    headers.append("Authorization", token);
+    const body = {
+        title: document.getElementById("text").value,
+        creator: login,
+    };
+    const requestConfig = {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify(body),
+        mode: "cors" // pour le cas où vous utilisez un serveur différent pour l'API et le client.
+    };
+    fetch(baseUrl + "todos", requestConfig)
+        .then((response) => {
+            if(response.status === 201) {
+                displayRequestResult("Todo ajouté", "alert-success");
+            } else {
+                displayRequestResult("Impossible d'ajouté le todo", "alert-danger");
+                throw new Error("Bad response code (" + response.status + ").");
+            }
+        })
+        .catch((err) => {
+            console.error("In create todo: " + err);
+        })
 }
 
+function modifyName(){
+    const login = localStorage.getItem("login");
+    const token = localStorage.getItem("token");
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+    headers.append("Authorization", token);
+    const body = {
+        name: document.getElementById("nom_update_input").textContent,
+    };
+    const requestConfig = {
+        method: "PUT",
+        headers: headers,
+        body: JSON.stringify(body),
+        mode: "cors" // pour le cas où vous utilisez un serveur différent pour l'API et le client.
+    };
+    fetch(baseUrl + "users/" + login, requestConfig)
+        .then((response) => {
+            //voir pour gérer le cas d'une erreur 201
+            if(response.status === 204) {
+                displayRequestResult("Utilisateur modifié (name)", "alert-success");
+            } else {
+                displayRequestResult("Impossible de modifier votre nom", "alert-danger");
+                throw new Error("Bad response code (" + response.status + ").");
+            }
+        })
+        .catch((err) => {
+            console.error("In modify Name: " + err);
+        })
+}
+
+function modifyPassword(){
+    const login = localStorage.getItem("login");
+    const token = localStorage.getItem("token");
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+    headers.append("Authorization", token);
+    const body = {
+        password: document.getElementById("password_update_input").value,
+    };
+    const requestConfig = {
+        method: "PUT",
+        headers: headers,
+        body: JSON.stringify(body),
+        mode: "cors" // pour le cas où vous utilisez un serveur différent pour l'API et le client.
+    };
+    fetch(baseUrl + "users/" + login, requestConfig)
+        .then((response) => {
+            //voir pour gérer le cas d'une erreur 201
+            if(response.status === 204) {
+                displayRequestResult("Utilisateur modifié (password)", "alert-success");
+            } else {
+                displayRequestResult("Impossible de modifier votre password", "alert-danger");
+                throw new Error("Bad response code (" + response.status + ").");
+            }
+        })
+        .catch((err) => {
+            console.error("In modify Password: " + err);
+        })
+}
+
+function renderAll(name, assignedTodos, allTodos) {
+    const login = localStorage.getItem("login");
+    renderTemplate('template_header', { login: login }, 'target_header');
+    renderTemplate('template_myAccount', { login: login, name: name, todos: assignedTodos }, 'target_myAccount');
+    renderTemplate('template_todoList', { todos: allTodos, name: name }, 'target_todoList');
+}
 function deco() {
     // TODO envoyer la requête de déconnexion
     location.hash = "#index";

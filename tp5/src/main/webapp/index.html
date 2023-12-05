@@ -86,12 +86,12 @@
                 <tr>
                     <td>Nom : </td>
                     <td><span id="nom_update_input" contenteditable="true">{{name}}</span></td>
-                    <td><button type="button" class="btn btn-secondary" id="user_update_button">Modifier</button></td>
+                    <td><button type="button" class="btn btn-secondary" id="user_update_button" onclick="modifyName()">Modifier</button></td>
                 </tr>
                 <tr>
                     <td><label for="password_update_input">Mot de passe :</label></td>
                     <td><input class="form-control" type="password" id="password_update_input"></td>
-                    <td><button type="button" class="btn btn-secondary" id="password_update_button">Modifier</button></td>
+                    <td><button type="button" class="btn btn-secondary" id="password_update_button" onclick="modifyPassword()">Modifier</button></td>
                 </tr>
             </table>
             <div>Assigné à :
@@ -125,7 +125,13 @@
                     <th></th>
                 </tr>
                 {{#todos}}
-                    <tr class="special">
+                    <tr
+                       {{#userIsAssignee}}
+                        class="special"
+                        {{/userIsAssignee}}
+                        {{^userIsAssignee}}
+                        {{/userIsAssignee}}
+                    >
                         <td>{{{image}}}</td>
                         <td>{{title}}</td>
                         <td><a href="#user/{{assignee}}">{{assignee}}</a></td>
@@ -154,7 +160,7 @@
                         <input class="form-control" type="text" id="text" size="50">
                     </div>
                     <div class="col-sm-2">
-                        <button type="button" class="btn btn-secondary" id="addTodo_button">Créer un nouveau todo</button>
+                        <button type="button" class="btn btn-secondary" id="addTodo_button" onclick="createTodo()">Créer un nouveau todo</button>
                     </div>
                 </div>
             </div>
