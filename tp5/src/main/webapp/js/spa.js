@@ -167,6 +167,7 @@ function getAllTodos(){
 }
 
 function getInformationForTodos(listOfTodos){
+    console.log(listOfTodos);
     const login = localStorage.getItem("login");
     const token = localStorage.getItem("token");
     return new Promise((resolve, reject) => {
@@ -196,6 +197,8 @@ function getInformationForTodos(listOfTodos){
                     }
                 }).then((json) => {
                     console.log(json);
+                    console.log(i);
+                    console.log(compteur);
                     listOfTodos[i] = json;
                     listOfTodos[i].userIsAssignee = (login === json.assignee); //savoir si l'utilisateur connecté et celui qui possède le todo
                     compteur++;

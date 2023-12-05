@@ -140,7 +140,13 @@
                         <td>{{{image}}}</td>
                         {{/userIsAssignee}}
 
+                        {{#userIsAssignee}}
+                        <td><span contenteditable="true">{{title}}</span></td>
+                        {{/userIsAssignee}}
+                        {{^userIsAssignee}}
                         <td>{{title}}</td>
+                        {{/userIsAssignee}}
+
                         <td><a href="#user/{{assignee}}">{{assignee}}</a></td>
                         {{#userIsAssignee}}
                             <td><button type="button" class="btn btn-secondary" id="idTodo1_removeUser_button" onclick="changeAssignee({{hash}})">Me retirer ce todo</button></td>
