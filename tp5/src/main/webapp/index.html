@@ -148,7 +148,7 @@
                         {{/userIsAssignee}}
 
                         {{#userIsAssignee}}
-                            <td><a href='#monCompte'</a></td>
+                            <td><a onmouseover="displayLogin()" onmouseout="hideLogin()" href='#monCompte'</a>{{assignee}}</td>
                             <td><button type="button" class="btn btn-secondary" id="idTodo1_removeUser_button" onclick="changeAssigneeNull({{hash}})">Me retirer ce todo</button></td>
                             <td><button type="button" class="btn btn-secondary" id="idTodo1_removeTodo_button" onclick="deleteTodo({{hash}})">Supprimer ce todo</button></td>
                             <td><button type="button" class="btn btn-secondary" id="idTodo1_rename_button" onclick="changeNameTodo({{hash}})">Modifier</button></td>

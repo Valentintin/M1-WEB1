@@ -99,6 +99,7 @@ function  getName() {
                     throw new Error("Bad response code (" + response.status + ") or does not contain JSON (" + response.headers.get("Content-Type") + ").");
                 }
             }).then((json) => {
+            localStorage.setItem("name", json.name);
             resolve(json.name);
         })
             .catch((err) => {
@@ -127,7 +128,6 @@ function getAssignedTodos(){
                     throw new Error("Bad response code (" + response.status + ") or does not contain JSON (" + response.headers.get("Content-Type") + ").");
                 }
             }).then((json) => {
-                console.log('avant');
                 return getInformationForTodos(json.assignedTodos);
             }).then((assignedTodos) => {
                 if(assignedTodos != null){
@@ -319,7 +319,6 @@ function modifyName(){
     };
     fetch(baseUrl + "users/" + login, requestConfig)
         .then((response) => {
-            //voir pour gérer le cas d'une erreur 201
             if(response.status === 204) {
                 displayRequestResult("Utilisateur modifié (name)", "alert-success");
                 return getName();
@@ -353,7 +352,6 @@ function modifyPassword(){
     };
     fetch(baseUrl + "users/" + login, requestConfig)
         .then((response) => {
-            //voir pour gérer le cas d'une erreur 201
             if(response.status === 204) {
                 displayRequestResult("Utilisateur modifié (password)", "alert-success");
             } else {
@@ -382,7 +380,6 @@ function changeNameTodo(hash){
     };
     fetch(baseUrl + "todos/" + hash, requestConfig)
         .then((response) => {
-            //voir pour gérer le cas d'une erreur 201
             if(response.status === 204) {
                 displayRequestResult("Todo name modifié (name)", "alert-success");
                 return Promise.all([
@@ -569,7 +566,20 @@ function deco() {
     location.hash = "#index";
     displayConnected(false);
 }
+
+function majTodos() {
+    return Promise.all([
+        getName(),
+        getAllTodos(),
+        getAssignedTodos()
+    ])
+    .then(([name, allTodos, assignedTodos]) => {
+            renderAll(name, assignedTodos, allTodos);
+    })
+}
+
 setInterval(getNumberOfUsers, 5000);
+setInterval(majTodos, 5000);
 // </editor-fold>
 
 // Functions pour Templates
@@ -577,4 +587,24 @@ function renderTemplate(id, data, idHtml) {
     const template = document.getElementById(id).innerHTML;
     const rendered = Mustache.render(template, data);
     document.getElementById(idHtml).innerHTML = rendered;
+}
+
+let loginPopUp;
+
+function displayLogin() {
+    let message = "Ton nom est " +  localStorage.getItem("name");
+
+   loginPopUp = window.open("", "MaPopUp", `scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,width=200,height=200,left=-1000,top=-1000;`);
+
+    if (loginPopUp == null || typeof(loginPopUp) == 'undefined') {
+        displayRequestResult("La fenêtre pop-up a été bloquée. Veuillez autoriser les pop-ups pour ce site.", "alert-danger");
+    } else {
+        loginPopUp.document.write(`<h1>${message}</h1>`);
+    }
+}
+
+function hideLogin() {
+    if(loginPopUp != null && !loginPopUp.closed) {
+        loginPopUp.close();
+    }
 }
