@@ -106,6 +106,8 @@ public class ContentNegotiationFilter extends HttpFilter {
                     }
                 }
             }
+            case "OPTIONS" ->
+                    super.doFilter(request, response, chain);
             default -> response.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED);
         }
     }
