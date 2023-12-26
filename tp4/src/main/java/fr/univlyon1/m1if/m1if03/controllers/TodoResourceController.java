@@ -1,7 +1,6 @@
 package fr.univlyon1.m1if.m1if03.controllers;
 
 import fr.univlyon1.m1if.m1if03.dao.TodoDao;
-import fr.univlyon1.m1if.m1if03.dao.UserDao;
 import fr.univlyon1.m1if.m1if03.dto.todo.TodoDtoMapper;
 import fr.univlyon1.m1if.m1if03.dto.todo.TodoRequestDto;
 import fr.univlyon1.m1if.m1if03.dto.todo.TodoResponseDto;
@@ -23,6 +22,7 @@ import javax.naming.NameNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import static fr.univlyon1.m1if.m1if03.utils.TodosM1if03JwtHelper.generateToken;
 
@@ -172,6 +172,9 @@ public class TodoResourceController extends HttpServlet {
             try {
                 Integer id = Integer.parseInt(url[1]);
                 todoResource.update(id, requestDto.getTitle(), requestDto.getAssignee(), request, response);
+                String token = generateToken(((User) (request.getAttribute("user"))).getLogin(),
+                        todoResource.getTodos(((User)request.getAttribute("user")).getLogin()), request);
+                response.setHeader("Authorization", "Bearer " + token);
                 response.setHeader("Location", "todos/" + requestDto.getHash());
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             } catch (NumberFormatException e) {
@@ -228,7 +231,22 @@ public class TodoResourceController extends HttpServlet {
             this.todoDao = todoDao;
         }
 
-        public Integer create(@NotNull String title, @NotNull String creator)
+        /**
+         * Renvoie les todos d'un utilisateur.
+         * @param assignee
+         * @return
+         */
+        List<Integer> getTodos(String assignee) {
+            List<Todo> todo = todoDao.findByAssignee(assignee);
+            List<Integer> list = new ArrayList<>();
+            for (Todo t : todo) {
+                list.add(t.hashCode());
+            }
+            return list;
+        }
+
+
+            public Integer create(@NotNull String title, @NotNull String creator)
                 throws IllegalArgumentException, NameAlreadyBoundException, ForbiddenLoginException {
             if (title == null || title.isEmpty()) {
                 throw new IllegalArgumentException("Le title ne doit pas être null ou vide.");
@@ -286,10 +304,10 @@ public class TodoResourceController extends HttpServlet {
             }
             if (assignee != null && !assignee.isEmpty()) {
                 todo.setAssignee(assignee);
-                UserDao userDao = (UserDao) request.getServletContext().getAttribute("userDao");
+                /*UserDao userDao = (UserDao) request.getServletContext().getAttribute("userDao");
+                System.out.println("userDAO");
                 User user = userDao.findOne(todo.getAssignee());
-                String token = generateToken(user.getLogin(), todoDao.findByAssignee(user.getLogin()).stream().map(Todo::hashCode).toList(), request);
-                response.setHeader("Authorization", "Bearer " + token);
+                System.out.println("findone");*/
             }
         }
 

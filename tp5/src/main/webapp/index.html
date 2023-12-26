@@ -97,7 +97,7 @@
             <div>Assigné à :
                 <ul>
                     {{#todos}}
-                        <li><a href="#todoList/{{hash}}">{{title}}</a></li>
+                        <li><a href='#todoList'>{{title}}</a></li>
                     {{/todos}}
                 </ul>
             </div>
@@ -141,20 +141,22 @@
                         {{/userIsAssignee}}
 
                         {{#userIsAssignee}}
-                        <td><span contenteditable="true">{{title}}</span></td>
+                        <td><span id="nameTodo1" contenteditable="true">{{title}}</span></td>
                         {{/userIsAssignee}}
                         {{^userIsAssignee}}
                         <td>{{title}}</td>
                         {{/userIsAssignee}}
 
-                        <td><a href="#user/{{assignee}}">{{assignee}}</a></td>
                         {{#userIsAssignee}}
-                            <td><button type="button" class="btn btn-secondary" id="idTodo1_removeUser_button" onclick="changeAssignee({{hash}})">Me retirer ce todo</button></td>
+                            <td><a href='#monCompte'</a></td>
+                            <td><button type="button" class="btn btn-secondary" id="idTodo1_removeUser_button" onclick="changeAssigneeNull({{hash}})">Me retirer ce todo</button></td>
+                            <td><button type="button" class="btn btn-secondary" id="idTodo1_removeTodo_button" onclick="deleteTodo({{hash}})">Supprimer ce todo</button></td>
+                            <td><button type="button" class="btn btn-secondary" id="idTodo1_rename_button" onclick="changeNameTodo({{hash}})">Modifier</button></td>
                         {{/userIsAssignee}}
                         {{^userIsAssignee}}
-                            <td><button type="button" class="btn btn-secondary" id="idTodo1_assignUser_button" onclick="changeAssignee({{hash}}, {{name}})">M'attribuer ce todo</button></td>
+                            <td><a>{{assignee}}</a></td>
+                            <td><button type="button" class="btn btn-secondary" id="idTodo1_assignUser_button" onclick="changeAssigneeName({{hash}})">M'attribuer ce todo</button></td>
                         {{/userIsAssignee}}
-                        <td><button type="button" class="btn btn-secondary" id="idTodo1_removeTodo_button" onclick="deleteTodo({{hash}})">Supprimer ce todo</button></td>
                     </tr>
                 {{/todos}}
             </table>

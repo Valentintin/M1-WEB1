@@ -41,7 +41,7 @@ public class UserDtoMapper {
      */
     public UserResponseDto toDto(User user) {
         //TODO Virer ça...
-        todoDao.findAll().forEach(todo -> todo.setAssignee(user.getLogin()));
+        //todoDao.findAll().forEach(todo -> todo.setAssignee(user.getLogin()));
         List<Integer> ownedTodos =
                 todoDao.findByAssignee(user.getLogin())
                         .stream()
