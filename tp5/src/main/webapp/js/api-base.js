@@ -6,4 +6,4 @@
  * il faut rajouter l'origine du client dans les paramètres du filtre CORS (fichier <code>web.xml</code> du TP4).
  * @type {string}
  */
-const baseUrl = "http://localhost:8080/todos_war/";
+const baseUrl = "https://192.168.75.73/api/v3/";

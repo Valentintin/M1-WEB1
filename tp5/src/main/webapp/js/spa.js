@@ -243,6 +243,7 @@ function connect() {
             if(response.status === 204) {
                 displayConnected(true);
                 displayRequestResult("Connexion réussie", "alert-success");
+                setInterval(majTodos, 5000);
                 localStorage.setItem("token", response.headers.get("Authorization"));
                 localStorage.setItem("login", login);
                 return Promise.all([
@@ -579,7 +580,6 @@ function majTodos() {
 }
 
 setInterval(getNumberOfUsers, 5000);
-setInterval(majTodos, 5000);
 // </editor-fold>
 
 // Functions pour Templates
