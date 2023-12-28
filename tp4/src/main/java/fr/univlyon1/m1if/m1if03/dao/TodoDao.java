@@ -12,17 +12,6 @@ import java.util.stream.Collectors;
  * @author Lionel Médini
  */
 public class TodoDao extends AbstractListDao<Todo> {
-    /**
-     * Constructeur <em>A SUPPRIMER</em> : ajoute quelques todos au démarrage pour pouvoir tester avec uniquement la partie users.
-     */
-    //TODO Supprimer ce constructeur une fois que la partie todos a été réalisée...
-    public TodoDao() {
-        super();
-        //TODO Virer ça...
-        this.add(new Todo("TODO1 : finir le TP3", "toto"));
-        this.add(new Todo("TODO2 : faire le TP4", "toto"));
-        this.add(new Todo("TODO 3 : dormir", "toto"));
-    }
 
     /**
      * Permet de retrouver un Todo_ à partir de son hash (son "vrai" ID), puisque dans le DAO, ils sont classés par ordre.

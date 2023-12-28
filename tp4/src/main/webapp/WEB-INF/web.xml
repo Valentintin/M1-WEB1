@@ -50,6 +50,10 @@
             <param-name>defaultMIME</param-name>
             <param-value>text/html</param-value>
         </init-param>
+        <init-param>
+            <param-name>cors.exposed.headers</param-name>
+            <param-value>Access-Control-Allow-Origin,Access-Control-Allow-Credentials,Authorization</param-value>
+        </init-param>
     </filter>
     <filter-mapping>
         <filter-name>ContentNegotiationFilter</filter-name>
