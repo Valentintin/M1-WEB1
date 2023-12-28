@@ -20,7 +20,7 @@ deploy:
     script:
         - cd tp4
         - mvn clean package
-        - scp -o StrictHostKeyChecking=no -i $CI_SSH_KEY target/todos-client.war gitlabci@192.168.75.73:/opt/tomcat/webapps/v3.war
+        - scp -o StrictHostKeyChecking=no -i $CI_SSH_KEY target/todos.war gitlabci@192.168.75.73:/opt/tomcat/webapps/v3.war
 
         - cd ../tp5
         - mvn clean package
