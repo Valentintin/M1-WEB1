@@ -1,9 +1,93 @@
-# M1IF03 2023 Base
+# Rapport TP7
 
-Ce dépôt contiendra les sources de code pour l'UE M1IF03 en 2023-2024.
+## 1. Analyse de l'état initial de votre application
+déploiement sur Tomcat
 
-Il est conseillé d'en faire un fork et de le puller à chaque début de TP. Sinon, vous pouvez aussi puller ce repository séparément et recopier le nouveau code dans le vôtre.
+script : 
+```js
+function calc() {
+    var timeOrigin = window.performance.timeOrigin;
+    var domCompleted = window.performance.timing.domComplete;
+    var domLoading = window.performance.timing.domLoading;
+    var responseEnd = window.performance.timing.responseEnd;
+    var CSSDomEnd = window.performance.timing.domContentLoadedEventEnd;
+    var domTotal = domLoading - timeOrigin;
+    var HTMLDownloadTime = responseEnd - timeOrigin;
+    var CSSDomTime = CSSDomEnd - timeOrigin;
+    var CRP = domCompleted - timeOrigin;
+    // Calcul pour le App Shell
+    var appShell = performance.getEntries().filter(x =>
+    x.name.endsWith('.js') || x.name.endsWith('.html') || x.name.endsWith('.css'))[performance.getEntries().filter(x =>
+    x.name.endsWith('.js') || x.name.endsWith('.html') || x.name.endsWith('.css')).length - 1].responseEnd;
+    console.log("Dom total: " + domTotal);
+    console.log("HTML Download time" + HTMLDownloadTime);
+    console.log("CSSDom Download time" + CSSDomTime);
+    console.log("Appshell time" + appShell);
+    console.log("CRP : " + CRP);
+    return {
+        HTMLDownloadTime: HTMLDownloadTime,
+        DomTotal: domTotal,
+        CSSDomTime: CSSDomTime,
+        AppShellTime: appShell,
+        CRP: CRP
+    };
+}
+var results = [];
+for (var i = 0; i < 10; i++) {
+    results.push(calc());
+    location.reload();
+}
+var averageResults = calculateAverage(results);
+console.log("Moyenne des rÃ©sultats : ", averageResults);
 
-Dans ce cas, vous conserverez la structure par TP et y mettrez le code développé à chaque TP. Y compris les scripts de configuration.
+function calculateAverage(results) {
+    var average = {
+    HTMLDownloadTime: 0,
+    DomTotal: 0,
+    CSSDomTime: 0,
+    AppShellTime: 0,
+    CRP: 0
+    };
+    for (var i = 0; i < results.length; i++) {
+        average.HTMLDownloadTime += results[i].HTMLDownloadTime;
+        average.DomTotal += results[i].DomTotal;
+        average.CSSDomTime += results[i].CSSDomTime;
+        average.AppShellTime += results[i].AppShellTime;
+        average.CRP += results[i].CRP;
+    }
+    average.HTMLDownloadTime /= results.length;
+    average.DomTotal /= results.length;
+    average.CSSDomTime /= results.length;
+    average.AppShellTime /= results.length;
+    average.CRP /= results.length;
+    return average;
+}
+function runMeasurement() {
+    var results = JSON.parse(localStorage.getItem('performanceResults'))
+    || [];
+    results.push(calc());
+    localStorage.setItem('performanceResults', JSON.stringify(results));
+    location.reload();
+}
+runMeasurement();
+```
 
-Dans tous les cas, n'oubliez pas d'ajouter vos enseignants en tant que reporters : Lionel Médini pour commencer, nous vous demanderons d'ajouter les intervenants extérieurs quand leurs comptes auront été créés.
+| Mesure du... | Resultat en ms |
+|--------------|----------------|
+| temps de chargement de la page HTML initiale | 129 |
+| temps d'affichage de l'app shell | 284.5 |
+| temps d'affichage du chemin critique de rendu (CRP) | 291 |
+
+## 2. Déploiement des fichiers statiques sur nginx
+déploiement sur nginx
+
+| Mesure du... | Resultat en ms | Amélioration |
+|--------------|----------------|--------------|
+| temps de chargement de la page HTML initiale | 98.8 | 24% |
+| temps d'affichage de l'app shell | 224.7 | 21% |
+| temps d'affichage du chemin critique de rendu (CRP) | 236.8 | 19% |
+
+## 3. Optimisation de votre application
+
+
+voir [notre rapport lighthouse](./rapport_audit.pdf) nous indiquant de très bon score, l'optimisation de l'application n'est pas nécessaire.
