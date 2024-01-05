@@ -90,4 +90,6 @@ déploiement sur nginx
 ## 3. Optimisation de votre application
 
 
-voir [notre rapport lighthouse](./rapport_audit.pdf) nous indiquant de très bon score, l'optimisation de l'application n'est pas nécessaire.
+voir [notre rapport lighthouse](./rapport_audit.pdf) nous indiquant de très bon score...
+
+Pour l'Optimisation nous avons utilisé CDN afin de charger les librairies à partir d'autre serveur, afin de soulager la charge de notre VM. On utilise des balises script afin de charger bootstrap, jquery, popper directement depuis le html.
