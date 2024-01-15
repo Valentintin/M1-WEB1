@@ -93,3 +93,13 @@ déploiement sur nginx
 voir [notre rapport lighthouse](./rapport_audit.pdf) nous indiquant de très bon score. Avec 97 de performances, 92 d'accessibility, 100 best practices, 90 SEO
 
 Pour l'Optimisation nous avons utilisé CDN afin de charger les librairies à partir d'autre serveur, afin de soulager la charge de notre VM. On utilise des balises script afin de charger bootstrap, jquery, popper directement depuis le html.
+
+Apres ces changements nous avons les résultats suivants:  100 de performances, 100 d'accessibility, 100 best practices, 90 SEO
+
+| Mesure du... | Resultat en ms | Amélioration |
+|--------------|----------------|--------------|
+| temps de chargement de la page HTML initiale | 19.3 | 3.5% |
+| temps d'affichage de l'app shell | 71.5 | −188.3%
+| temps d'affichage du chemin critique de rendu (CRP) | 63 | -5% |
+
+Le temps d'affichage de l'app shell est surement erroné mais nous avons constaté une augmentation de ce temps seulement dans cette partie.
