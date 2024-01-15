@@ -108,6 +108,19 @@
 
         <section id='todoList' class='inactive'>
             <div id="target_todoList"></div>
+            <div class="container d-flex">
+                <div class ="row ">
+                    <div class="col-sm-2">
+                        <label class="form-label" for="text">Titre :</label>
+                    </div>
+                    <div class="col-sm-8">
+                        <input class="form-control" type="text" id="text" size="50">
+                    </div>
+                    <div class="col-sm-2">
+                        <button type="button" class="btn btn-secondary" id="addTodo_button" onclick="createTodo()">Créer un nouveau todo</button>
+                    </div>
+                </div>
+            </div>
         </section>
         <script id="template_todoList" type="x-tmpl-mustache">
             <h2><strong>Liste des todos</strong></h2>
@@ -166,19 +179,6 @@
                 TODO recharger les informations toutes les 5 secondes.
             -->
 
-            <div class="container d-flex">
-                <div class ="row ">
-                    <div class="col-sm-2">
-                        <label class="form-label" for="text">Titre :</label>
-                    </div>
-                    <div class="col-sm-8">
-                        <input class="form-control" type="text" id="text" size="50">
-                    </div>
-                    <div class="col-sm-2">
-                        <button type="button" class="btn btn-secondary" id="addTodo_button" onclick="createTodo()">Créer un nouveau todo</button>
-                    </div>
-                </div>
-            </div>
         </script>
     </article>
 </div>
