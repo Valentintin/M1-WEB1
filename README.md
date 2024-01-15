@@ -74,22 +74,22 @@ runMeasurement();
 
 | Mesure du... | Resultat en ms |
 |--------------|----------------|
-| temps de chargement de la page HTML initiale | 129 |
-| temps d'affichage de l'app shell | 284.5 |
-| temps d'affichage du chemin critique de rendu (CRP) | 291 |
+| temps de chargement de la page HTML initiale | 21.69 | 
+| temps d'affichage de l'app shell | 25.2 |
+| temps d'affichage du chemin critique de rendu (CRP) | 75.6 |
 
 ## 2. Déploiement des fichiers statiques sur nginx
 déploiement sur nginx
 
 | Mesure du... | Resultat en ms | Amélioration |
 |--------------|----------------|--------------|
-| temps de chargement de la page HTML initiale | 98.8 | 24% |
-| temps d'affichage de l'app shell | 224.7 | 21% |
-| temps d'affichage du chemin critique de rendu (CRP) | 236.8 | 19% |
+| temps de chargement de la page HTML initiale | 20 | 7.79% |
+| temps d'affichage de l'app shell | 24.8 | 1.59% |
+| temps d'affichage du chemin critique de rendu (CRP) | 60 | 20.63% |
 
 ## 3. Optimisation de votre application
 
 
-voir [notre rapport lighthouse](./rapport_audit.pdf) nous indiquant de très bon score...
+voir [notre rapport lighthouse](./rapport_audit.pdf) nous indiquant de très bon score. Avec 97 de performances, 92 d'accessibility, 100 best practices, 90 SEO
 
 Pour l'Optimisation nous avons utilisé CDN afin de charger les librairies à partir d'autre serveur, afin de soulager la charge de notre VM. On utilise des balises script afin de charger bootstrap, jquery, popper directement depuis le html.
